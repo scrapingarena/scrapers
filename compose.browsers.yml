@@ -1,0 +1,22 @@
+services:
+  obscura:
+    profiles: [obscura]
+    image: h4ckf0r0day/obscura
+    shm_size: 2gb
+    ports:
+      - "127.0.0.1:9222:9222"
+
+  lightpanda:
+    profiles: [lightpanda]
+    image: lightpanda/browser:nightly
+    command: ["lightpanda", "serve", "--host", "0.0.0.0", "--port", "9222"]
+    shm_size: 2gb
+    ports:
+      - "127.0.0.1:9222:9222"
+
+  steel:
+    profiles: [steel]
+    image: ghcr.io/steel-dev/steel-browser
+    shm_size: 2gb
+    ports:
+      - "127.0.0.1:3000:3000"

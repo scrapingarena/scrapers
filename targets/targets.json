@@ -1,0 +1,902 @@
+[
+  {
+    "id": "example",
+    "name": "Example Domain",
+    "url": "https://example.com/",
+    "category": "reference",
+    "protection": "none",
+    "required_markers": ["Example Domain"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "hacker-news",
+    "name": "Hacker News",
+    "url": "https://news.ycombinator.com/",
+    "category": "community",
+    "protection": "none",
+    "required_markers": ["Hacker News"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "wikipedia",
+    "name": "Wikipedia",
+    "url": "https://www.wikipedia.org/",
+    "category": "reference",
+    "protection": "none",
+    "required_markers": ["Wikipedia"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "python",
+    "name": "Python",
+    "url": "https://www.python.org/",
+    "category": "developer",
+    "protection": "none",
+    "required_markers": ["Python"],
+    "min_visible_chars": 300
+  },
+  {
+    "id": "github",
+    "name": "GitHub",
+    "url": "https://github.com/",
+    "category": "developer",
+    "protection": "unknown",
+    "required_markers": ["GitHub"],
+    "min_visible_chars": 300
+  },
+  {
+    "id": "npm",
+    "name": "npm",
+    "url": "https://www.npmjs.com/",
+    "category": "developer",
+    "protection": "cloudflare",
+    "required_markers": ["npm"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "crates",
+    "name": "crates.io",
+    "url": "https://crates.io/",
+    "category": "developer",
+    "protection": "fastly",
+    "required_markers": ["crates.io"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "pypi",
+    "name": "PyPI",
+    "url": "https://pypi.org/",
+    "category": "developer",
+    "protection": "fastly",
+    "required_markers": ["Python Package Index"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "mdn",
+    "name": "MDN Web Docs",
+    "url": "https://developer.mozilla.org/",
+    "category": "developer",
+    "protection": "cloudflare",
+    "required_markers": ["MDN"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "stackoverflow",
+    "name": "Stack Overflow",
+    "url": "https://stackoverflow.com/",
+    "category": "developer",
+    "protection": "cloudflare",
+    "required_markers": ["Stack Overflow"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "url": "https://www.cloudflare.com/",
+    "category": "technology",
+    "protection": "cloudflare",
+    "required_markers": ["Cloudflare"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "url": "https://discord.com/",
+    "category": "social",
+    "protection": "cloudflare",
+    "required_markers": ["Discord"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "canva",
+    "name": "Canva",
+    "url": "https://www.canva.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Canva"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "medium",
+    "name": "Medium",
+    "url": "https://medium.com/",
+    "category": "publishing",
+    "protection": "cloudflare",
+    "required_markers": ["Medium"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "coursera",
+    "name": "Coursera",
+    "url": "https://www.coursera.org/",
+    "category": "education",
+    "protection": "cloudflare",
+    "required_markers": ["Coursera"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "nike",
+    "name": "Nike",
+    "url": "https://www.nike.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Nike"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "best-buy",
+    "name": "Best Buy",
+    "url": "https://www.bestbuy.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Best Buy"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "home-depot",
+    "name": "The Home Depot",
+    "url": "https://www.homedepot.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Home Depot"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "lowes",
+    "name": "Lowe's",
+    "url": "https://www.lowes.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Lowe"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "costco",
+    "name": "Costco",
+    "url": "https://www.costco.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Costco"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "ikea",
+    "name": "IKEA",
+    "url": "https://www.ikea.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["IKEA"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "airbnb",
+    "name": "Airbnb",
+    "url": "https://www.airbnb.com/",
+    "category": "travel",
+    "protection": "unknown",
+    "required_markers": ["Airbnb"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "booking",
+    "name": "Booking.com",
+    "url": "https://www.booking.com/",
+    "category": "travel",
+    "protection": "unknown",
+    "required_markers": ["Booking.com"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "expedia",
+    "name": "Expedia",
+    "url": "https://www.expedia.com/",
+    "category": "travel",
+    "protection": "akamai",
+    "required_markers": ["Expedia"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "tripadvisor",
+    "name": "Tripadvisor",
+    "url": "https://www.tripadvisor.com/",
+    "category": "travel",
+    "protection": "datadome",
+    "required_markers": ["Tripadvisor"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "kayak",
+    "name": "KAYAK",
+    "url": "https://www.kayak.com/",
+    "category": "travel",
+    "protection": "human-security",
+    "required_markers": ["KAYAK"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "zillow",
+    "name": "Zillow",
+    "url": "https://www.zillow.com/",
+    "category": "real-estate",
+    "protection": "human-security",
+    "required_markers": ["Zillow"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "realtor",
+    "name": "Realtor.com",
+    "url": "https://www.realtor.com/",
+    "category": "real-estate",
+    "protection": "akamai",
+    "required_markers": ["Realtor.com"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "redfin",
+    "name": "Redfin",
+    "url": "https://www.redfin.com/",
+    "category": "real-estate",
+    "protection": "unknown",
+    "required_markers": ["Redfin"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "indeed",
+    "name": "Indeed",
+    "url": "https://www.indeed.com/",
+    "category": "jobs",
+    "protection": "cloudflare",
+    "required_markers": ["Indeed"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "glassdoor",
+    "name": "Glassdoor",
+    "url": "https://www.glassdoor.com/",
+    "category": "jobs",
+    "protection": "cloudflare",
+    "required_markers": ["Glassdoor"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "walmart",
+    "name": "Walmart",
+    "url": "https://www.walmart.com/",
+    "category": "commerce",
+    "protection": "human-security",
+    "required_markers": ["Walmart"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "target",
+    "name": "Target",
+    "url": "https://www.target.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Target"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "wayfair",
+    "name": "Wayfair",
+    "url": "https://www.wayfair.com/",
+    "category": "commerce",
+    "protection": "human-security",
+    "required_markers": ["Wayfair"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "etsy",
+    "name": "Etsy",
+    "url": "https://www.etsy.com/",
+    "category": "commerce",
+    "protection": "unknown",
+    "required_markers": ["Etsy"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "ebay",
+    "name": "eBay",
+    "url": "https://www.ebay.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["eBay"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "amazon",
+    "name": "Amazon",
+    "url": "https://www.amazon.com/",
+    "category": "commerce",
+    "protection": "unknown",
+    "required_markers": ["Amazon"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "aliexpress",
+    "name": "AliExpress",
+    "url": "https://www.aliexpress.com/",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["AliExpress"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "shopify",
+    "name": "Shopify",
+    "url": "https://www.shopify.com/",
+    "category": "commerce",
+    "protection": "cloudflare",
+    "required_markers": ["Shopify"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "newegg",
+    "name": "Newegg",
+    "url": "https://www.newegg.com/",
+    "category": "commerce",
+    "protection": "human-security",
+    "required_markers": ["Newegg"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "foot-locker",
+    "name": "Foot Locker",
+    "url": "https://www.footlocker.com/",
+    "category": "commerce",
+    "protection": "datadome",
+    "required_markers": ["Foot Locker"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "stockx",
+    "name": "StockX",
+    "url": "https://stockx.com/",
+    "category": "commerce",
+    "protection": "datadome",
+    "required_markers": ["StockX"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "alltrails",
+    "name": "AllTrails",
+    "url": "https://www.alltrails.com/",
+    "category": "travel",
+    "protection": "datadome",
+    "required_markers": ["AllTrails"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "soundcloud",
+    "name": "SoundCloud",
+    "url": "https://soundcloud.com/",
+    "category": "media",
+    "protection": "datadome",
+    "required_markers": ["SoundCloud"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "leboncoin",
+    "name": "Leboncoin",
+    "url": "https://www.leboncoin.fr/",
+    "category": "classifieds",
+    "protection": "datadome",
+    "required_markers": ["leboncoin"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "reuters",
+    "name": "Reuters",
+    "url": "https://www.reuters.com/",
+    "category": "news",
+    "protection": "imperva",
+    "required_markers": ["Reuters"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "bloomberg",
+    "name": "Bloomberg",
+    "url": "https://www.bloomberg.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["Bloomberg"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "nytimes",
+    "name": "The New York Times",
+    "url": "https://www.nytimes.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["New York Times"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "wsj",
+    "name": "The Wall Street Journal",
+    "url": "https://www.wsj.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["Wall Street Journal"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "washington-post",
+    "name": "The Washington Post",
+    "url": "https://www.washingtonpost.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["Washington Post"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "guardian",
+    "name": "The Guardian",
+    "url": "https://www.theguardian.com/international",
+    "category": "news",
+    "protection": "fastly",
+    "required_markers": ["The Guardian"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "bbc",
+    "name": "BBC",
+    "url": "https://www.bbc.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["BBC"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "cnn",
+    "name": "CNN",
+    "url": "https://www.cnn.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["CNN"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "fox-news",
+    "name": "Fox News",
+    "url": "https://www.foxnews.com/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["Fox News"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "ap-news",
+    "name": "AP News",
+    "url": "https://apnews.com/",
+    "category": "news",
+    "protection": "fastly",
+    "required_markers": ["Associated Press"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "npr",
+    "name": "NPR",
+    "url": "https://www.npr.org/",
+    "category": "news",
+    "protection": "akamai",
+    "required_markers": ["NPR"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "techcrunch",
+    "name": "TechCrunch",
+    "url": "https://techcrunch.com/",
+    "category": "technology-news",
+    "protection": "unknown",
+    "required_markers": ["TechCrunch"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "the-verge",
+    "name": "The Verge",
+    "url": "https://www.theverge.com/",
+    "category": "technology-news",
+    "protection": "fastly",
+    "required_markers": ["The Verge"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "ars-technica",
+    "name": "Ars Technica",
+    "url": "https://arstechnica.com/",
+    "category": "technology-news",
+    "protection": "unknown",
+    "required_markers": ["Ars Technica"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "wired",
+    "name": "WIRED",
+    "url": "https://www.wired.com/",
+    "category": "technology-news",
+    "protection": "fastly",
+    "required_markers": ["WIRED"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "reddit",
+    "name": "Reddit",
+    "url": "https://www.reddit.com/",
+    "category": "social",
+    "protection": "fastly",
+    "required_markers": ["Reddit"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "pinterest",
+    "name": "Pinterest",
+    "url": "https://www.pinterest.com/",
+    "category": "social",
+    "protection": "unknown",
+    "required_markers": ["Pinterest"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn",
+    "url": "https://www.linkedin.com/",
+    "category": "social",
+    "protection": "unknown",
+    "required_markers": ["LinkedIn"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "instagram",
+    "name": "Instagram",
+    "url": "https://www.instagram.com/",
+    "category": "social",
+    "protection": "unknown",
+    "required_markers": ["Instagram"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "tiktok",
+    "name": "TikTok",
+    "url": "https://www.tiktok.com/",
+    "category": "social",
+    "protection": "akamai",
+    "required_markers": ["TikTok"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "url": "https://www.twitch.tv/",
+    "category": "media",
+    "protection": "akamai",
+    "required_markers": ["Twitch"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "vimeo",
+    "name": "Vimeo",
+    "url": "https://vimeo.com/",
+    "category": "media",
+    "protection": "fastly",
+    "required_markers": ["Vimeo"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "dailymotion",
+    "name": "Dailymotion",
+    "url": "https://www.dailymotion.com/",
+    "category": "media",
+    "protection": "akamai",
+    "required_markers": ["Dailymotion"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify",
+    "url": "https://www.spotify.com/",
+    "category": "media",
+    "protection": "unknown",
+    "required_markers": ["Spotify"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "imdb",
+    "name": "IMDb",
+    "url": "https://www.imdb.com/",
+    "category": "media",
+    "protection": "akamai",
+    "required_markers": ["IMDb"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "rotten-tomatoes",
+    "name": "Rotten Tomatoes",
+    "url": "https://www.rottentomatoes.com/",
+    "category": "media",
+    "protection": "akamai",
+    "required_markers": ["Rotten Tomatoes"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "goodreads",
+    "name": "Goodreads",
+    "url": "https://www.goodreads.com/",
+    "category": "books",
+    "protection": "unknown",
+    "required_markers": ["Goodreads"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "fandom",
+    "name": "Fandom",
+    "url": "https://www.fandom.com/",
+    "category": "reference",
+    "protection": "fastly",
+    "required_markers": ["Fandom"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "genius",
+    "name": "Genius",
+    "url": "https://genius.com/",
+    "category": "media",
+    "protection": "cloudflare",
+    "required_markers": ["Genius"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "weather-com",
+    "name": "The Weather Channel",
+    "url": "https://weather.com/",
+    "category": "weather",
+    "protection": "akamai",
+    "required_markers": ["Weather"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "accuweather",
+    "name": "AccuWeather",
+    "url": "https://www.accuweather.com/",
+    "category": "weather",
+    "protection": "akamai",
+    "required_markers": ["AccuWeather"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "weather-underground",
+    "name": "Weather Underground",
+    "url": "https://www.wunderground.com/",
+    "category": "weather",
+    "protection": "akamai",
+    "required_markers": ["Weather Underground"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "timeanddate",
+    "name": "timeanddate",
+    "url": "https://www.timeanddate.com/",
+    "category": "reference",
+    "protection": "unknown",
+    "required_markers": ["timeanddate"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "openstreetmap",
+    "name": "OpenStreetMap",
+    "url": "https://www.openstreetmap.org/",
+    "category": "maps",
+    "protection": "fastly",
+    "required_markers": ["OpenStreetMap"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "google-maps",
+    "name": "Google Maps",
+    "url": "https://maps.google.com/",
+    "category": "maps",
+    "protection": "unknown",
+    "required_markers": ["Google"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "google",
+    "name": "Google",
+    "url": "https://www.google.com/",
+    "category": "search",
+    "protection": "unknown",
+    "required_markers": ["Google"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "bing",
+    "name": "Bing",
+    "url": "https://www.bing.com/",
+    "category": "search",
+    "protection": "akamai",
+    "required_markers": ["Bing"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "duckduckgo",
+    "name": "DuckDuckGo",
+    "url": "https://duckduckgo.com/",
+    "category": "search",
+    "protection": "unknown",
+    "required_markers": ["DuckDuckGo"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "yahoo",
+    "name": "Yahoo",
+    "url": "https://www.yahoo.com/",
+    "category": "portal",
+    "protection": "unknown",
+    "required_markers": ["Yahoo"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "yandex",
+    "name": "Yandex",
+    "url": "https://yandex.com/",
+    "category": "search",
+    "protection": "unknown",
+    "required_markers": ["Yandex"],
+    "min_visible_chars": 50
+  },
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "url": "https://stripe.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Stripe"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "url": "https://vercel.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Vercel"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "netlify",
+    "name": "Netlify",
+    "url": "https://www.netlify.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Netlify"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "digitalocean",
+    "name": "DigitalOcean",
+    "url": "https://www.digitalocean.com/",
+    "category": "cloud",
+    "protection": "cloudflare",
+    "required_markers": ["DigitalOcean"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "aws",
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com/",
+    "category": "cloud",
+    "protection": "akamai",
+    "required_markers": ["AWS"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "azure",
+    "name": "Microsoft Azure",
+    "url": "https://azure.microsoft.com/",
+    "category": "cloud",
+    "protection": "akamai",
+    "required_markers": ["Azure"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "google-cloud",
+    "name": "Google Cloud",
+    "url": "https://cloud.google.com/",
+    "category": "cloud",
+    "protection": "unknown",
+    "required_markers": ["Google Cloud"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "oracle",
+    "name": "Oracle",
+    "url": "https://www.oracle.com/",
+    "category": "technology",
+    "protection": "akamai",
+    "required_markers": ["Oracle"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "ibm",
+    "name": "IBM",
+    "url": "https://www.ibm.com/",
+    "category": "technology",
+    "protection": "akamai",
+    "required_markers": ["IBM"],
+    "min_visible_chars": 200
+  },
+  {
+    "id": "salesforce",
+    "name": "Salesforce",
+    "url": "https://www.salesforce.com/",
+    "category": "saas",
+    "protection": "akamai",
+    "required_markers": ["Salesforce"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "hubspot",
+    "name": "HubSpot",
+    "url": "https://www.hubspot.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["HubSpot"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "url": "https://www.notion.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Notion"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "slack",
+    "name": "Slack",
+    "url": "https://slack.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Slack"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "url": "https://www.dropbox.com/",
+    "category": "saas",
+    "protection": "akamai",
+    "required_markers": ["Dropbox"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "box",
+    "name": "Box",
+    "url": "https://www.box.com/",
+    "category": "saas",
+    "protection": "cloudflare",
+    "required_markers": ["Box"],
+    "min_visible_chars": 100
+  }
+]
