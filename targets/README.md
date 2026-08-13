@@ -41,8 +41,15 @@ After editing the array, validate it without making network requests:
 uv run scrapingarena doctor
 ```
 
-The canonical corpus currently requires exactly 100 unique IDs and 100 unique
-domains. For a quick run against the first few configured URLs:
+The canonical corpus requires exactly 100 unique IDs and 100 unique domains.
+Every canonical target must name a protection provider and use a deep search,
+shopping, listing, catalog, or product-result route. Unprotected sites,
+homepages, news, and publishing pages are rejected: they tend to exercise
+ordinary HTML delivery or CDN caching rather than behavioral defenses on
+high-value dynamic pages. Keep queries read-only and deterministic; do not add
+login, cart, checkout, or reservation flows.
+
+For a quick run against the first few configured URLs:
 
 ```bash
 uv run scrapingarena benchmark --scraper wreq --limit 5

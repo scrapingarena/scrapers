@@ -29,6 +29,27 @@ def validate_corpus(targets: list[Target], *, require_full_corpus: bool = True) 
             f"target corpus must contain exactly 100 URLs, got {len(targets)}"
         )
 
+    if require_full_corpus:
+        unprotected = [target.id for target in targets if target.protection == "none"]
+        if unprotected:
+            raise ValueError(f"canonical targets cannot be unprotected: {unprotected}")
+
+        editorial = [
+            target.id
+            for target in targets
+            if "news" in target.category or target.category == "publishing"
+        ]
+        if editorial:
+            raise ValueError(f"canonical targets cannot be editorial: {editorial}")
+
+        plain = [
+            target.id
+            for target in targets
+            if not target.url.query and not (target.url.path or "").rstrip("/")
+        ]
+        if plain:
+            raise ValueError(f"canonical targets must use deep routes: {plain}")
+
     ids = [target.id for target in targets]
     if len(ids) != len(set(ids)):
         raise ValueError("target IDs must be unique")

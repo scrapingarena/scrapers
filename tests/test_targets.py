@@ -12,6 +12,20 @@ def test_versioned_corpus_has_100_unique_domains() -> None:
     assert len(targets) == 100
     assert len({target.url.host for target in targets}) == 100
     assert len({target.id for target in targets}) == 100
+    assert all(target.protection != "none" for target in targets)
+    assert all("news" not in target.category for target in targets)
+    assert all(target.category != "publishing" for target in targets)
+
+
+def test_versioned_corpus_includes_deep_dynamic_routes() -> None:
+    targets = load_targets()
+    dynamic_targets = [
+        target
+        for target in targets
+        if target.url.query or (target.url.path or "").rstrip("/")
+    ]
+
+    assert len(dynamic_targets) == 100
 
 
 def test_custom_corpus_can_skip_full_size_requirement() -> None:

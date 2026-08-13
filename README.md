@@ -133,6 +133,12 @@ uv sync --extra openai
 uv run scrapingarena benchmark --validator openai
 ```
 
+If `--validator openai` is selected but `OPENAI_API_KEY` is absent, the default
+fallback adjudicates otherwise ambiguous HTML using known block-page keywords.
+Any matching keyword is blocked; HTML with no match is accepted with lower
+confidence. Disable this behavior with `--no-openai-fallback` or
+`SCRAPINGARENA_OPENAI_FALLBACK=false` to require the key strictly.
+
 The model is configured with `SCRAPINGARENA_OPENAI_MODEL` and defaults to
 `gpt-5.6-luna`. An LLM decision never overrides hard response-header, status, or
 known challenge-signature evidence.
