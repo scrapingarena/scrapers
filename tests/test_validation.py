@@ -12,6 +12,7 @@ from scrapingarena.models import (
 )
 from scrapingarena.validation.composite import CompositeValidator
 from scrapingarena.validation.deterministic import DeterministicValidator
+from scrapingarena.validation.keyword_fallback import KeywordFallbackValidator
 
 
 def target(**overrides: object) -> Target:
@@ -134,3 +135,24 @@ async def test_adjudicator_only_receives_ambiguous_responses() -> None:
     assert ambiguous.verdict is Verdict.FAILED
     assert adjudicator.calls == 1
     assert "deterministic" in ambiguous.signals
+
+
+async def test_keyword_fallback_blocks_matching_html() -> None:
+    result = await KeywordFallbackValidator().validate(
+        target(),
+        response(html="<html><body>Pardon our interruption</body></html>"),
+    )
+
+    assert result.verdict is Verdict.BLOCKED
+    assert result.validator == "keyword-fallback-v1"
+    assert result.signals["block_keywords"] == ["pardon our interruption"]
+
+
+async def test_keyword_fallback_accepts_html_without_block_keywords() -> None:
+    result = await KeywordFallbackValidator().validate(
+        target(),
+        response(html="<html><body>Unexpected catalog content</body></html>"),
+    )
+
+    assert result.verdict is Verdict.SUCCESS
+    assert result.confidence < 0.8

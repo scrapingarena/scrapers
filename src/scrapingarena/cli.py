@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 from typing import Annotated
 
@@ -12,7 +13,9 @@ from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.registry import create_scraper, scraper_names
 from scrapingarena.targets import default_targets_path, load_targets
+from scrapingarena.validation.base import Validator
 from scrapingarena.validation.composite import CompositeValidator
+from scrapingarena.validation.keyword_fallback import KeywordFallbackValidator
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -57,6 +60,16 @@ def benchmark(
         str,
         typer.Option(help="deterministic or openai"),
     ] = "deterministic",
+    openai_fallback: Annotated[
+        bool,
+        typer.Option(
+            "--openai-fallback/--no-openai-fallback",
+            envvar="SCRAPINGARENA_OPENAI_FALLBACK",
+            help=(
+                "Use HTML block keywords when OpenAI is selected but its key is absent."
+            ),
+        ),
+    ] = True,
     targets_path: Annotated[
         Path,
         typer.Option("--targets", exists=True, dir_okay=False),
@@ -79,11 +92,22 @@ def benchmark(
     if limit:
         targets = targets[:limit]
 
-    adjudicator = None
+    adjudicator: Validator | None = None
     if validator == "openai":
-        from scrapingarena.validation.openai_validator import OpenAIValidator
+        if os.getenv("OPENAI_API_KEY"):
+            from scrapingarena.validation.openai_validator import OpenAIValidator
 
-        adjudicator = OpenAIValidator()
+            adjudicator = OpenAIValidator()
+        elif openai_fallback:
+            adjudicator = KeywordFallbackValidator()
+            typer.echo(
+                "OPENAI_API_KEY is not set; using HTML block-keyword fallback",
+                err=True,
+            )
+        else:
+            raise typer.BadParameter(
+                "OPENAI_API_KEY is required when --no-openai-fallback is set"
+            )
     elif validator != "deterministic":
         raise typer.BadParameter("validator must be deterministic or openai")
 
