@@ -40,6 +40,8 @@ uv run scrapingarena merge shard-results/*/latest.json \
 
 ```text
 targets/targets.json                   versioned 100-URL corpus
+benchmark-scrapers.json                Actions runtime matrix
+scripts/benchmark_ci.py                CI setup and execution driver
 src/scrapingarena/scrapers/            scraper adapters
 src/scrapingarena/validation/          deterministic + optional LLM validation
 src/scrapingarena/runner.py            concurrency, retries, orchestration
@@ -63,6 +65,7 @@ dependency upgrade automatically advances the browser profile.
 | --- | --- | --- |
 | `wreq` | Python HTTP client | `uv sync` |
 | `curl-cffi` | Python HTTP client | `uv sync --extra curl-cffi` |
+| `niquests` | Python HTTP client | `uv sync --extra niquests` |
 | `obscura` | CDP browser service | `uv sync --extra cdp` + Docker Compose profile |
 | `lightpanda` | CDP browser service | `uv sync --extra cdp` + Docker Compose profile |
 | `steel` | Browser API service | `uv sync --extra steel` + Docker Compose profile |
@@ -104,7 +107,14 @@ concurrency 2–4 and be increased only after checking memory use.
 1. Add `src/scrapingarena/scrapers/<name>.py`.
 2. Subclass `BaseScraper` and implement `scrape()`.
 3. Register one factory in `scrapers/registry.py`.
-4. Add adapter tests using synthetic responses; do not hit live sites in CI.
+4. Add its runtime settings to `benchmark-scrapers.json`.
+5. Add adapter tests using synthetic responses; do not hit live sites in CI.
+
+The JSON groups adapters as `http`, `browser`, or `agent`. Every entry declares
+its install command, benchmark command, cache paths, setup and service commands,
+health URL, and positive concurrency. The small CI driver handles dependency
+installation, optional runtime setup, services, health checks, and concurrency.
+The Actions workflow only creates the matrix and invokes that driver.
 
 Adapters can read credentials from environment variables. Never put credentials
 in the target corpus, reports, or adapter metadata.

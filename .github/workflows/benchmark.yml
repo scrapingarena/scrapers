@@ -14,10 +14,6 @@ on:
         description: "Optional target limit for a smoke run"
         type: string
         required: false
-      concurrency:
-        description: "Concurrent URLs per scraper"
-        type: number
-        default: 10
 
 permissions:
   contents: write
@@ -33,13 +29,8 @@ jobs:
       scrapers: ${{ steps.matrix.outputs.scrapers }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
-        with:
-          version: "0.11.32"
-          enable-cache: true
-      - run: uv sync --locked
       - id: matrix
-        run: echo "scrapers=$(uv run scrapingarena scrapers --json)" >> "$GITHUB_OUTPUT"
+        run: echo "scrapers=$(python3 scripts/benchmark_ci.py matrix)" >> "$GITHUB_OUTPUT"
 
   benchmark:
     needs: prepare
@@ -57,117 +48,27 @@ jobs:
           version: "0.11.32"
           enable-cache: true
       - name: Cache downloaded browser runtimes
-        if: ${{ contains(matrix.scraper, 'camoufox') || matrix.scraper == 'cloakbrowser' || matrix.scraper == 'shardbrowser' }}
+        if: ${{ matrix.scraper.cache_paths != '' }}
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/camoufox
-            ~/.camoufox
-            ~/.cloakbrowser
-            ~/.cache/shardx-sdk
-          key: browser-${{ runner.os }}-${{ matrix.scraper }}-${{ hashFiles('uv.lock') }}
-      - name: Install adapter dependencies
-        env:
-          SCRAPER: ${{ matrix.scraper }}
-          VALIDATOR: ${{ inputs.validator || 'deterministic' }}
-        run: |
-          extras=()
-          case "$SCRAPER" in
-            camoufox-original) extras+=(--extra camoufox-original) ;;
-            camoufox-fork) extras+=(--extra camoufox-fork) ;;
-            cloakbrowser) extras+=(--extra cloakbrowser) ;;
-            curl-cffi) extras+=(--extra curl-cffi) ;;
-            lightpanda|obscura) extras+=(--extra cdp) ;;
-            shardbrowser) extras+=(--extra shardbrowser) ;;
-            steel) extras+=(--extra steel) ;;
-          esac
-          if [ "$VALIDATOR" = "openai" ]; then
-            extras+=(--extra openai)
-          fi
-          uv sync --locked "${extras[@]}"
-      - name: Install packaged browser binary
-        if: ${{ contains(matrix.scraper, 'camoufox') || matrix.scraper == 'cloakbrowser' }}
-        env:
-          SCRAPER: ${{ matrix.scraper }}
-          CLOAKBROWSER_AUTO_UPDATE: "false"
-        run: |
-          case "$SCRAPER" in
-            camoufox-original) uv run python -m camoufox fetch ;;
-            camoufox-fork)
-              uv run python -m camoufox sync
-              uv run python -m camoufox set official/prerelease
-              uv run python -m camoufox fetch
-              ;;
-            cloakbrowser) uv run python -m cloakbrowser install ;;
-          esac
-      - name: Start browser service
-        if: ${{ matrix.scraper == 'lightpanda' || matrix.scraper == 'obscura' || matrix.scraper == 'steel' }}
-        env:
-          SCRAPER: ${{ matrix.scraper }}
-        run: |
-          case "$SCRAPER" in
-            lightpanda)
-              docker run -d --name scrapingarena-browser --shm-size=2g \
-                -p 127.0.0.1:9222:9222 lightpanda/browser:nightly \
-                lightpanda serve --host 0.0.0.0 --port 9222
-              health_url=http://127.0.0.1:9222/json/version
-              ;;
-            obscura)
-              docker run -d --name scrapingarena-browser --shm-size=2g \
-                -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura
-              health_url=http://127.0.0.1:9222/json/version
-              ;;
-            steel)
-              docker run -d --name scrapingarena-browser --shm-size=2g \
-                -p 127.0.0.1:3000:3000 ghcr.io/steel-dev/steel-browser
-              health_url=http://127.0.0.1:3000
-              ;;
-          esac
-          for attempt in {1..60}; do
-            if curl --fail --silent "$health_url" >/dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-          docker logs scrapingarena-browser
-          exit 1
-      - name: Run scraper shard
+          path: ${{ matrix.scraper.cache_paths }}
+          key: browser-${{ runner.os }}-${{ matrix.scraper.slug }}-${{ hashFiles('uv.lock') }}
+      - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          VALIDATOR: ${{ inputs.validator || 'deterministic' }}
-          LIMIT: ${{ inputs.limit }}
-          URL_CONCURRENCY: ${{ inputs.concurrency || 10 }}
-          SCRAPER: ${{ matrix.scraper }}
           SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
-          CLOAKBROWSER_AUTO_UPDATE: "false"
           STEEL_BASE_URL: http://127.0.0.1:3000
           SCRAPINGARENA_CDP_ENDPOINT: http://127.0.0.1:9222
         run: |
-          effective_concurrency="$URL_CONCURRENCY"
-          case "$SCRAPER" in
-            cloakbrowser) effective_concurrency=1 ;;
-            camoufox-*|lightpanda|obscura|shardbrowser|steel)
-              if [ "$effective_concurrency" -gt 4 ]; then
-                effective_concurrency=4
-              fi
-              ;;
-          esac
-          args=(
-            --scraper "$SCRAPER"
-            --validator "$VALIDATOR"
-            --concurrency "$effective_concurrency"
-            --retries 1
-            --output-dir "shard-results/$SCRAPER"
-          )
-          if [ -n "$LIMIT" ]; then
-            args+=(--limit "$LIMIT")
-          fi
-          uv run scrapingarena benchmark "${args[@]}"
+          python3 scripts/benchmark_ci.py execute \
+            --scraper "${{ matrix.scraper.slug }}" \
+            --validator "${{ inputs.validator || 'deterministic' }}" \
+            --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-${{ matrix.scraper }}
-          path: shard-results/${{ matrix.scraper }}/latest.json
+          name: benchmark-${{ matrix.scraper.slug }}
+          path: shard-results/${{ matrix.scraper.slug }}/latest.json
           retention-days: 14
 
   aggregate:
@@ -182,31 +83,19 @@ jobs:
         with:
           version: "0.11.32"
           enable-cache: true
-      - run: uv sync --locked
       - uses: actions/download-artifact@v4
         with:
           pattern: benchmark-*
           path: downloaded-shards
-      - name: Merge scraper shards
+      - name: Merge and publish results
         run: |
-          uv run scrapingarena merge downloaded-shards/*/latest.json \
+          python3 scripts/benchmark_ci.py aggregate \
             --run-id "${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
-            --output-dir results
+            --ref "${GITHUB_REF_NAME}" \
+            --limit "${{ inputs.limit }}"
       - name: Upload full report
         uses: actions/upload-artifact@v4
         with:
           name: scrapingarena-results-${{ github.run_id }}-${{ github.run_attempt }}
           path: results/
           retention-days: 90
-      - name: Commit canonical results to the benchmarked branch
-        if: ${{ !inputs.limit }}
-        run: |
-          git config user.name "scrapingarena-bot"
-          git config user.email "scrapingarena-bot@users.noreply.github.com"
-          git add results/latest.json results/index.json results/runs/
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m "results: benchmark run ${GITHUB_RUN_ID} [skip ci]"
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
