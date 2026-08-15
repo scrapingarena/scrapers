@@ -9,6 +9,7 @@ from scrapingarena.scrapers.camoufox_scraper import (
 )
 from scrapingarena.scrapers.cloakbrowser_scraper import CloakBrowserScraper
 from scrapingarena.scrapers.curl_cffi_scraper import CurlCffiScraper
+from scrapingarena.scrapers.niquests_scraper import NiquestsScraper
 from scrapingarena.scrapers.playwright_cdp import LightpandaScraper, ObscuraScraper
 from scrapingarena.scrapers.shardbrowser_scraper import ShardBrowserScraper
 from scrapingarena.scrapers.steel_scraper import SteelScraper
@@ -24,6 +25,7 @@ _SCRAPERS: dict[str, ScraperFactory] = {
         CloakBrowserScraper,
         CurlCffiScraper,
         LightpandaScraper,
+        NiquestsScraper,
         ObscuraScraper,
         ShardBrowserScraper,
         SteelScraper,
