@@ -43,7 +43,8 @@ class PlaywrightCdpScraper(BaseScraper):
             raise RuntimeError(f"{self.metadata.slug} browser is not connected")
 
         started = time.perf_counter()
-        context = await self._browser.new_context()
+        context = self._browser.contexts[0]
+        page = None
         try:
             page = await context.new_page()
             response = await page.goto(
@@ -66,7 +67,8 @@ class PlaywrightCdpScraper(BaseScraper):
                 error=f"{type(exc).__name__}: {exc}",
             )
         finally:
-            await context.close()
+            if page is not None:
+                await page.close()
 
 
 class ObscuraScraper(PlaywrightCdpScraper):

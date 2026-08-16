@@ -71,7 +71,10 @@
       "install_command": "uv sync --locked --extra shardbrowser",
       "benchmark_command": "uv run scrapingarena benchmark --scraper shardbrowser",
       "cache_paths": ["~/.cache/shardx-sdk"],
-      "setup_commands": [],
+      "setup_commands": [
+        "sudo apt-get update",
+        "sudo apt-get install -y unzip ca-certificates fonts-liberation libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64 libxshmfence1"
+      ],
       "service_commands": [],
       "health_url": "",
       "concurrency": 4
@@ -88,7 +91,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 lightpanda/browser:nightly lightpanda serve --host 0.0.0.0 --port 9222"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "concurrency": 4
+      "concurrency": 1
     },
     {
       "slug": "obscura",
