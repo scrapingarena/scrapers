@@ -36,7 +36,7 @@ def _update_index(path: Path, report: BenchmarkReport) -> None:
         for item in index.get("runs", [])
         if item.get("run_id") != report.metadata.run_id
     ]
-    index["runs"] = [run, *previous][:100]
+    index["runs"] = [run, *previous]
     _atomic_write(path, f"{json.dumps(index, indent=2)}\n")
 
 

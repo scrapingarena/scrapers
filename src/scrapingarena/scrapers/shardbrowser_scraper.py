@@ -32,7 +32,11 @@ class ShardBrowserScraper(BaseScraper):
     async def __aenter__(self) -> ShardBrowserScraper:
         template = os.getenv("SHARDX_PROFILE", "linux-gt1030")
         self._profile = self._sdk.create_profile(template)
-        self._manager = self._sdk.session(self._profile, headless=True)
+        self._manager = self._sdk.session(
+            self._profile,
+            headless=True,
+            screen_mode="profile",
+        )
         try:
             self._browser = await self._manager.__aenter__()
         except BaseException:

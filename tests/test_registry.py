@@ -38,7 +38,5 @@ def test_benchmark_matrix_matches_registry() -> None:
     assert all(item.keys() == required_fields for item in configurations)
     assert all(item["concurrency"] > 0 for item in configurations)
     assert all(
-        item["health_url"]
-        for item in configurations
-        if item["service_commands"]
+        item["health_url"] for item in configurations if item["service_commands"]
     )

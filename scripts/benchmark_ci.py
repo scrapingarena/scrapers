@@ -13,6 +13,8 @@ from typing import Any
 
 ROOT = Path(__file__).parents[1]
 CONFIG_PATH = ROOT / "benchmark-scrapers.json"
+
+
 def configurations() -> list[dict[str, Any]]:
     grouped = json.loads(CONFIG_PATH.read_text())
     configurations = []
@@ -22,9 +24,7 @@ def configurations() -> list[dict[str, Any]]:
                 "category": category,
                 "cache_paths": "\n".join(item["cache_paths"]),
             }
-            configurations.append(
-                item | workflow_fields
-            )
+            configurations.append(item | workflow_fields)
     return configurations
 
 

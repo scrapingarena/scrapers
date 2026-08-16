@@ -33,9 +33,10 @@ jobs:
         run: echo "scrapers=$(python3 scripts/benchmark_ci.py matrix)" >> "$GITHUB_OUTPUT"
 
   benchmark:
+    name: ${{ matrix.scraper.slug }}
     needs: prepare
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       max-parallel: 9
@@ -65,6 +66,7 @@ jobs:
             --validator "${{ inputs.validator || 'deterministic' }}" \
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-${{ matrix.scraper.slug }}
@@ -73,6 +75,7 @@ jobs:
 
   aggregate:
     needs: benchmark
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
