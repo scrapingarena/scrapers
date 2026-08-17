@@ -1,4 +1,71 @@
 {
   "schema_version": 1,
-  "runs": []
+  "runs": [
+    {
+      "run_id": "31999389755-1",
+      "started_at": "2026-08-17T05:51:58.304031+00:00",
+      "summaries": [
+        {
+          "scraper": "camoufox-original",
+          "total": 100,
+          "success": 1,
+          "blocked": 0,
+          "failed": 99,
+          "ambiguous": 0,
+          "success_rate": 1.0,
+          "median_success_ms": 15725.06
+        },
+        {
+          "scraper": "cloakbrowser",
+          "total": 100,
+          "success": 26,
+          "blocked": 61,
+          "failed": 6,
+          "ambiguous": 7,
+          "success_rate": 26.0,
+          "median_success_ms": 1829.19
+        },
+        {
+          "scraper": "curl-cffi",
+          "total": 100,
+          "success": 29,
+          "blocked": 56,
+          "failed": 6,
+          "ambiguous": 9,
+          "success_rate": 29.0,
+          "median_success_ms": 425.38
+        },
+        {
+          "scraper": "niquests",
+          "total": 100,
+          "success": 25,
+          "blocked": 60,
+          "failed": 7,
+          "ambiguous": 8,
+          "success_rate": 25.0,
+          "median_success_ms": 630.17
+        },
+        {
+          "scraper": "steel",
+          "total": 100,
+          "success": 0,
+          "blocked": 0,
+          "failed": 100,
+          "ambiguous": 0,
+          "success_rate": 0.0,
+          "median_success_ms": null
+        },
+        {
+          "scraper": "wreq",
+          "total": 100,
+          "success": 24,
+          "blocked": 52,
+          "failed": 6,
+          "ambiguous": 18,
+          "success_rate": 24.0,
+          "median_success_ms": 575.35
+        }
+      ]
+    }
+  ]
 }
