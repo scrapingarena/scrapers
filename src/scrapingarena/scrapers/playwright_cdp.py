@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import contextlib
 import os
 import time
 from typing import Any
@@ -43,23 +45,30 @@ class PlaywrightCdpScraper(BaseScraper):
             raise RuntimeError(f"{self.metadata.slug} browser is not connected")
 
         started = time.perf_counter()
-        context = self._browser.contexts[0]
+        context = None
+        owns_context = False
         page = None
         try:
-            page = await context.new_page()
-            response = await page.goto(
-                request.target.url_string,
-                wait_until="domcontentloaded",
-                timeout=request.timeout_seconds * 1000,
-            )
-            return ScrapeResponse(
-                requested_url=request.target.url_string,
-                final_url=page.url,
-                status_code=response.status if response else None,
-                headers=await response.all_headers() if response else {},
-                html=await page.content(),
-                duration_ms=(time.perf_counter() - started) * 1000,
-            )
+            async with asyncio.timeout(request.timeout_seconds):
+                if self._browser.contexts:
+                    context = self._browser.contexts[0]
+                else:
+                    context = await self._browser.new_context()
+                    owns_context = True
+                page = await context.new_page()
+                response = await page.goto(
+                    request.target.url_string,
+                    wait_until="domcontentloaded",
+                    timeout=request.timeout_seconds * 1000,
+                )
+                return ScrapeResponse(
+                    requested_url=request.target.url_string,
+                    final_url=page.url,
+                    status_code=response.status if response else None,
+                    headers=await response.all_headers() if response else {},
+                    html=await page.content(),
+                    duration_ms=(time.perf_counter() - started) * 1000,
+                )
         except Exception as exc:
             return ScrapeResponse(
                 requested_url=request.target.url_string,
@@ -68,7 +77,15 @@ class PlaywrightCdpScraper(BaseScraper):
             )
         finally:
             if page is not None:
-                await page.close()
+                await self._close_bounded(page)
+            if owns_context and context is not None:
+                await self._close_bounded(context)
+
+    @staticmethod
+    async def _close_bounded(resource: Any) -> None:
+        # A wedged CDP connection must not hold the entire benchmark open.
+        with contextlib.suppress(Exception):
+            await asyncio.wait_for(resource.close(), timeout=5)
 
 
 class ObscuraScraper(PlaywrightCdpScraper):

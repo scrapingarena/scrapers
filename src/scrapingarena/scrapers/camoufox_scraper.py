@@ -67,13 +67,3 @@ class CamoufoxOriginalScraper(CamoufoxScraper):
         kind="antibot-browser",
         homepage="https://github.com/daijro/camoufox",
     )
-
-
-class CamoufoxForkScraper(CamoufoxScraper):
-    package_extra = "camoufox-fork"
-    metadata = ScraperMetadata(
-        slug="camoufox-fork",
-        name="Camoufox (CloverLabs fork)",
-        kind="antibot-browser",
-        homepage="https://github.com/CloverLabsAI/camoufox",
-    )

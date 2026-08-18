@@ -71,7 +71,6 @@ dependency upgrade automatically advances the browser profile.
 | `steel` | Browser API service | `uv sync --extra steel` + Docker Compose profile |
 | `cloakbrowser` | Packaged Chromium | `uv sync --extra cloakbrowser`, then `uv run python -m cloakbrowser install` |
 | `camoufox-original` | Packaged Firefox fork | `uv sync --extra camoufox-original`, then `uv run python -m camoufox fetch` |
-| `camoufox-fork` | CloverLabs wrapper + prerelease browser | `uv sync --extra camoufox-fork`, then select `official/prerelease` and fetch |
 | `shardbrowser` | ShardX packaged Chromium | `uv sync --extra shardbrowser`; runtime downloads on first use |
 
 Start one of the service-backed browsers locally, then run its adapter:

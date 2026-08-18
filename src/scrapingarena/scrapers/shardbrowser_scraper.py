@@ -36,6 +36,7 @@ class ShardBrowserScraper(BaseScraper):
             self._profile,
             headless=True,
             screen_mode="profile",
+            extra_args=["--no-sandbox", "--disable-dev-shm-usage"],
         )
         try:
             self._browser = await self._manager.__aenter__()
