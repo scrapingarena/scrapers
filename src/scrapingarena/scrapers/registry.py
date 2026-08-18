@@ -3,10 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from scrapingarena.scrapers.base import BaseScraper
-from scrapingarena.scrapers.camoufox_scraper import (
-    CamoufoxForkScraper,
-    CamoufoxOriginalScraper,
-)
+from scrapingarena.scrapers.camoufox_scraper import CamoufoxOriginalScraper
 from scrapingarena.scrapers.cloakbrowser_scraper import CloakBrowserScraper
 from scrapingarena.scrapers.curl_cffi_scraper import CurlCffiScraper
 from scrapingarena.scrapers.niquests_scraper import NiquestsScraper
@@ -20,7 +17,6 @@ ScraperFactory = Callable[[], BaseScraper]
 _SCRAPERS: dict[str, ScraperFactory] = {
     scraper.metadata.slug: scraper
     for scraper in (
-        CamoufoxForkScraper,
         CamoufoxOriginalScraper,
         CloakBrowserScraper,
         CurlCffiScraper,

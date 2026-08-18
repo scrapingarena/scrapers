@@ -290,33 +290,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cloverlabs-camoufox"
-version = "0.6.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "browserforge" },
-    { name = "inquirer" },
-    { name = "language-tags" },
-    { name = "lxml" },
-    { name = "numpy" },
-    { name = "orjson" },
-    { name = "platformdirs" },
-    { name = "playwright" },
-    { name = "pysocks" },
-    { name = "pyyaml" },
-    { name = "requests" },
-    { name = "rich" },
-    { name = "rich-click" },
-    { name = "screeninfo" },
-    { name = "typing-extensions" },
-    { name = "ua-parser" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/0e/05cee9dfd5a190f1ad950a31f4670ae2f302e2067d2eff1c2c72b1963231/cloverlabs_camoufox-0.6.0.tar.gz", hash = "sha256:9927f9b434c82faad55f8e6f57ddd1fcf355a43ba50f79ccf27e49b8ab93abd4", size = 1374484 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f9/e9/a8f516af7f066c7877cb8384f3ed5b0c68d54885a1360a3d055aba0f334f/cloverlabs_camoufox-0.6.0-py3-none-any.whl", hash = "sha256:9f7d26eb4e4f494bcd0f8bf043d5932cba11f7bd82c2795d595f5ff602a87744", size = 1386435 },
-]
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -1569,9 +1542,6 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-camoufox-fork = [
-    { name = "cloverlabs-camoufox" },
-]
 camoufox-original = [
     { name = "camoufox" },
 ]
@@ -1609,7 +1579,6 @@ dev = [
 requires-dist = [
     { name = "camoufox", marker = "extra == 'camoufox-original'", specifier = ">=0.4,<1" },
     { name = "cloakbrowser", marker = "extra == 'cloakbrowser'", specifier = ">=0.3,<1" },
-    { name = "cloverlabs-camoufox", marker = "extra == 'camoufox-fork'", specifier = ">=0.4,<1" },
     { name = "curl-cffi", marker = "extra == 'curl-cffi'", specifier = ">=0.14,<1" },
     { name = "niquests", marker = "extra == 'niquests'", specifier = ">=3.18,<4" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.99,<2" },
@@ -1620,7 +1589,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.16,<1" },
     { name = "wreq", specifier = ">=0.7,<1" },
 ]
-provides-extras = ["camoufox-fork", "camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "openai", "shardbrowser", "steel"]
+provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "openai", "shardbrowser", "steel"]
 
 [package.metadata.requires-dev]
 dev = [
