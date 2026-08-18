@@ -15,6 +15,7 @@ class Protection(StrEnum):
     HUMAN_SECURITY = "human-security"
     IMPERVA = "imperva"
     FASTLY = "fastly"
+    KASADA = "kasada"
     UNKNOWN = "unknown"
 
 

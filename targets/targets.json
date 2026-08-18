@@ -45,78 +45,6 @@
     "min_visible_chars": 300
   },
   {
-    "id": "npm",
-    "name": "npm",
-    "url": "https://www.npmjs.com/search?q=playwright",
-    "category": "developer",
-    "protection": "cloudflare",
-    "required_markers": ["npm"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "crates",
-    "name": "crates.io",
-    "url": "https://crates.io/search?q=browser",
-    "category": "developer",
-    "protection": "fastly",
-    "required_markers": ["crates.io"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "pypi",
-    "name": "PyPI",
-    "url": "https://pypi.org/search/?q=playwright",
-    "category": "developer",
-    "protection": "fastly",
-    "required_markers": ["Python Package Index"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "mdn",
-    "name": "MDN Web Docs",
-    "url": "https://developer.mozilla.org/en-US/search?q=web%20scraping",
-    "category": "developer",
-    "protection": "cloudflare",
-    "required_markers": ["MDN"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "stackoverflow",
-    "name": "Stack Overflow",
-    "url": "https://stackoverflow.com/questions/tagged/web-scraping",
-    "category": "developer",
-    "protection": "cloudflare",
-    "required_markers": ["Stack Overflow"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "cloudflare",
-    "name": "Cloudflare",
-    "url": "https://www.cloudflare.com/products/bot-management/",
-    "category": "technology",
-    "protection": "cloudflare",
-    "required_markers": ["Cloudflare"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "discord",
-    "name": "Discord",
-    "url": "https://discord.com/servers?query=gaming",
-    "category": "social",
-    "protection": "cloudflare",
-    "required_markers": ["Discord"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "canva",
-    "name": "Canva",
-    "url": "https://www.canva.com/templates/search/social-media/",
-    "category": "saas",
-    "protection": "cloudflare",
-    "required_markers": ["Canva"],
-    "min_visible_chars": 100
-  },
-  {
     "id": "skyscanner",
     "name": "Skyscanner",
     "url": "https://www.skyscanner.com/transport/flights/",
@@ -184,7 +112,7 @@
     "name": "IKEA",
     "url": "https://www.ikea.com/us/en/search/?q=desk",
     "category": "commerce",
-    "protection": "akamai",
+    "protection": "cloudflare",
     "required_markers": ["IKEA"],
     "min_visible_chars": 100
   },
@@ -193,7 +121,7 @@
     "name": "Airbnb",
     "url": "https://www.airbnb.com/s/New-York--NY/homes",
     "category": "travel",
-    "protection": "unknown",
+    "protection": "datadome",
     "required_markers": ["Airbnb"],
     "min_visible_chars": 100
   },
@@ -247,7 +175,7 @@
     "name": "Realtor.com",
     "url": "https://www.realtor.com/realestateandhomes-search/New-York_NY",
     "category": "real-estate",
-    "protection": "akamai",
+    "protection": "kasada",
     "required_markers": ["Realtor.com"],
     "min_visible_chars": 100
   },
@@ -292,7 +220,7 @@
     "name": "Target",
     "url": "https://www.target.com/s?searchTerm=wireless%20headphones",
     "category": "commerce",
-    "protection": "akamai",
+    "protection": "human-security",
     "required_markers": ["Target"],
     "min_visible_chars": 100
   },
@@ -310,7 +238,7 @@
     "name": "Etsy",
     "url": "https://www.etsy.com/search?q=handmade%20wallet",
     "category": "commerce",
-    "protection": "unknown",
+    "protection": "datadome",
     "required_markers": ["Etsy"],
     "min_visible_chars": 100
   },
@@ -342,20 +270,11 @@
     "min_visible_chars": 100
   },
   {
-    "id": "shopify",
-    "name": "Shopify",
-    "url": "https://www.shopify.com/blog/topics/ecommerce",
-    "category": "commerce",
-    "protection": "cloudflare",
-    "required_markers": ["Shopify"],
-    "min_visible_chars": 100
-  },
-  {
     "id": "newegg",
     "name": "Newegg",
     "url": "https://www.newegg.com/p/pl?d=gaming%20laptop",
     "category": "commerce",
-    "protection": "human-security",
+    "protection": "cloudflare",
     "required_markers": ["Newegg"],
     "min_visible_chars": 100
   },
@@ -373,7 +292,7 @@
     "name": "StockX",
     "url": "https://stockx.com/search?s=air%20jordan",
     "category": "commerce",
-    "protection": "datadome",
+    "protection": "cloudflare",
     "required_markers": ["StockX"],
     "min_visible_chars": 100
   },
@@ -409,7 +328,7 @@
     "name": "PetSmart",
     "url": "https://www.petsmart.com/search/?q=dog%20food",
     "category": "commerce",
-    "protection": "imperva",
+    "protection": "akamai",
     "required_markers": ["PetSmart", "dog food"],
     "min_visible_chars": 100
   },
@@ -454,7 +373,7 @@
     "name": "Back Market",
     "url": "https://www.backmarket.com/en-us/search?q=iphone",
     "category": "marketplace",
-    "protection": "datadome",
+    "protection": "cloudflare",
     "required_markers": ["Back Market", "iPhone"],
     "min_visible_chars": 100
   },
@@ -468,12 +387,12 @@
     "min_visible_chars": 100
   },
   {
-    "id": "etix",
-    "name": "Etix",
-    "url": "https://www.etix.com/ticket/online/search2.jsp?searchType=venue&keyword=music",
-    "category": "ticketing",
-    "protection": "datadome",
-    "required_markers": ["Etix", "music"],
+    "id": "zoominfo",
+    "name": "ZoomInfo",
+    "url": "https://www.zoominfo.com/companies-search/location-usa-industry-software",
+    "category": "business-data",
+    "protection": "human-security",
+    "required_markers": ["ZoomInfo"],
     "min_visible_chars": 100
   },
   {
@@ -490,7 +409,7 @@
     "name": "Mister Auto",
     "url": "https://www.mister-auto.com/search/?k=brake%20pads",
     "category": "commerce",
-    "protection": "datadome",
+    "protection": "cloudflare",
     "required_markers": ["Mister Auto", "brake"],
     "min_visible_chars": 100
   },
@@ -515,7 +434,7 @@
   {
     "id": "stubhub",
     "name": "StubHub",
-    "url": "https://www.stubhub.com/find/s/?q=concerts",
+    "url": "https://www.stubhub.com/concert-tickets/category/1",
     "category": "ticketing",
     "protection": "human-security",
     "required_markers": ["StubHub", "concerts"],
@@ -562,7 +481,7 @@
     "name": "LinkedIn",
     "url": "https://www.linkedin.com/jobs/search/?keywords=software%20engineer",
     "category": "social",
-    "protection": "unknown",
+    "protection": "cloudflare",
     "required_markers": ["LinkedIn"],
     "min_visible_chars": 100
   },
@@ -598,7 +517,7 @@
     "name": "Vimeo",
     "url": "https://vimeo.com/search?q=documentary",
     "category": "media",
-    "protection": "fastly",
+    "protection": "cloudflare",
     "required_markers": ["Vimeo"],
     "min_visible_chars": 100
   },
@@ -610,15 +529,6 @@
     "protection": "akamai",
     "required_markers": ["Dailymotion"],
     "min_visible_chars": 50
-  },
-  {
-    "id": "spotify",
-    "name": "Spotify",
-    "url": "https://www.spotify.com/us/premium/",
-    "category": "media",
-    "protection": "unknown",
-    "required_markers": ["Spotify"],
-    "min_visible_chars": 100
   },
   {
     "id": "imdb",
@@ -648,66 +558,12 @@
     "min_visible_chars": 100
   },
   {
-    "id": "fandom",
-    "name": "Fandom",
-    "url": "https://www.fandom.com/topics/games",
-    "category": "reference",
-    "protection": "fastly",
-    "required_markers": ["Fandom"],
-    "min_visible_chars": 100
-  },
-  {
     "id": "genius",
     "name": "Genius",
     "url": "https://genius.com/search?q=radiohead",
     "category": "media",
     "protection": "cloudflare",
     "required_markers": ["Genius"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "weather-com",
-    "name": "The Weather Channel",
-    "url": "https://weather.com/weather/today/l/New+York+NY",
-    "category": "weather",
-    "protection": "akamai",
-    "required_markers": ["Weather"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "accuweather",
-    "name": "AccuWeather",
-    "url": "https://www.accuweather.com/en/us/new-york/10021/weather-forecast/349727",
-    "category": "weather",
-    "protection": "akamai",
-    "required_markers": ["AccuWeather"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "weather-underground",
-    "name": "Weather Underground",
-    "url": "https://www.wunderground.com/weather/us/ny/new-york-city",
-    "category": "weather",
-    "protection": "akamai",
-    "required_markers": ["Weather Underground"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "timeanddate",
-    "name": "timeanddate",
-    "url": "https://www.timeanddate.com/weather/usa/new-york",
-    "category": "reference",
-    "protection": "unknown",
-    "required_markers": ["timeanddate"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "openstreetmap",
-    "name": "OpenStreetMap",
-    "url": "https://www.openstreetmap.org/search?query=New%20York",
-    "category": "maps",
-    "protection": "fastly",
-    "required_markers": ["OpenStreetMap"],
     "min_visible_chars": 100
   },
   {
@@ -738,24 +594,6 @@
     "min_visible_chars": 50
   },
   {
-    "id": "duckduckgo",
-    "name": "DuckDuckGo",
-    "url": "https://duckduckgo.com/?q=wireless%20headphones&ia=shopping",
-    "category": "search",
-    "protection": "unknown",
-    "required_markers": ["DuckDuckGo"],
-    "min_visible_chars": 50
-  },
-  {
-    "id": "yahoo",
-    "name": "Yahoo",
-    "url": "https://search.yahoo.com/search?p=wireless%20headphones",
-    "category": "portal",
-    "protection": "unknown",
-    "required_markers": ["Yahoo"],
-    "min_visible_chars": 100
-  },
-  {
     "id": "yandex",
     "name": "Yandex",
     "url": "https://yandex.com/search/?text=wireless%20headphones",
@@ -765,138 +603,300 @@
     "min_visible_chars": 50
   },
   {
-    "id": "stripe",
-    "name": "Stripe",
-    "url": "https://stripe.com/docs/api",
-    "category": "saas",
-    "protection": "cloudflare",
-    "required_markers": ["Stripe"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "vercel",
-    "name": "Vercel",
-    "url": "https://vercel.com/templates?search=nextjs",
-    "category": "saas",
-    "protection": "cloudflare",
-    "required_markers": ["Vercel"],
+    "id": "yelp",
+    "name": "Yelp",
+    "url": "https://www.yelp.com/search?find_desc=restaurants&find_loc=New%20York",
+    "category": "local",
+    "protection": "datadome",
+    "required_markers": ["Yelp"],
     "min_visible_chars": 100
   },
   {
-    "id": "netlify",
-    "name": "Netlify",
-    "url": "https://www.netlify.com/integrations/",
-    "category": "saas",
+    "id": "yellowpages",
+    "name": "Yellow Pages",
+    "url": "https://www.yellowpages.com/search?search_terms=plumber&geo_location_terms=New%20York",
+    "category": "local",
     "protection": "cloudflare",
-    "required_markers": ["Netlify"],
+    "required_markers": ["Yellow Pages", "plumber"],
     "min_visible_chars": 100
   },
   {
-    "id": "digitalocean",
-    "name": "DigitalOcean",
-    "url": "https://www.digitalocean.com/community/tutorials?q=docker",
-    "category": "cloud",
-    "protection": "cloudflare",
-    "required_markers": ["DigitalOcean"],
-    "min_visible_chars": 100
-  },
-  {
-    "id": "aws",
-    "name": "Amazon Web Services",
-    "url": "https://aws.amazon.com/marketplace/search/results?searchTerms=database",
-    "category": "cloud",
-    "protection": "akamai",
-    "required_markers": ["AWS"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "azure",
-    "name": "Microsoft Azure",
-    "url": "https://azure.microsoft.com/en-us/products",
-    "category": "cloud",
-    "protection": "akamai",
-    "required_markers": ["Azure"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "google-cloud",
-    "name": "Google Cloud",
-    "url": "https://cloud.google.com/products?hl=en",
-    "category": "cloud",
+    "id": "trustpilot",
+    "name": "Trustpilot",
+    "url": "https://www.trustpilot.com/categories/insurance_agency",
+    "category": "reviews",
     "protection": "unknown",
-    "required_markers": ["Google Cloud"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "oracle",
-    "name": "Oracle",
-    "url": "https://www.oracle.com/search/results?Ntt=database",
-    "category": "technology",
-    "protection": "akamai",
-    "required_markers": ["Oracle"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "ibm",
-    "name": "IBM",
-    "url": "https://www.ibm.com/search?lang=en&cc=us&q=cloud",
-    "category": "technology",
-    "protection": "akamai",
-    "required_markers": ["IBM"],
-    "min_visible_chars": 200
-  },
-  {
-    "id": "salesforce",
-    "name": "Salesforce",
-    "url": "https://www.salesforce.com/search/?q=crm",
-    "category": "saas",
-    "protection": "akamai",
-    "required_markers": ["Salesforce"],
+    "required_markers": ["Trustpilot"],
     "min_visible_chars": 100
   },
   {
-    "id": "hubspot",
-    "name": "HubSpot",
-    "url": "https://www.hubspot.com/products/crm",
-    "category": "saas",
+    "id": "g2",
+    "name": "G2",
+    "url": "https://www.g2.com/search?query=crm",
+    "category": "reviews",
+    "protection": "datadome",
+    "required_markers": ["G2"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "doordash",
+    "name": "DoorDash",
+    "url": "https://www.doordash.com/food-delivery/new-york-ny-restaurants/",
+    "category": "food-delivery",
     "protection": "cloudflare",
-    "required_markers": ["HubSpot"],
+    "required_markers": ["DoorDash"],
     "min_visible_chars": 100
   },
   {
-    "id": "notion",
-    "name": "Notion",
-    "url": "https://www.notion.com/templates/search?query=project%20management",
-    "category": "saas",
+    "id": "grubhub",
+    "name": "Grubhub",
+    "url": "https://www.grubhub.com/delivery/ny-new-york",
+    "category": "food-delivery",
+    "protection": "fastly",
+    "required_markers": ["Grubhub"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "deliveroo",
+    "name": "Deliveroo",
+    "url": "https://deliveroo.co.uk/restaurants/london/soho",
+    "category": "food-delivery",
     "protection": "cloudflare",
-    "required_markers": ["Notion"],
+    "required_markers": ["Deliveroo"],
     "min_visible_chars": 100
   },
   {
-    "id": "slack",
-    "name": "Slack",
-    "url": "https://slack.com/marketplace?query=calendar",
-    "category": "saas",
+    "id": "ziprecruiter",
+    "name": "ZipRecruiter",
+    "url": "https://www.ziprecruiter.com/jobs-search?search=software%20engineer",
+    "category": "jobs",
     "protection": "cloudflare",
-    "required_markers": ["Slack"],
+    "required_markers": ["ZipRecruiter"],
     "min_visible_chars": 100
   },
   {
-    "id": "dropbox",
-    "name": "Dropbox",
-    "url": "https://www.dropbox.com/features/share",
-    "category": "saas",
+    "id": "seek",
+    "name": "SEEK",
+    "url": "https://www.seek.com.au/software-engineer-jobs",
+    "category": "jobs",
+    "protection": "cloudflare",
+    "required_markers": ["SEEK"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "stepstone",
+    "name": "StepStone",
+    "url": "https://www.stepstone.de/jobs/software-engineer",
+    "category": "jobs",
     "protection": "akamai",
-    "required_markers": ["Dropbox"],
+    "required_markers": ["StepStone"],
     "min_visible_chars": 100
   },
   {
-    "id": "box",
-    "name": "Box",
-    "url": "https://www.box.com/resources?search=security",
-    "category": "saas",
+    "id": "reed",
+    "name": "Reed",
+    "url": "https://www.reed.co.uk/jobs/software-engineer-jobs",
+    "category": "jobs",
     "protection": "cloudflare",
-    "required_markers": ["Box"],
+    "required_markers": ["reed.co.uk", "Reed"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "apartments",
+    "name": "Apartments.com",
+    "url": "https://www.apartments.com/new-york-ny/",
+    "category": "real-estate",
+    "protection": "akamai",
+    "required_markers": ["Apartments.com"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "rightmove",
+    "name": "Rightmove",
+    "url": "https://www.rightmove.co.uk/property-for-sale/London.html",
+    "category": "real-estate",
+    "protection": "fastly",
+    "required_markers": ["Rightmove"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "zoopla",
+    "name": "Zoopla",
+    "url": "https://www.zoopla.co.uk/for-sale/property/london/",
+    "category": "real-estate",
+    "protection": "cloudflare",
+    "required_markers": ["Zoopla"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "idealista",
+    "name": "Idealista",
+    "url": "https://www.idealista.com/venta-viviendas/madrid-madrid/",
+    "category": "real-estate",
+    "protection": "datadome",
+    "required_markers": ["idealista"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "cars-com",
+    "name": "Cars.com",
+    "url": "https://www.cars.com/shopping/results/?stock_type=used",
+    "category": "automotive",
+    "protection": "cloudflare",
+    "required_markers": ["Cars.com"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "carvana",
+    "name": "Carvana",
+    "url": "https://www.carvana.com/cars",
+    "category": "automotive",
+    "protection": "cloudflare",
+    "required_markers": ["Carvana"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "cargurus",
+    "name": "CarGurus",
+    "url": "https://www.cargurus.com/Cars/spt_used_cars",
+    "category": "automotive",
+    "protection": "fastly",
+    "required_markers": ["CarGurus"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "mobile-de",
+    "name": "mobile.de",
+    "url": "https://suchen.mobile.de/fahrzeuge/search.html?isSearchRequest=true",
+    "category": "automotive",
+    "protection": "akamai",
+    "required_markers": ["mobile.de"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "agoda",
+    "name": "Agoda",
+    "url": "https://www.agoda.com/en-us/city/new-york-ny-us.html",
+    "category": "travel",
+    "protection": "akamai",
+    "required_markers": ["Agoda"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "vrbo",
+    "name": "Vrbo",
+    "url": "https://www.vrbo.com/search?destination=New%20York",
+    "category": "travel",
+    "protection": "akamai",
+    "required_markers": ["Vrbo"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "marriott",
+    "name": "Marriott",
+    "url": "https://www.marriott.com/search/findHotels.mi?destinationAddress.destination=New%20York",
+    "category": "travel",
+    "protection": "akamai",
+    "required_markers": ["Marriott"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "getyourguide",
+    "name": "GetYourGuide",
+    "url": "https://www.getyourguide.com/s/?q=paris",
+    "category": "travel",
+    "protection": "cloudflare",
+    "required_markers": ["GetYourGuide"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "viator",
+    "name": "Viator",
+    "url": "https://www.viator.com/searchResults/all?text=paris",
+    "category": "travel",
+    "protection": "datadome",
+    "required_markers": ["Viator"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "allegro",
+    "name": "Allegro",
+    "url": "https://allegro.pl/listing?string=laptop",
+    "category": "marketplace",
+    "protection": "datadome",
+    "required_markers": ["Allegro"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "mercari",
+    "name": "Mercari",
+    "url": "https://www.mercari.com/search/?keyword=iphone",
+    "category": "marketplace",
+    "protection": "cloudflare",
+    "required_markers": ["Mercari"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "depop",
+    "name": "Depop",
+    "url": "https://www.depop.com/search/?q=jacket",
+    "category": "marketplace",
+    "protection": "cloudflare",
+    "required_markers": ["Depop"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "crunchbase",
+    "name": "Crunchbase",
+    "url": "https://www.crunchbase.com/discover/organization.companies",
+    "category": "business-data",
+    "protection": "cloudflare",
+    "required_markers": ["Crunchbase"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "seatgeek",
+    "name": "SeatGeek",
+    "url": "https://seatgeek.com/search?q=concerts",
+    "category": "ticketing",
+    "protection": "datadome",
+    "required_markers": ["SeatGeek"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "zara",
+    "name": "Zara",
+    "url": "https://www.zara.com/us/en/search?searchTerm=jacket",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["ZARA"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "sephora",
+    "name": "Sephora",
+    "url": "https://www.sephora.com/search?keyword=lipstick",
+    "category": "commerce",
+    "protection": "akamai",
+    "required_markers": ["Sephora"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "temu",
+    "name": "Temu",
+    "url": "https://www.temu.com/search_result.html?search_key=headphones",
+    "category": "commerce",
+    "protection": "cloudflare",
+    "required_markers": ["Temu"],
+    "min_visible_chars": 100
+  },
+  {
+    "id": "hertz",
+    "name": "Hertz",
+    "url": "https://www.hertz.com/us/en/vehicles",
+    "category": "travel",
+    "protection": "imperva",
+    "required_markers": ["Hertz"],
     "min_visible_chars": 100
   }
 ]
