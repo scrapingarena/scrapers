@@ -83,7 +83,7 @@ def benchmark(
         typer.Option(min=1, help="Run only the first N targets (smoke tests)."),
     ] = None,
     concurrency: Annotated[int, typer.Option(min=1, max=25)] = 5,
-    retries: Annotated[int, typer.Option(min=0, max=5)] = 1,
+    retries: Annotated[int, typer.Option(min=0, max=5)] = 3,
     timeout: Annotated[float, typer.Option(min=1, max=120)] = 30,
 ) -> None:
     """Run selected scraper adapters against the versioned target corpus."""

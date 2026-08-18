@@ -4,6 +4,7 @@ import asyncio
 import os
 import platform
 import statistics
+import time
 import uuid
 from collections import Counter
 from pathlib import Path
@@ -13,6 +14,7 @@ from scrapingarena.models import (
     BenchmarkReport,
     RunMetadata,
     ScrapeRequest,
+    ScrapeResponse,
     ScraperSummary,
     Target,
     TargetResult,
@@ -30,7 +32,7 @@ class BenchmarkRunner:
         validator: Validator,
         *,
         concurrency: int = 5,
-        retries: int = 1,
+        retries: int = 3,
         timeout_seconds: float = 30,
     ) -> None:
         if concurrency < 1:
@@ -53,11 +55,10 @@ class BenchmarkRunner:
         results: dict[str, list[TargetResult]] = {}
 
         for scraper in scrapers:
-            async with scraper:
-                results[scraper.metadata.slug] = await self._run_scraper(
-                    scraper,
-                    targets,
-                )
+            results[scraper.metadata.slug] = await self._run_scraper(
+                scraper,
+                targets,
+            )
 
         finished_at = utc_now()
         run_id = os.getenv("SCRAPINGARENA_RUN_ID") or (
@@ -104,7 +105,23 @@ class BenchmarkRunner:
             timeout_seconds=self._timeout_seconds,
         )
         for attempt_number in range(1, self._retries + 2):
-            response = await scraper.scrape(request)
+            total_attempts = self._retries + 1
+            label = (
+                f"[{scraper.metadata.slug}] {target.id} "
+                f"attempt {attempt_number}/{total_attempts}"
+            )
+            print(f"{label} start {target.url_string}", flush=True)
+            started = time.perf_counter()
+            try:
+                attempt_scraper = type(scraper)()
+                async with attempt_scraper:
+                    response = await attempt_scraper.scrape(request)
+            except Exception as exc:
+                response = ScrapeResponse(
+                    requested_url=target.url_string,
+                    duration_ms=(time.perf_counter() - started) * 1000,
+                    error=f"{type(exc).__name__}: {exc}",
+                )
             validation = await self._validator.validate(target, response)
             attempts.append(
                 AttemptResult(
@@ -112,6 +129,13 @@ class BenchmarkRunner:
                     response=response,
                     validation=validation,
                 )
+            )
+            error = response.error.replace("\n", " ") if response.error else "none"
+            print(
+                f"{label} result={validation.verdict.value} "
+                f"status={response.status_code} "
+                f"duration_ms={response.duration_ms:.0f} error={error}",
+                flush=True,
             )
             if validation.verdict is Verdict.SUCCESS:
                 break

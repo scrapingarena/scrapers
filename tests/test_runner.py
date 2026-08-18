@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import ClassVar
+
+import pytest
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse, Target
 from scrapingarena.reporting import write_report
@@ -29,6 +32,31 @@ class FakeScraper(BaseScraper):
             },
             html="<html><body>Expected useful body content.</body></html>",
             duration_ms=12,
+        )
+
+
+class RetriedScraper(BaseScraper):
+    metadata = ScraperMetadata(
+        slug="retried",
+        name="Retried",
+        kind="test",
+        homepage="https://example.com",
+    )
+    opened: ClassVar[int] = 0
+    closed: ClassVar[int] = 0
+
+    async def __aenter__(self) -> RetriedScraper:
+        type(self).opened += 1
+        return self
+
+    async def close(self) -> None:
+        type(self).closed += 1
+
+    async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
+        return ScrapeResponse(
+            requested_url=request.target.url_string,
+            status_code=500,
+            duration_ms=1,
         )
 
 
@@ -65,3 +93,29 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
         parsed["results"]["fake"][0]["attempts"][0]["validation"]["verdict"]
         == "success"
     )
+
+
+async def test_runner_logs_and_reopens_scraper_for_three_retries(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    RetriedScraper.opened = 0
+    RetriedScraper.closed = 0
+    target = Target.model_validate(
+        {
+            "id": "example",
+            "name": "Example",
+            "url": "https://example.com/",
+            "category": "test",
+        }
+    )
+
+    report = await BenchmarkRunner(
+        CompositeValidator(), concurrency=1, retries=3
+    ).run([RetriedScraper()], [target])
+
+    assert len(report.results["retried"][0].attempts) == 4
+    assert RetriedScraper.opened == 4
+    assert RetriedScraper.closed == 4
+    output = capsys.readouterr().out
+    assert "[retried] example attempt 1/4 start" in output
+    assert "[retried] example attempt 4/4 result=failed status=500" in output
