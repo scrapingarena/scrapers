@@ -76,7 +76,7 @@ def execute(args: argparse.Namespace) -> None:
         "--concurrency",
         str(config["concurrency"]),
         "--retries",
-        "1",
+        "3",
         "--output-dir",
         f"shard-results/{args.scraper}",
     ]
