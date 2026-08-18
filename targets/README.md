@@ -32,8 +32,12 @@ Each entry has this shape:
 `protection`, `required_markers`, `forbidden_markers`, and
 `min_visible_chars` have defaults, but explicit values are preferable for
 published benchmark targets. Supported protection values are `none`,
-`cloudflare`, `akamai`, `datadome`, `human-security`, `imperva`, `fastly`, and
-`unknown`.
+`cloudflare`, `akamai`, `datadome`, `human-security`, `imperva`, `fastly`,
+`kasada`, and `unknown`. Set it from evidence — a bot-manager cookie or header
+on a live request (`__cf_bm`, `_abck`, `datadome`, `_px`, `visid_incap`,
+`x-kpsdk`) — not from what a vendor's case-study page claims. The CDN headers
+that say who *delivers* a page (`cf-ray`, `x-served-by`, `x-akamai-*`) are not
+evidence of bot defence.
 
 After editing the array, validate it without making network requests:
 
@@ -48,6 +52,22 @@ homepages, news, and publishing pages are rejected: they tend to exercise
 ordinary HTML delivery or CDN caching rather than behavioral defenses on
 high-value dynamic pages. Keep queries read-only and deterministic; do not add
 login, cart, checkout, or reservation flows.
+
+**A target must return a record set somebody would pay to have.** Listings and
+offers, search results, profiles and posts, reviews, jobs, properties,
+vehicles, stays — the pages commercial scraping revenue actually concentrates
+in. That rules out, in addition to the above:
+
+- vendor marketing and product-overview pages (`/products`, `/features/...`),
+- documentation and API references,
+- blogs, tutorials, and resource libraries,
+- template, integration, and app-directory galleries,
+- reference and content pages whose data is published as a free dump or API
+  (package registries, open map data, almanac and weather pages).
+
+The test is not whether a page is dynamic or well defended — a marketing page
+behind Akamai is still a marketing page. It is whether getting past the defence
+would win you data worth the trouble.
 
 For a quick run against the first few configured URLs:
 
