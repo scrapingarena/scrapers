@@ -20,11 +20,15 @@ def configurations() -> list[dict[str, Any]]:
     configurations = []
     for category, items in grouped.items():
         for item in items:
-            workflow_fields = {
-                "category": category,
-                "cache_paths": "\n".join(item["cache_paths"]),
-            }
-            configurations.append(item | workflow_fields)
+            for proxy in item["proxy_providers"]:
+                workflow_fields = {
+                    "slug": f"{item['slug']}-{proxy}",
+                    "scraper": item["slug"],
+                    "proxy": proxy,
+                    "category": category,
+                    "cache_paths": "\n".join(item["cache_paths"]),
+                }
+                configurations.append(item | workflow_fields)
     return configurations
 
 
@@ -91,6 +95,8 @@ def execute(args: argparse.Namespace) -> None:
 
     command = [
         *shlex.split(config["benchmark_command"]),
+        "--proxy",
+        config["proxy"],
         "--validator",
         args.validator,
         "--concurrency",

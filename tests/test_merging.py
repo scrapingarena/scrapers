@@ -29,7 +29,9 @@ def benchmark_report() -> BenchmarkReport:
         ),
         summaries=[
             ScraperSummary(
+                benchmark="fake-direct",
                 scraper="fake",
+                proxy_provider=None,
                 total=0,
                 success=0,
                 blocked=0,
@@ -39,7 +41,7 @@ def benchmark_report() -> BenchmarkReport:
                 median_success_ms=None,
             )
         ],
-        results={"fake": []},
+        results={"fake-direct": []},
     )
 
 
@@ -49,8 +51,10 @@ def test_merge_reports_combines_scraper_shards(
 ) -> None:
     first = deepcopy(benchmark_report)
     second = deepcopy(benchmark_report)
+    first.summaries[0].benchmark = "alpha-direct"
     first.summaries[0].scraper = "alpha"
     first.results = {"alpha": next(iter(first.results.values()))}
+    second.summaries[0].benchmark = "beta-direct"
     second.summaries[0].scraper = "beta"
     second.results = {"beta": next(iter(second.results.values()))}
 
@@ -64,7 +68,10 @@ def test_merge_reports_combines_scraper_shards(
 
     assert merged.metadata.run_id == "actions-123-1"
     assert list(merged.results) == ["alpha", "beta"]
-    assert [summary.scraper for summary in merged.summaries] == ["alpha", "beta"]
+    assert [summary.benchmark for summary in merged.summaries] == [
+        "alpha-direct",
+        "beta-direct",
+    ]
 
 
 def test_merge_reports_rejects_duplicate_scrapers(

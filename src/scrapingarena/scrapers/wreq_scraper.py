@@ -5,7 +5,7 @@ import time
 from datetime import timedelta
 from typing import Any
 
-from wreq import Client, Emulation
+from wreq import Client, Emulation, Proxy
 from wreq import exceptions as wreq_exceptions
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
@@ -56,9 +56,13 @@ class WreqScraper(BaseScraper):
     async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
         started = time.perf_counter()
         try:
+            kwargs: dict[str, Any] = {}
+            if request.proxy:
+                kwargs["proxy"] = Proxy.all(request.proxy.url)
             response = await self._client.get(
                 request.target.url_string,
                 timeout=timedelta(seconds=request.timeout_seconds),
+                **kwargs,
             )
             duration_ms = (time.perf_counter() - started) * 1000
             return ScrapeResponse(

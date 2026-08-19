@@ -12,6 +12,7 @@ from scrapingarena.merging import merge_reports
 from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.registry import create_scraper, scraper_names
+from scrapingarena.settings import configured_proxy
 from scrapingarena.targets import default_targets_path, load_targets
 from scrapingarena.validation.base import Validator
 from scrapingarena.validation.composite import CompositeValidator
@@ -85,6 +86,10 @@ def benchmark(
     concurrency: Annotated[int, typer.Option(min=1, max=25)] = 5,
     retries: Annotated[int, typer.Option(min=0, max=5)] = 3,
     timeout: Annotated[float, typer.Option(min=1, max=120)] = 30,
+    proxy: Annotated[
+        str,
+        typer.Option(help="Proxy provider: direct or oxylabs."),
+    ] = "direct",
 ) -> None:
     """Run selected scraper adapters against the versioned target corpus."""
     names = scraper or scraper_names()
@@ -117,17 +122,23 @@ def benchmark(
         retries=retries,
         timeout_seconds=timeout,
     )
+    try:
+        proxy_settings = configured_proxy(proxy)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--proxy") from exc
+
     report = asyncio.run(
         runner.run(
             [create_scraper(name) for name in names],
             targets,
             targets_path=targets_path,
+            proxy=proxy_settings,
         )
     )
     run_path, latest_path = write_report(report, output_dir)
     for summary in report.summaries:
         typer.echo(
-            f"{summary.scraper}: {summary.success}/{summary.total} success "
+            f"{summary.benchmark}: {summary.success}/{summary.total} success "
             f"({summary.success_rate:.2f}%), median={summary.median_success_ms}ms"
         )
     typer.echo(f"Wrote {run_path} and {latest_path}")

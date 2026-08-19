@@ -57,6 +57,8 @@ jobs:
       - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OXYLABS_RESIDENTIAL_PROXIES_USERNAME: ${{ secrets.OXYLABS_RESIDENTIAL_PROXIES_USERNAME }}
+          OXYLABS_RESIDENTIAL_PROXIES_PASSWORD: ${{ secrets.OXYLABS_RESIDENTIAL_PROXIES_PASSWORD }}
           SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
           STEEL_BASE_URL: http://127.0.0.1:3000
           SCRAPINGARENA_CDP_ENDPOINT: http://127.0.0.1:9222

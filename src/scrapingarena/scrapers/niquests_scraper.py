@@ -34,6 +34,11 @@ class NiquestsScraper(BaseScraper):
                 request.target.url_string,
                 timeout=request.timeout_seconds,
                 allow_redirects=True,
+                proxies=(
+                    {"http": request.proxy.url, "https": request.proxy.url}
+                    if request.proxy
+                    else None
+                ),
             )
             return ScrapeResponse(
                 requested_url=request.target.url_string,
