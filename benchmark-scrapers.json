@@ -98,10 +98,10 @@
       "cache_paths": [],
       "setup_commands": [],
       "service_commands": [
-        "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:3000:3000 ghcr.io/steel-dev/steel-browser"
+        "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:3000:3000 -p 127.0.0.1:9223:9223 ghcr.io/steel-dev/steel-browser"
       ],
-      "health_url": "http://127.0.0.1:3000",
-      "concurrency": 4
+      "health_url": "http://127.0.0.1:3000/v1/health",
+      "concurrency": 1
     }
   ]
 }
