@@ -57,6 +57,10 @@ class BenchmarkRunner:
         results: dict[str, list[TargetResult]] = {}
 
         for scraper in scrapers:
+            if proxy is not None and not scraper.supports_proxy:
+                raise ValueError(
+                    f"{scraper.metadata.slug} does not support external proxies"
+                )
             proxy_name = proxy.provider_name if proxy else "direct"
             benchmark_name = f"{scraper.metadata.slug}-{proxy_name}"
             results[benchmark_name] = await self._run_scraper(
@@ -132,14 +136,21 @@ class BenchmarkRunner:
             print(f"{label} start {target.url_string}", flush=True)
             started = time.perf_counter()
             try:
-                attempt_scraper = type(scraper)()
+                attempt_scraper = type(scraper)(proxy=proxy)
                 async with attempt_scraper:
                     response = await attempt_scraper.scrape(request)
             except Exception as exc:
+                error = f"{type(exc).__name__}: {exc}"
+                if proxy:
+                    error = proxy.redact(error)
                 response = ScrapeResponse(
                     requested_url=target.url_string,
                     duration_ms=(time.perf_counter() - started) * 1000,
-                    error=f"{type(exc).__name__}: {exc}",
+                    error=error,
+                )
+            if proxy and response.error:
+                response = response.model_copy(
+                    update={"error": proxy.redact(response.error)}
                 )
             validation = await self._validator.validate(target, response)
             attempts.append(

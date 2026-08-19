@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
+from scrapingarena.settings import ProxySettings
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,6 +23,10 @@ class BaseScraper(ABC):
     """
 
     metadata: ScraperMetadata
+    supports_proxy = False
+
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        self._proxy = proxy
 
     async def __aenter__(self) -> BaseScraper:
         return self

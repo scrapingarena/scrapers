@@ -5,19 +5,29 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 class CamoufoxScraper(BaseScraper):
+    supports_proxy = True
     package_extra = "camoufox"
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         try:
             from camoufox.async_api import AsyncCamoufox
         except ImportError as exc:
             raise RuntimeError(
                 f"{self.metadata.slug} requires the '{self.package_extra}' extra"
             ) from exc
-        self._manager: Any = AsyncCamoufox(headless=True)
+        options: dict[str, Any] = {"headless": True}
+        if proxy:
+            options["proxy"] = {
+                "server": f"http://{proxy.host}:{proxy.port}",
+                "username": proxy.username,
+                "password": proxy.password,
+            }
+        self._manager: Any = AsyncCamoufox(**options)
         self._browser: Any = None
 
     async def __aenter__(self) -> CamoufoxScraper:

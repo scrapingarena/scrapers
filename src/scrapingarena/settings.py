@@ -20,6 +20,14 @@ class ProxySettings:
         password = quote(self.password, safe="")
         return f"http://{username}:{password}@{self.host}:{self.port}"
 
+    def redact(self, value: str) -> str:
+        """Remove proxy credentials from an error before it reaches a report."""
+        redacted = value.replace(self.url, f"http://***@{self.host}:{self.port}")
+        for secret in (self.username, self.password):
+            redacted = redacted.replace(secret, "***")
+            redacted = redacted.replace(quote(secret, safe=""), "***")
+        return redacted
+
 
 def configured_proxy(provider_name: str) -> ProxySettings | None:
     """Load one named provider, with ``direct`` representing no proxy."""

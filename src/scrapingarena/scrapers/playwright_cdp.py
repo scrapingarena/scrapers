@@ -8,14 +8,17 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 class PlaywrightCdpScraper(BaseScraper):
     """Drive a browser service over CDP while isolating every target."""
 
+    supports_proxy = True
     endpoint_env = "SCRAPINGARENA_CDP_ENDPOINT"
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         self._playwright: Any = None
         self._browser: Any = None
 
@@ -50,7 +53,18 @@ class PlaywrightCdpScraper(BaseScraper):
         page = None
         try:
             async with asyncio.timeout(request.timeout_seconds):
-                if self._browser.contexts:
+                if request.proxy:
+                    context = await self._browser.new_context(
+                        proxy={
+                            "server": (
+                                f"http://{request.proxy.host}:{request.proxy.port}"
+                            ),
+                            "username": request.proxy.username,
+                            "password": request.proxy.password,
+                        }
+                    )
+                    owns_context = True
+                elif self._browser.contexts:
                     context = self._browser.contexts[0]
                 else:
                     context = await self._browser.new_context()

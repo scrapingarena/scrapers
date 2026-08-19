@@ -43,7 +43,7 @@
       "setup_commands": ["uv run python -m camoufox fetch"],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 4
     },
     {
@@ -54,7 +54,7 @@
       "setup_commands": ["uv run python -m cloakbrowser install"],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 1
     },
     {
@@ -68,7 +68,7 @@
       ],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 4
     }
   ],
@@ -83,7 +83,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 lightpanda/browser:nightly lightpanda serve --host 0.0.0.0 --port 9222"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 1
     },
     {
@@ -96,12 +96,12 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 4
     },
     {
       "slug": "steel",
-      "install_command": "uv sync --locked --extra steel",
+      "install_command": "uv sync --locked --extra steel --extra cdp",
       "benchmark_command": "uv run scrapingarena benchmark --scraper steel",
       "cache_paths": [],
       "setup_commands": [],
@@ -109,7 +109,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:3000:3000 -p 127.0.0.1:9223:9223 ghcr.io/steel-dev/steel-browser"
       ],
       "health_url": "http://127.0.0.1:3000/v1/health",
-      "proxy_providers": ["direct"],
+      "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 1
     }
   ]

@@ -33,3 +33,19 @@ def test_direct_needs_no_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD", raising=False)
 
     assert configured_proxy("direct") is None
+
+
+def test_proxy_redacts_raw_and_encoded_credentials(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OXYLABS_RESIDENTIAL_PROXIES_USERNAME", "user@example.com")
+    monkeypatch.setenv("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD", "p/a:ss")
+    proxy = configured_proxy("oxylabs")
+
+    assert proxy is not None
+    error = f"failed via {proxy.url}; login user@example.com with p/a:ss"
+    redacted = proxy.redact(error)
+    assert "user@example.com" not in redacted
+    assert "user%40example.com" not in redacted
+    assert "p/a:ss" not in redacted
+    assert "p%2Fa%3Ass" not in redacted

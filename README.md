@@ -155,7 +155,9 @@ To add a provider:
 2. Confirm that each adapter which will use the provider passes
    `request.proxy` to its underlying HTTP or browser client. Adding a provider
    to the matrix does not add proxy support to an adapter. At present,
-   `curl-cffi`, `niquests`, and `wreq` support proxy requests.
+   All current adapters support external proxy requests. Steel uses its quick
+   scrape endpoint for direct requests and its session/CDP API for external
+   proxies because the quick endpoint only exposes Steel-managed proxies.
 3. Add the provider name to that adapter's `proxy_providers` list in
    `benchmark-scrapers.json`:
 

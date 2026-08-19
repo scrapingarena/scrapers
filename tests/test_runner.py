@@ -15,6 +15,7 @@ from scrapingarena.validation.composite import CompositeValidator
 
 
 class FakeScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="fake",
         name="Fake",
