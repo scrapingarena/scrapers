@@ -10,10 +10,12 @@ from scrapingarena.models import ScrapeRequest, ScrapeResponse, Target
 from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 from scrapingarena.validation.composite import CompositeValidator
 
 
 class FakeScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="fake",
         name="Fake",
@@ -90,7 +92,7 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
     assert "must-not-be-persisted" not in payload
     assert "<html>" not in payload
     assert (
-        parsed["results"]["fake"][0]["attempts"][0]["validation"]["verdict"]
+        parsed["results"]["fake-direct"][0]["attempts"][0]["validation"]["verdict"]
         == "success"
     )
 
@@ -109,13 +111,43 @@ async def test_runner_logs_and_reopens_scraper_for_three_retries(
         }
     )
 
-    report = await BenchmarkRunner(
-        CompositeValidator(), concurrency=1, retries=3
-    ).run([RetriedScraper()], [target])
+    report = await BenchmarkRunner(CompositeValidator(), concurrency=1, retries=3).run(
+        [RetriedScraper()], [target]
+    )
 
-    assert len(report.results["retried"][0].attempts) == 4
+    assert len(report.results["retried-direct"][0].attempts) == 4
     assert RetriedScraper.opened == 4
     assert RetriedScraper.closed == 4
     output = capsys.readouterr().out
-    assert "[retried] example attempt 1/4 start" in output
-    assert "[retried] example attempt 4/4 result=failed status=500" in output
+    assert "[retried-direct] example attempt 1/4 start" in output
+    assert "[retried-direct] example attempt 4/4 result=failed status=500" in output
+
+
+async def test_runner_benchmarks_each_proxy_provider() -> None:
+    target = Target.model_validate(
+        {
+            "id": "example",
+            "name": "Example",
+            "url": "https://example.com/",
+            "category": "test",
+            "required_markers": ["Expected"],
+            "min_visible_chars": 10,
+        }
+    )
+    proxy = ProxySettings(
+        host="proxy.example.com",
+        port=8080,
+        username="user",
+        password="secret",
+        provider_name="example-proxy",
+        provider_url="https://example.com/proxy",
+    )
+
+    report = await BenchmarkRunner(CompositeValidator(), concurrency=1, retries=0).run(
+        [FakeScraper()], [target], proxy=proxy
+    )
+
+    assert list(report.results) == ["fake-example-proxy"]
+    assert report.summaries[0].benchmark == "fake-example-proxy"
+    assert report.summaries[0].scraper == "fake"
+    assert report.summaries[0].proxy_provider == "example-proxy"

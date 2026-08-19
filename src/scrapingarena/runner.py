@@ -22,6 +22,7 @@ from scrapingarena.models import (
     utc_now,
 )
 from scrapingarena.scrapers.base import BaseScraper
+from scrapingarena.settings import ProxySettings
 from scrapingarena.targets import corpus_sha256
 from scrapingarena.validation.base import Validator
 
@@ -50,14 +51,20 @@ class BenchmarkRunner:
         targets: list[Target],
         *,
         targets_path: Path | None = None,
+        proxy: ProxySettings | None = None,
     ) -> BenchmarkReport:
         started_at = utc_now()
         results: dict[str, list[TargetResult]] = {}
 
         for scraper in scrapers:
-            results[scraper.metadata.slug] = await self._run_scraper(
-                scraper,
-                targets,
+            if proxy is not None and not scraper.supports_proxy:
+                raise ValueError(
+                    f"{scraper.metadata.slug} does not support external proxies"
+                )
+            proxy_name = proxy.provider_name if proxy else "direct"
+            benchmark_name = f"{scraper.metadata.slug}-{proxy_name}"
+            results[benchmark_name] = await self._run_scraper(
+                scraper, targets, benchmark_name=benchmark_name, proxy=proxy
             )
 
         finished_at = utc_now()
@@ -75,8 +82,15 @@ class BenchmarkRunner:
                 target_set_sha256=corpus_sha256(targets_path),
             ),
             summaries=[
-                self._summarize(scraper_name, scraper_results)
-                for scraper_name, scraper_results in results.items()
+                self._summarize(
+                    benchmark_name,
+                    benchmark_name.removesuffix(
+                        f"-{proxy.provider_name if proxy else 'direct'}"
+                    ),
+                    proxy.provider_name if proxy else None,
+                    scraper_results,
+                )
+                for benchmark_name, scraper_results in results.items()
             ],
             results=results,
         )
@@ -85,12 +99,17 @@ class BenchmarkRunner:
         self,
         scraper: BaseScraper,
         targets: list[Target],
+        *,
+        benchmark_name: str,
+        proxy: ProxySettings | None,
     ) -> list[TargetResult]:
         semaphore = asyncio.Semaphore(self._concurrency)
 
         async def run_target(target: Target) -> TargetResult:
             async with semaphore:
-                return await self._run_target(scraper, target)
+                return await self._run_target(
+                    scraper, target, benchmark_name=benchmark_name, proxy=proxy
+                )
 
         return list(await asyncio.gather(*(run_target(target) for target in targets)))
 
@@ -98,29 +117,40 @@ class BenchmarkRunner:
         self,
         scraper: BaseScraper,
         target: Target,
+        *,
+        benchmark_name: str,
+        proxy: ProxySettings | None,
     ) -> TargetResult:
         attempts: list[AttemptResult] = []
         request = ScrapeRequest(
             target=target,
             timeout_seconds=self._timeout_seconds,
+            proxy=proxy,
         )
         for attempt_number in range(1, self._retries + 2):
             total_attempts = self._retries + 1
             label = (
-                f"[{scraper.metadata.slug}] {target.id} "
+                f"[{benchmark_name}] {target.id} "
                 f"attempt {attempt_number}/{total_attempts}"
             )
             print(f"{label} start {target.url_string}", flush=True)
             started = time.perf_counter()
             try:
-                attempt_scraper = type(scraper)()
+                attempt_scraper = type(scraper)(proxy=proxy)
                 async with attempt_scraper:
                     response = await attempt_scraper.scrape(request)
             except Exception as exc:
+                error = f"{type(exc).__name__}: {exc}"
+                if proxy:
+                    error = proxy.redact(error)
                 response = ScrapeResponse(
                     requested_url=target.url_string,
                     duration_ms=(time.perf_counter() - started) * 1000,
-                    error=f"{type(exc).__name__}: {exc}",
+                    error=error,
+                )
+            if proxy and response.error:
+                response = response.model_copy(
+                    update={"error": proxy.redact(response.error)}
                 )
             validation = await self._validator.validate(target, response)
             attempts.append(
@@ -149,7 +179,9 @@ class BenchmarkRunner:
 
     @staticmethod
     def _summarize(
+        benchmark: str,
         scraper: str,
+        proxy_provider: str | None,
         results: list[TargetResult],
     ) -> ScraperSummary:
         verdicts = Counter(
@@ -162,7 +194,9 @@ class BenchmarkRunner:
         ]
         total = len(results)
         return ScraperSummary(
+            benchmark=benchmark,
             scraper=scraper,
+            proxy_provider=proxy_provider,
             total=total,
             success=verdicts[Verdict.SUCCESS],
             blocked=verdicts[Verdict.BLOCKED],

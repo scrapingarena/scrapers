@@ -6,6 +6,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
+from scrapingarena.settings import ProxySettings
+
 
 class Protection(StrEnum):
     NONE = "none"
@@ -37,10 +39,11 @@ class Target(BaseModel):
 
 
 class ScrapeRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
     target: Target
     timeout_seconds: float = Field(default=30, gt=0, le=120)
+    proxy: ProxySettings | None = Field(default=None, exclude=True)
 
 
 class ScrapeResponse(BaseModel):
@@ -97,7 +100,9 @@ class TargetResult(BaseModel):
 class ScraperSummary(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    benchmark: str
     scraper: str
+    proxy_provider: str | None
     total: int
     success: int
     blocked: int
@@ -127,7 +132,7 @@ class RunMetadata(BaseModel):
 class BenchmarkReport(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: int = 1
+    schema_version: int = 2
     metadata: RunMetadata
     summaries: list[ScraperSummary]
     results: dict[str, list[TargetResult]]

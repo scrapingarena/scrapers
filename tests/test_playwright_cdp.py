@@ -5,6 +5,7 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, Target
 from scrapingarena.scrapers.playwright_cdp import LightpandaScraper
+from scrapingarena.settings import ProxySettings
 
 
 class FakeResponse:
@@ -46,8 +47,12 @@ class FakeBrowser:
     def __init__(self, contexts: list[FakeContext]) -> None:
         self.contexts = contexts
         self.created_context: FakeContext | None = None
+        self.proxy: dict[str, str] | None = None
 
-    async def new_context(self) -> FakeContext:
+    async def new_context(
+        self, *, proxy: dict[str, str] | None = None
+    ) -> FakeContext:
+        self.proxy = proxy
         self.created_context = FakeContext()
         return self.created_context
 
@@ -123,3 +128,39 @@ async def test_cdp_scraper_times_out_when_cdp_operation_hangs() -> None:
 
     assert response.error is not None
     assert response.error.startswith("TimeoutError:")
+
+
+async def test_cdp_scraper_creates_isolated_proxy_context() -> None:
+    browser = FakeBrowser([FakeContext()])
+    scraper = LightpandaScraper()
+    scraper._browser = browser
+    proxy = ProxySettings(
+        host="proxy.example.com",
+        port=8080,
+        username="user",
+        password="secret",
+        provider_name="proxy",
+        provider_url="https://example.com/proxy",
+    )
+    request = ScrapeRequest(
+        target=Target.model_validate(
+            {
+                "id": "example",
+                "name": "Example",
+                "url": "https://example.com",
+                "category": "test",
+            }
+        ),
+        proxy=proxy,
+    )
+
+    response = await scraper.scrape(request)
+
+    assert response.status_code == 200
+    assert browser.proxy == {
+        "server": "http://proxy.example.com:8080",
+        "username": "user",
+        "password": "secret",
+    }
+    assert browser.created_context is not None
+    assert browser.created_context.closed

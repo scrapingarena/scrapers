@@ -24,7 +24,8 @@ def _update_index(path: Path, report: BenchmarkReport) -> None:
     if path.exists():
         index: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     else:
-        index = {"schema_version": 1, "runs": []}
+        index = {"schema_version": 2, "runs": []}
+    index["schema_version"] = 2
 
     run = {
         "run_id": report.metadata.run_id,

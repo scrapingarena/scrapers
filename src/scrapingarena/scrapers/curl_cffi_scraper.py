@@ -5,9 +5,11 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 class CurlCffiScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="curl-cffi",
         name="curl_cffi",
@@ -15,7 +17,8 @@ class CurlCffiScraper(BaseScraper):
         homepage="https://github.com/lexiforest/curl_cffi",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         try:
             from curl_cffi.requests import AsyncSession
         except ImportError as exc:
@@ -34,6 +37,7 @@ class CurlCffiScraper(BaseScraper):
                 request.target.url_string,
                 timeout=request.timeout_seconds,
                 allow_redirects=True,
+                proxy=request.proxy.url if request.proxy else None,
             )
             return ScrapeResponse(
                 requested_url=request.target.url_string,

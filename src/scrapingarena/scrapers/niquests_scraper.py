@@ -5,9 +5,11 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 class NiquestsScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="niquests",
         name="Niquests",
@@ -15,7 +17,8 @@ class NiquestsScraper(BaseScraper):
         homepage="https://github.com/jawah/niquests",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         try:
             from niquests import AsyncSession
         except ImportError as exc:
@@ -34,6 +37,11 @@ class NiquestsScraper(BaseScraper):
                 request.target.url_string,
                 timeout=request.timeout_seconds,
                 allow_redirects=True,
+                proxies=(
+                    {"http": request.proxy.url, "https": request.proxy.url}
+                    if request.proxy
+                    else None
+                ),
             )
             return ScrapeResponse(
                 requested_url=request.target.url_string,

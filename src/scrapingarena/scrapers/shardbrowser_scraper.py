@@ -6,9 +6,11 @@ from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 class ShardBrowserScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="shardbrowser",
         name="ShardBrowser (ShardX)",
@@ -16,7 +18,8 @@ class ShardBrowserScraper(BaseScraper):
         homepage="https://github.com/ProxyShard/ShardBrowser",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         try:
             from shardx import ShardX
         except ImportError as exc:
@@ -32,12 +35,14 @@ class ShardBrowserScraper(BaseScraper):
     async def __aenter__(self) -> ShardBrowserScraper:
         template = os.getenv("SHARDX_PROFILE", "linux-gt1030")
         self._profile = self._sdk.create_profile(template)
-        self._manager = self._sdk.session(
-            self._profile,
-            headless=True,
-            screen_mode="profile",
-            extra_args=["--no-sandbox", "--disable-dev-shm-usage"],
-        )
+        options: dict[str, Any] = {
+            "headless": True,
+            "screen_mode": "profile",
+            "extra_args": ["--no-sandbox", "--disable-dev-shm-usage"],
+        }
+        if self._proxy:
+            options["proxy"] = self._proxy.url
+        self._manager = self._sdk.session(self._profile, **options)
         try:
             self._browser = await self._manager.__aenter__()
         except BaseException:

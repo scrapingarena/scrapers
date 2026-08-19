@@ -33,7 +33,7 @@ def merge_reports(paths: list[Path], *, run_id: str | None = None) -> BenchmarkR
         results.update(report.results)
         summaries.extend(report.summaries)
 
-    summaries.sort(key=lambda summary: summary.scraper)
+    summaries.sort(key=lambda summary: summary.benchmark)
     return BenchmarkReport(
         schema_version=first.schema_version,
         metadata=RunMetadata(

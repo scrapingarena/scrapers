@@ -5,11 +5,12 @@ import time
 from datetime import timedelta
 from typing import Any
 
-from wreq import Client, Emulation
+from wreq import Client, Emulation, Proxy
 from wreq import exceptions as wreq_exceptions
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.settings import ProxySettings
 
 
 def latest_chrome_emulation() -> Any:
@@ -38,6 +39,7 @@ WREQ_ERRORS = (
 
 
 class WreqScraper(BaseScraper):
+    supports_proxy = True
     metadata = ScraperMetadata(
         slug="wreq",
         name="wreq",
@@ -45,7 +47,8 @@ class WreqScraper(BaseScraper):
         homepage="https://github.com/0x676e67/wreq-python",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, proxy: ProxySettings | None = None) -> None:
+        super().__init__(proxy)
         # Do not pass or modify headers: the emulation profile owns the complete
         # browser fingerprint, including its matching browser headers.
         self._client = Client(emulation=latest_chrome_emulation())
@@ -56,9 +59,13 @@ class WreqScraper(BaseScraper):
     async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
         started = time.perf_counter()
         try:
+            kwargs: dict[str, Any] = {}
+            if request.proxy:
+                kwargs["proxy"] = Proxy.all(request.proxy.url)
             response = await self._client.get(
                 request.target.url_string,
                 timeout=timedelta(seconds=request.timeout_seconds),
+                **kwargs,
             )
             duration_ms = (time.perf_counter() - started) * 1000
             return ScrapeResponse(
