@@ -53,6 +53,26 @@ def wait_for_service(url: str) -> None:
     raise SystemExit(f"service did not become healthy: {url}")
 
 
+def print_service_diagnostics() -> None:
+    """Leave useful evidence when a service dies without failing the job."""
+    subprocess.run(
+        [
+            "docker",
+            "inspect",
+            "--format",
+            "{{json .State}}",
+            "scrapingarena-browser",
+        ],
+        cwd=ROOT,
+        check=False,
+    )
+    subprocess.run(
+        ["docker", "logs", "--tail", "200", "scrapingarena-browser"],
+        cwd=ROOT,
+        check=False,
+    )
+
+
 def execute(args: argparse.Namespace) -> None:
     config = configuration(args.scraper)
     install_command = shlex.split(config["install_command"])
@@ -82,7 +102,11 @@ def execute(args: argparse.Namespace) -> None:
     ]
     if args.limit:
         command.extend(("--limit", args.limit))
-    run_command(command, env=env)
+    try:
+        run_command(command, env=env)
+    finally:
+        if config["service_commands"]:
+            print_service_diagnostics()
 
 
 def aggregate(args: argparse.Namespace) -> None:

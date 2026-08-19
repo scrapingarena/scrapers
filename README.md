@@ -88,9 +88,14 @@ port 3000 and uses its SDK instead:
 ```bash
 docker compose -f compose.browsers.yml --profile steel up -d steel
 uv sync --extra steel
-uv run scrapingarena benchmark --scraper steel --limit 5 --concurrency 2
+uv run scrapingarena benchmark --scraper steel --limit 5 --concurrency 1
 docker compose -f compose.browsers.yml --profile steel down
 ```
+
+The self-hosted Steel container supports one active browser operation at a
+time, so its benchmark configuration deliberately uses concurrency 1. CI waits
+for `/v1/health` before starting and prints the final container state plus the
+last 200 log lines to make browser-service failures diagnosable.
 
 Camoufox's two distributions both import as `camoufox`, so never install their
 extras together. The Actions matrix gives each one a separate environment.
