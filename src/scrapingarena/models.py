@@ -97,6 +97,25 @@ class TargetResult(BaseModel):
         return self.attempts[-1]
 
 
+class ResourceSample(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    elapsed_ms: float = Field(ge=0)
+    memory_mb: float = Field(ge=0)
+    cpu_cores: float = Field(ge=0)
+
+
+class ResourceUsage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    duration_ms: float = Field(ge=0)
+    peak_memory_mb: float = Field(ge=0)
+    average_memory_mb: float = Field(ge=0)
+    peak_cpu_cores: float = Field(ge=0)
+    average_cpu_cores: float = Field(ge=0)
+    samples: list[ResourceSample]
+
+
 class ScraperSummary(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -110,6 +129,7 @@ class ScraperSummary(BaseModel):
     ambiguous: int
     success_rate: float
     median_success_ms: float | None
+    resources: ResourceUsage | None = None
 
 
 class RunMetadata(BaseModel):
@@ -132,7 +152,7 @@ class RunMetadata(BaseModel):
 class BenchmarkReport(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: int = 2
+    schema_version: int = 3
     metadata: RunMetadata
     summaries: list[ScraperSummary]
     results: dict[str, list[TargetResult]]

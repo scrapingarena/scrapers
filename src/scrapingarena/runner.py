@@ -12,6 +12,7 @@ from pathlib import Path
 from scrapingarena.models import (
     AttemptResult,
     BenchmarkReport,
+    ResourceUsage,
     RunMetadata,
     ScrapeRequest,
     ScrapeResponse,
@@ -21,6 +22,7 @@ from scrapingarena.models import (
     Verdict,
     utc_now,
 )
+from scrapingarena.resources import ResourceMonitor
 from scrapingarena.scrapers.base import BaseScraper
 from scrapingarena.settings import ProxySettings
 from scrapingarena.targets import corpus_sha256
@@ -55,6 +57,7 @@ class BenchmarkRunner:
     ) -> BenchmarkReport:
         started_at = utc_now()
         results: dict[str, list[TargetResult]] = {}
+        resources: dict[str, ResourceUsage | None] = {}
 
         for scraper in scrapers:
             if proxy is not None and not scraper.supports_proxy:
@@ -63,9 +66,19 @@ class BenchmarkRunner:
                 )
             proxy_name = proxy.provider_name if proxy else "direct"
             benchmark_name = f"{scraper.metadata.slug}-{proxy_name}"
-            results[benchmark_name] = await self._run_scraper(
-                scraper, targets, benchmark_name=benchmark_name, proxy=proxy
-            )
+            if proxy is None:
+                async with ResourceMonitor(
+                    container_name=os.getenv("SCRAPINGARENA_RESOURCE_CONTAINER")
+                ) as monitor:
+                    results[benchmark_name] = await self._run_scraper(
+                        scraper, targets, benchmark_name=benchmark_name, proxy=proxy
+                    )
+                resources[benchmark_name] = monitor.usage()
+            else:
+                results[benchmark_name] = await self._run_scraper(
+                    scraper, targets, benchmark_name=benchmark_name, proxy=proxy
+                )
+                resources[benchmark_name] = None
 
         finished_at = utc_now()
         run_id = os.getenv("SCRAPINGARENA_RUN_ID") or (
@@ -89,6 +102,7 @@ class BenchmarkRunner:
                     ),
                     proxy.provider_name if proxy else None,
                     scraper_results,
+                    resources[benchmark_name],
                 )
                 for benchmark_name, scraper_results in results.items()
             ],
@@ -183,6 +197,7 @@ class BenchmarkRunner:
         scraper: str,
         proxy_provider: str | None,
         results: list[TargetResult],
+        resources: ResourceUsage | None,
     ) -> ScraperSummary:
         verdicts = Counter(
             result.final_attempt.validation.verdict for result in results
@@ -211,4 +226,5 @@ class BenchmarkRunner:
                 if success_durations
                 else None
             ),
+            resources=resources,
         )

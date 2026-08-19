@@ -210,10 +210,26 @@ Run the direct control separately:
 uv run scrapingarena benchmark --scraper wreq --proxy direct --limit 5
 ```
 
-Schema-v2 reports identify every result with its `benchmark` variant and also
+Schema-v3 reports identify every result with its `benchmark` variant and also
 store the underlying `scraper` and nullable `proxy_provider` separately. Proxy
 credentials and authenticated proxy URLs must never be serialized. Provider
 homepage URLs are public metadata and are safe to keep in configuration.
+
+### Resource measurements
+
+Schema-v3 reports measure CPU and memory for direct benchmark variants only.
+The runner samples its process tree once per second; service-backed browser
+jobs also include the `scrapingarena-browser` Docker container. Each direct
+summary stores peak and average memory in MiB, peak and average CPU usage in
+cores, wall-clock duration, and the full sample series. Proxy summaries set
+`resources` to `null` because proxy latency would duplicate and distort the
+scraper footprint measurement.
+
+Full samples live in each run report. `results/index.json` deliberately omits
+the sample arrays and retains only aggregate resource values, keeping the daily
+history index small. The web app normalizes older schema-v1/v2 reports with
+`resources: null`, so historical success charts continue to work and resource
+charts begin at the first schema-v3 run.
 
 ## Validation
 

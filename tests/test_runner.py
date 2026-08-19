@@ -86,8 +86,12 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
     run_path, latest_path = write_report(report, tmp_path / "results")
     payload = latest_path.read_text(encoding="utf-8")
     parsed = json.loads(payload)
+    index = json.loads((tmp_path / "results" / "index.json").read_text())
 
     assert report.summaries[0].success_rate == 100
+    assert report.summaries[0].resources is not None
+    assert report.summaries[0].resources.samples
+    assert "samples" not in index["runs"][0]["summaries"][0]["resources"]
     assert run_path.is_file()
     assert "must-not-be-persisted" not in payload
     assert "<html>" not in payload
@@ -151,3 +155,4 @@ async def test_runner_benchmarks_each_proxy_provider() -> None:
     assert report.summaries[0].benchmark == "fake-example-proxy"
     assert report.summaries[0].scraper == "fake"
     assert report.summaries[0].proxy_provider == "example-proxy"
+    assert report.summaries[0].resources is None

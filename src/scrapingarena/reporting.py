@@ -24,13 +24,16 @@ def _update_index(path: Path, report: BenchmarkReport) -> None:
     if path.exists():
         index: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
     else:
-        index = {"schema_version": 2, "runs": []}
-    index["schema_version"] = 2
+        index = {"schema_version": 3, "runs": []}
+    index["schema_version"] = 3
 
     run = {
         "run_id": report.metadata.run_id,
         "started_at": report.metadata.started_at.isoformat(),
-        "summaries": [summary.model_dump(mode="json") for summary in report.summaries],
+        "summaries": [
+            summary.model_dump(mode="json", exclude={"resources": {"samples"}})
+            for summary in report.summaries
+        ],
     }
     previous = [
         item

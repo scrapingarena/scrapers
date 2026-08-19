@@ -92,6 +92,8 @@ def execute(args: argparse.Namespace) -> None:
         run_command(command, env=env)
     if config["service_commands"]:
         wait_for_service(config["health_url"])
+        if config["proxy"] == "direct":
+            env["SCRAPINGARENA_RESOURCE_CONTAINER"] = "scrapingarena-browser"
 
     command = [
         *shlex.split(config["benchmark_command"]),
