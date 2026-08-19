@@ -2,6 +2,102 @@
   "schema_version": 1,
   "runs": [
     {
+      "run_id": "32220737804-1",
+      "started_at": "2026-08-19T05:47:26.365513+00:00",
+      "summaries": [
+        {
+          "scraper": "camoufox-original",
+          "total": 100,
+          "success": 22,
+          "blocked": 70,
+          "failed": 3,
+          "ambiguous": 5,
+          "success_rate": 22.0,
+          "median_success_ms": 5539.77
+        },
+        {
+          "scraper": "cloakbrowser",
+          "total": 100,
+          "success": 17,
+          "blocked": 76,
+          "failed": 2,
+          "ambiguous": 5,
+          "success_rate": 17.0,
+          "median_success_ms": 2018.57
+        },
+        {
+          "scraper": "curl-cffi",
+          "total": 100,
+          "success": 19,
+          "blocked": 70,
+          "failed": 2,
+          "ambiguous": 9,
+          "success_rate": 19.0,
+          "median_success_ms": 714.01
+        },
+        {
+          "scraper": "lightpanda",
+          "total": 100,
+          "success": 18,
+          "blocked": 68,
+          "failed": 4,
+          "ambiguous": 10,
+          "success_rate": 18.0,
+          "median_success_ms": 1038.53
+        },
+        {
+          "scraper": "niquests",
+          "total": 100,
+          "success": 15,
+          "blocked": 76,
+          "failed": 4,
+          "ambiguous": 5,
+          "success_rate": 15.0,
+          "median_success_ms": 817.41
+        },
+        {
+          "scraper": "obscura",
+          "total": 100,
+          "success": 10,
+          "blocked": 71,
+          "failed": 16,
+          "ambiguous": 3,
+          "success_rate": 10.0,
+          "median_success_ms": 2916.99
+        },
+        {
+          "scraper": "shardbrowser",
+          "total": 100,
+          "success": 15,
+          "blocked": 78,
+          "failed": 2,
+          "ambiguous": 5,
+          "success_rate": 15.0,
+          "median_success_ms": 3477.25
+        },
+        {
+          "scraper": "steel",
+          "total": 100,
+          "success": 0,
+          "blocked": 0,
+          "failed": 100,
+          "ambiguous": 0,
+          "success_rate": 0.0,
+          "median_success_ms": null
+        },
+        {
+          "scraper": "wreq",
+          "total": 100,
+          "success": 18,
+          "blocked": 65,
+          "failed": 3,
+          "ambiguous": 14,
+          "success_rate": 18.0,
+          "median_success_ms": 551.52
+        }
+      ]
+    },
+    {
       "run_id": "32104146193-1",
       "started_at": "2026-08-18T05:46:11.989284+00:00",
       "summaries": [
