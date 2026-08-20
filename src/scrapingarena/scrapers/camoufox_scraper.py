@@ -1,11 +1,26 @@
 from __future__ import annotations
 
+import sys
 import time
 from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
 from scrapingarena.settings import ProxySettings
+
+
+def camoufox_launch_options(proxy: ProxySettings | None) -> dict[str, Any]:
+    options: dict[str, Any] = {
+        "headless": "virtual" if sys.platform.startswith("linux") else True
+    }
+    if proxy:
+        options["proxy"] = {
+            "server": f"http://{proxy.host}:{proxy.port}",
+            "username": proxy.username,
+            "password": proxy.password,
+        }
+        options["geoip"] = True
+    return options
 
 
 class CamoufoxScraper(BaseScraper):
@@ -20,13 +35,9 @@ class CamoufoxScraper(BaseScraper):
             raise RuntimeError(
                 f"{self.metadata.slug} requires the '{self.package_extra}' extra"
             ) from exc
-        options: dict[str, Any] = {"headless": True}
-        if proxy:
-            options["proxy"] = {
-                "server": f"http://{proxy.host}:{proxy.port}",
-                "username": proxy.username,
-                "password": proxy.password,
-            }
+        # Camoufox recommends headed mode inside Xvfb on Linux because native
+        # headless mode remains an observable fingerprint surface.
+        options = camoufox_launch_options(proxy)
         self._manager: Any = AsyncCamoufox(**options)
         self._browser: Any = None
 

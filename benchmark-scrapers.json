@@ -40,18 +40,26 @@
       "install_command": "uv sync --locked --extra camoufox-original",
       "benchmark_command": "uv run scrapingarena benchmark --scraper camoufox-original",
       "cache_paths": ["~/.cache/camoufox", "~/.camoufox"],
-      "setup_commands": ["uv run python -m camoufox fetch"],
+      "setup_commands": [
+        "sudo apt-get update",
+        "sudo apt-get install -y xvfb",
+        "uv run python -m camoufox fetch"
+      ],
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 4
+      "concurrency": 1
     },
     {
       "slug": "cloakbrowser",
       "install_command": "uv sync --locked --extra cloakbrowser",
-      "benchmark_command": "uv run scrapingarena benchmark --scraper cloakbrowser",
+      "benchmark_command": "xvfb-run -a uv run scrapingarena benchmark --scraper cloakbrowser",
       "cache_paths": ["~/.cloakbrowser"],
-      "setup_commands": ["uv run python -m cloakbrowser install"],
+      "setup_commands": [
+        "sudo apt-get update",
+        "sudo apt-get install -y xvfb",
+        "uv run python -m cloakbrowser install"
+      ],
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
@@ -60,11 +68,11 @@
     {
       "slug": "shardbrowser",
       "install_command": "uv sync --locked --extra shardbrowser",
-      "benchmark_command": "uv run scrapingarena benchmark --scraper shardbrowser",
+      "benchmark_command": "xvfb-run -a uv run scrapingarena benchmark --scraper shardbrowser",
       "cache_paths": ["~/.cache/shardx-sdk"],
       "setup_commands": [
         "sudo apt-get update",
-        "sudo apt-get install -y unzip ca-certificates fonts-liberation libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64 libxshmfence1"
+        "sudo apt-get install -y xvfb unzip ca-certificates fonts-liberation libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64 libxshmfence1"
       ],
       "service_commands": [],
       "health_url": "",

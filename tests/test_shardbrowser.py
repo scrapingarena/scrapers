@@ -33,6 +33,7 @@ async def test_shardbrowser_uses_ci_safe_chromium_flags() -> None:
 
     await scraper.__aenter__()
 
+    assert scraper._sdk.session_kwargs["headless"] is False
     assert scraper._sdk.session_kwargs["extra_args"] == [
         "--no-sandbox",
         "--disable-dev-shm-usage",

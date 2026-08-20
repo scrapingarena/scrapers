@@ -35,13 +35,16 @@ class CloakBrowserScraper(BaseScraper):
         started = time.perf_counter()
         browser = None
         try:
-            options: dict[str, Any] = {"headless": True}
+            # Run headed inside CI's Xvfb. CloakBrowser documents this as its
+            # highest-stealth mode for aggressive anti-bot providers.
+            options: dict[str, Any] = {"headless": False}
             if self._proxy:
                 options["proxy"] = {
                     "server": f"http://{self._proxy.host}:{self._proxy.port}",
                     "username": self._proxy.username,
                     "password": self._proxy.password,
                 }
+                options["geoip"] = True
             browser = self._launch(**options)
             page = browser.new_page()
             response = page.goto(

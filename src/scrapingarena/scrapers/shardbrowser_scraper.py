@@ -36,7 +36,9 @@ class ShardBrowserScraper(BaseScraper):
         template = os.getenv("SHARDX_PROFILE", "linux-gt1030")
         self._profile = self._sdk.create_profile(template)
         options: dict[str, Any] = {
-            "headless": True,
+            # The benchmark runs under Xvfb, allowing the patched engine to use
+            # its regular headed rendering path without requiring a display.
+            "headless": False,
             "screen_mode": "profile",
             "extra_args": ["--no-sandbox", "--disable-dev-shm-usage"],
         }
