@@ -1,0 +1,39 @@
+version: 2
+updates:
+  # Dependabot's uv ecosystem updates pyproject.toml and uv.lock together.
+  # Benchmarks remain pinned to the reviewed lockfile between update PRs.
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: daily
+    versioning-strategy: increase-if-necessary
+    open-pull-requests-limit: 20
+    labels:
+      - dependencies
+      - python
+    commit-message:
+      prefix: deps
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - dependencies
+      - docker
+    commit-message:
+      prefix: deps
