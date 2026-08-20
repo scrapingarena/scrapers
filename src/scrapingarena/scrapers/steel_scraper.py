@@ -54,9 +54,7 @@ class SteelScraper(BaseScraper):
             if api_key:
                 separator = "&" if "?" in endpoint else "?"
                 endpoint = f"{endpoint}{separator}apiKey={api_key}"
-            self._browser = await self._playwright.chromium.connect_over_cdp(
-                endpoint
-            )
+            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint)
         except BaseException:
             await self.close()
             raise

@@ -170,9 +170,17 @@ To add a provider:
    entries such as `wreq-direct`, `wreq-oxylabs`, and
    `wreq-new-provider`.
 
-4. Add the provider's credential names to the benchmark step's `env` block in
-   `.github/workflows/benchmark.yml`, sourcing their values from GitHub Actions
-   secrets. For example:
+4. Add a sibling provider job in `.github/workflows/benchmark.yml` so GitHub
+   renders the provider as its own graph column. Add a provider-filtered output
+   to `prepare`, point the job matrix at that output, and include the new job in
+   `aggregate.needs`. The matrix command is:
+
+   ```bash
+   python3 scripts/benchmark_ci.py matrix --proxy new-provider
+   ```
+
+   Add the provider's credential names to that job's `env` block, sourcing
+   their values from GitHub Actions secrets. For example:
 
    ```yaml
    env:

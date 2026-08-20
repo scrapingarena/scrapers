@@ -26,13 +26,16 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      scrapers: ${{ steps.matrix.outputs.scrapers }}
+      direct: ${{ steps.matrix.outputs.direct }}
+      oxylabs: ${{ steps.matrix.outputs.oxylabs }}
     steps:
       - uses: actions/checkout@v7
       - id: matrix
-        run: echo "scrapers=$(python3 scripts/benchmark_ci.py matrix)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "direct=$(python3 scripts/benchmark_ci.py matrix --proxy direct)" >> "$GITHUB_OUTPUT"
+          echo "oxylabs=$(python3 scripts/benchmark_ci.py matrix --proxy oxylabs)" >> "$GITHUB_OUTPUT"
 
-  benchmark:
+  benchmark-direct:
     name: ${{ matrix.scraper.slug }}
     needs: prepare
     runs-on: ubuntu-latest
@@ -41,7 +44,48 @@ jobs:
       fail-fast: false
       max-parallel: 9
       matrix:
-        scraper: ${{ fromJSON(needs.prepare.outputs.scrapers) }}
+        scraper: ${{ fromJSON(needs.prepare.outputs.direct) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+          enable-cache: true
+      - name: Cache downloaded browser runtimes
+        if: ${{ matrix.scraper.cache_paths != '' }}
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.scraper.cache_paths }}
+          key: browser-${{ runner.os }}-${{ matrix.scraper.slug }}-${{ hashFiles('uv.lock') }}
+      - name: Prepare and run scraper
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+          STEEL_BASE_URL: http://127.0.0.1:3000
+          SCRAPINGARENA_CDP_ENDPOINT: http://127.0.0.1:9222
+        run: |
+          python3 scripts/benchmark_ci.py execute \
+            --scraper "${{ matrix.scraper.slug }}" \
+            --validator "${{ inputs.validator || 'deterministic' }}" \
+            --limit "${{ inputs.limit }}"
+      - name: Upload scraper shard
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-${{ matrix.scraper.slug }}
+          path: shard-results/${{ matrix.scraper.slug }}/latest.json
+          retention-days: 14
+
+  benchmark-oxylabs:
+    name: ${{ matrix.scraper.slug }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix:
+        scraper: ${{ fromJSON(needs.prepare.outputs.oxylabs) }}
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -76,7 +120,7 @@ jobs:
           retention-days: 14
 
   aggregate:
-    needs: benchmark
+    needs: [benchmark-direct, benchmark-oxylabs]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 10

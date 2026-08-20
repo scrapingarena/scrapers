@@ -49,9 +49,7 @@ class FakeBrowser:
         self.created_context: FakeContext | None = None
         self.proxy: dict[str, str] | None = None
 
-    async def new_context(
-        self, *, proxy: dict[str, str] | None = None
-    ) -> FakeContext:
+    async def new_context(self, *, proxy: dict[str, str] | None = None) -> FakeContext:
         self.proxy = proxy
         self.created_context = FakeContext()
         return self.created_context
