@@ -3,6 +3,11 @@
 [`targets.json`](targets.json) is the single source of truth for benchmark URLs.
 Every registered scraper receives these entries in the same order.
 
+The corpus includes routes adopted from String's
+[Web Data Frontier Benchmark](https://github.com/usestring/web-data-frontier-benchmark),
+using its July 15, 2026 cross-provider results to favor useful pages with a
+demonstrated mix of successes and blocks over URLs that fail uniformly.
+
 Each entry has this shape:
 
 ```json
