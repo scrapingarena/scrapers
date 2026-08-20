@@ -4,7 +4,7 @@ import asyncio
 from typing import Any
 
 from scrapingarena.models import ScrapeRequest, Target
-from scrapingarena.scrapers.playwright_cdp import LightpandaScraper
+from scrapingarena.scrapers.lightpanda_scraper import LightpandaScraper
 from scrapingarena.settings import ProxySettings
 
 

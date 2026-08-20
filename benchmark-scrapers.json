@@ -93,7 +93,7 @@
       "cache_paths": [],
       "setup_commands": [],
       "service_commands": [
-        "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
+        "docker run -d --name scrapingarena-browser --shm-size=2g -e OBSCURA_PROXY -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
       "proxy_providers": ["direct", "oxylabs"],
