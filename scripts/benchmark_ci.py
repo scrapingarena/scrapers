@@ -15,12 +15,14 @@ ROOT = Path(__file__).parents[1]
 CONFIG_PATH = ROOT / "benchmark-scrapers.json"
 
 
-def configurations() -> list[dict[str, Any]]:
+def configurations(proxy_filter: str | None = None) -> list[dict[str, Any]]:
     grouped = json.loads(CONFIG_PATH.read_text())
     configurations = []
     for category, items in grouped.items():
         for item in items:
             for proxy in item["proxy_providers"]:
+                if proxy_filter is not None and proxy != proxy_filter:
+                    continue
                 workflow_fields = {
                     "slug": f"{item['slug']}-{proxy}",
                     "scraper": item["slug"],
@@ -166,7 +168,8 @@ def aggregate(args: argparse.Namespace) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
-    subparsers.add_parser("matrix")
+    matrix_parser = subparsers.add_parser("matrix")
+    matrix_parser.add_argument("--proxy")
 
     execute_parser = subparsers.add_parser("execute")
     execute_parser.add_argument("--scraper", required=True)
@@ -182,7 +185,7 @@ def main() -> None:
 
     args = parser.parse_args()
     if args.command == "matrix":
-        print(json.dumps(configurations(), separators=(",", ":")))
+        print(json.dumps(configurations(args.proxy), separators=(",", ":")))
     elif args.command == "execute":
         execute(args)
     else:
