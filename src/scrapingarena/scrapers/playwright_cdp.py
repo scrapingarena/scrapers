@@ -7,7 +7,7 @@ import time
 from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
-from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.scrapers.base import BaseScraper
 from scrapingarena.settings import ProxySettings
 
 
@@ -100,21 +100,3 @@ class PlaywrightCdpScraper(BaseScraper):
         # A wedged CDP connection must not hold the entire benchmark open.
         with contextlib.suppress(Exception):
             await asyncio.wait_for(resource.close(), timeout=5)
-
-
-class ObscuraScraper(PlaywrightCdpScraper):
-    metadata = ScraperMetadata(
-        slug="obscura",
-        name="Obscura",
-        kind="agent-browser",
-        homepage="https://github.com/h4ckf0r0day/obscura",
-    )
-
-
-class LightpandaScraper(PlaywrightCdpScraper):
-    metadata = ScraperMetadata(
-        slug="lightpanda",
-        name="Lightpanda",
-        kind="agent-browser",
-        homepage="https://github.com/lightpanda-io/browser",
-    )
