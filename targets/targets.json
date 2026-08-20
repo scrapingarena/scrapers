@@ -2,28 +2,28 @@
   {
     "id": "vinted",
     "name": "Vinted",
-    "url": "https://www.vinted.com/catalog?search_text=running%20shoes",
+    "url": "https://www.vinted.fr/catalog?search_text=nike",
     "category": "marketplace",
     "protection": "datadome",
     "required_markers": ["Vinted"],
     "min_visible_chars": 100
   },
   {
-    "id": "traveloka",
-    "name": "Traveloka",
-    "url": "https://www.traveloka.com/en-en/hotel",
-    "category": "travel",
-    "protection": "datadome",
-    "required_markers": ["Traveloka", "Hotels"],
+    "id": "databricks-jobs",
+    "name": "Databricks Jobs",
+    "url": "https://www.databricks.com/company/careers/open-positions?department=Engineering&location=all",
+    "category": "jobs",
+    "protection": "unknown",
+    "required_markers": ["Databricks", "Engineering"],
     "min_visible_chars": 100
   },
   {
-    "id": "adidas",
-    "name": "Adidas",
-    "url": "https://www.adidas.com/us/search?q=running%20shoes",
-    "category": "commerce",
-    "protection": "akamai",
-    "required_markers": ["adidas"],
+    "id": "tradingview",
+    "name": "TradingView",
+    "url": "https://www.tradingview.com/symbols/NASDAQ-AAPL/",
+    "category": "finance",
+    "protection": "unknown",
+    "required_markers": ["AAPL", "Apple"],
     "min_visible_chars": 100
   },
   {
@@ -47,7 +47,7 @@
   {
     "id": "skyscanner",
     "name": "Skyscanner",
-    "url": "https://www.skyscanner.com/transport/flights/",
+    "url": "https://www.skyscanner.net/transport/flights/nyca/lond/",
     "category": "travel",
     "protection": "human-security",
     "required_markers": ["Skyscanner", "Flights"],
@@ -65,7 +65,7 @@
   {
     "id": "nike",
     "name": "Nike",
-    "url": "https://www.nike.com/w?q=running%20shoes",
+    "url": "https://www.nike.com/t/kd19-purple-stuff-basketball-shoes-vrLfPVAT/IH1117-500",
     "category": "commerce",
     "protection": "akamai",
     "required_markers": ["Nike"],
@@ -74,7 +74,7 @@
   {
     "id": "best-buy",
     "name": "Best Buy",
-    "url": "https://www.bestbuy.com/site/searchpage.jsp?st=wireless%20headphones",
+    "url": "https://www.bestbuy.com/site/apple-airpods-pro-2nd-generation-with-magsafe-case-usb-c-white/6447382.p?skuId=6447382",
     "category": "commerce",
     "protection": "akamai",
     "required_markers": ["Best Buy"],
@@ -83,7 +83,7 @@
   {
     "id": "home-depot",
     "name": "The Home Depot",
-    "url": "https://www.homedepot.com/s/cordless%20drill",
+    "url": "https://www.homedepot.com/p/Milwaukee-M18-FUEL-18-Volt-Lithium-Ion-Brushless-Cordless-Gen-II-18-Gauge-Brad-Nailer-Tool-Only-2746-20/309752194",
     "category": "commerce",
     "protection": "akamai",
     "required_markers": ["Home Depot"],
@@ -92,34 +92,34 @@
   {
     "id": "lowes",
     "name": "Lowe's",
-    "url": "https://www.lowes.com/search?searchTerm=cordless%20drill",
+    "url": "https://www.lowes.com/pd/James-Martin-Vanities-Bristol-72-in-Whitewashed-Walnut-Undermount-Double-Sink-Bathroom-Vanity-with-Eternal-Jasmine-Pearl-Quartz-Top/5013813827",
     "category": "commerce",
     "protection": "akamai",
     "required_markers": ["Lowe"],
     "min_visible_chars": 100
   },
   {
-    "id": "costco",
-    "name": "Costco",
-    "url": "https://www.costco.com/CatalogSearch?dept=All&keyword=laptop",
+    "id": "digikey",
+    "name": "DigiKey",
+    "url": "https://www.digikey.com/en/products/detail/texas-instruments/NE555P/277057",
     "category": "commerce",
-    "protection": "akamai",
-    "required_markers": ["Costco"],
+    "protection": "unknown",
+    "required_markers": ["NE555P", "Texas Instruments"],
     "min_visible_chars": 100
   },
   {
-    "id": "ikea",
-    "name": "IKEA",
-    "url": "https://www.ikea.com/us/en/search/?q=desk",
+    "id": "ashley-furniture",
+    "name": "Ashley Furniture",
+    "url": "https://www.ashleyfurniture.com/p/roanhowe_dining_table_and_4_chairs/APG-D76935-5P.html",
     "category": "commerce",
-    "protection": "cloudflare",
-    "required_markers": ["IKEA"],
+    "protection": "unknown",
+    "required_markers": ["Ashley", "Roanhowe"],
     "min_visible_chars": 100
   },
   {
     "id": "airbnb",
     "name": "Airbnb",
-    "url": "https://www.airbnb.com/s/New-York--NY/homes",
+    "url": "https://www.airbnb.com/s/Paris--France/homes",
     "category": "travel",
     "protection": "datadome",
     "required_markers": ["Airbnb"],
@@ -146,7 +146,7 @@
   {
     "id": "tripadvisor",
     "name": "Tripadvisor",
-    "url": "https://www.tripadvisor.com/Search?q=hotels",
+    "url": "https://www.tripadvisor.com/Hotels-g35805-Chicago_Illinois-Hotels.html",
     "category": "travel",
     "protection": "datadome",
     "required_markers": ["Tripadvisor"],
@@ -155,7 +155,7 @@
   {
     "id": "kayak",
     "name": "KAYAK",
-    "url": "https://www.kayak.com/flights",
+    "url": "https://www.kayak.com/flights/NYC-CHI",
     "category": "travel",
     "protection": "human-security",
     "required_markers": ["KAYAK"],
@@ -173,7 +173,7 @@
   {
     "id": "realtor",
     "name": "Realtor.com",
-    "url": "https://www.realtor.com/realestateandhomes-search/New-York_NY",
+    "url": "https://www.realtor.com/realestateandhomes-search/Chicago_IL",
     "category": "real-estate",
     "protection": "kasada",
     "required_markers": ["Realtor.com"],
@@ -191,7 +191,7 @@
   {
     "id": "indeed",
     "name": "Indeed",
-    "url": "https://www.indeed.com/jobs?q=software%20engineer",
+    "url": "https://www.indeed.com/l-chicago,-il-jobs.html",
     "category": "jobs",
     "protection": "cloudflare",
     "required_markers": ["Indeed"],
@@ -200,7 +200,7 @@
   {
     "id": "glassdoor",
     "name": "Glassdoor",
-    "url": "https://www.glassdoor.com/Job/software-engineer-jobs-SRCH_KO0,17.htm",
+    "url": "https://www.glassdoor.com/Job/chicago-software-engineer-jobs-SRCH_IL.0,7_IC1128808_KO8,25.htm",
     "category": "jobs",
     "protection": "cloudflare",
     "required_markers": ["Glassdoor"],
@@ -209,7 +209,7 @@
   {
     "id": "walmart",
     "name": "Walmart",
-    "url": "https://www.walmart.com/search?q=wireless%20headphones",
+    "url": "https://www.walmart.com/ip/Nike-Men-s-Short-Sleeve-Just-Do-It-Swoosh-Graphic-Active-T-Shirt-Navy-L/2501897203",
     "category": "commerce",
     "protection": "human-security",
     "required_markers": ["Walmart"],
@@ -218,25 +218,25 @@
   {
     "id": "target",
     "name": "Target",
-    "url": "https://www.target.com/s?searchTerm=wireless%20headphones",
+    "url": "https://www.target.com/p/1-39-6-34-x2-39-6-34-so-happy-you-39-re-here-doormat-natural-threshold-8482/-/A-82253413",
     "category": "commerce",
     "protection": "human-security",
     "required_markers": ["Target"],
     "min_visible_chars": 100
   },
   {
-    "id": "wayfair",
-    "name": "Wayfair",
-    "url": "https://www.wayfair.com/keyword.php?keyword=office%20chair",
-    "category": "commerce",
-    "protection": "human-security",
-    "required_markers": ["Wayfair"],
+    "id": "coinmarketcap",
+    "name": "CoinMarketCap",
+    "url": "https://coinmarketcap.com/currencies/bitcoin/",
+    "category": "finance",
+    "protection": "unknown",
+    "required_markers": ["Bitcoin", "BTC"],
     "min_visible_chars": 100
   },
   {
     "id": "etsy",
     "name": "Etsy",
-    "url": "https://www.etsy.com/search?q=handmade%20wallet",
+    "url": "https://www.etsy.com/listing/4409872205/linen-sheer-cafe-curtains-farmhouse",
     "category": "commerce",
     "protection": "datadome",
     "required_markers": ["Etsy"],
@@ -245,7 +245,7 @@
   {
     "id": "ebay",
     "name": "eBay",
-    "url": "https://www.ebay.com/sch/i.html?_nkw=wireless%20headphones",
+    "url": "https://www.ebay.com/itm/227305215584",
     "category": "commerce",
     "protection": "akamai",
     "required_markers": ["eBay"],
@@ -254,7 +254,7 @@
   {
     "id": "amazon",
     "name": "Amazon",
-    "url": "https://www.amazon.com/s?k=wireless%20headphones",
+    "url": "https://www.amazon.com/Combination-Lock-Shackle-Security-Mounting-Bicycle-Secure/dp/B08KCWFMRS",
     "category": "commerce",
     "protection": "unknown",
     "required_markers": ["Amazon"],
@@ -281,7 +281,7 @@
   {
     "id": "foot-locker",
     "name": "Foot Locker",
-    "url": "https://www.footlocker.com/search?query=running%20shoes",
+    "url": "https://www.footlocker.com/category/mens/shoes.html",
     "category": "commerce",
     "protection": "datadome",
     "required_markers": ["Foot Locker"],
@@ -290,7 +290,7 @@
   {
     "id": "stockx",
     "name": "StockX",
-    "url": "https://stockx.com/search?s=air%20jordan",
+    "url": "https://stockx.com/air-jordan-5-retro-black-university-blue-2026",
     "category": "commerce",
     "protection": "cloudflare",
     "required_markers": ["StockX"],
@@ -306,18 +306,18 @@
     "min_visible_chars": 100
   },
   {
-    "id": "soundcloud",
-    "name": "SoundCloud",
-    "url": "https://soundcloud.com/search?q=electronic%20music",
+    "id": "youtube",
+    "name": "YouTube",
+    "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     "category": "media",
-    "protection": "datadome",
-    "required_markers": ["SoundCloud"],
+    "protection": "unknown",
+    "required_markers": ["Rick Astley", "Never Gonna Give You Up"],
     "min_visible_chars": 100
   },
   {
     "id": "leboncoin",
     "name": "Leboncoin",
-    "url": "https://www.leboncoin.fr/recherche?text=iphone",
+    "url": "https://www.leboncoin.fr/c/voitures",
     "category": "classifieds",
     "protection": "datadome",
     "required_markers": ["leboncoin"],
@@ -335,7 +335,7 @@
   {
     "id": "ticketmaster",
     "name": "Ticketmaster",
-    "url": "https://www.ticketmaster.com/search?q=concerts",
+    "url": "https://www.ticketmaster.com/taylor-swift-tickets/artist/1094215",
     "category": "ticketing",
     "protection": "akamai",
     "required_markers": ["Ticketmaster", "concerts"],
@@ -380,7 +380,7 @@
   {
     "id": "monster",
     "name": "Monster",
-    "url": "https://www.monster.com/jobs/search?q=software%20engineer",
+    "url": "https://www.monster.com/jobs/search?q=Software+Engineer&where=New+York%2C+NY&page=1&so=m.h.s",
     "category": "jobs",
     "protection": "datadome",
     "required_markers": ["Monster", "software engineer"],
@@ -443,10 +443,10 @@
   {
     "id": "goodrx",
     "name": "GoodRx",
-    "url": "https://www.goodrx.com/search?query=ibuprofen",
+    "url": "https://www.goodrx.com/advil",
     "category": "health-commerce",
     "protection": "human-security",
-    "required_markers": ["GoodRx", "ibuprofen"],
+    "required_markers": ["GoodRx", "Advil"],
     "min_visible_chars": 100
   },
   {
@@ -461,7 +461,7 @@
   {
     "id": "reddit",
     "name": "Reddit",
-    "url": "https://www.reddit.com/search/?q=web%20scraping",
+    "url": "https://www.reddit.com/r/webscraping/",
     "category": "social",
     "protection": "fastly",
     "required_markers": ["Reddit"],
@@ -470,16 +470,16 @@
   {
     "id": "pinterest",
     "name": "Pinterest",
-    "url": "https://www.pinterest.com/search/pins/?q=interior%20design",
+    "url": "https://www.pinterest.com/nasa/",
     "category": "social",
     "protection": "unknown",
-    "required_markers": ["Pinterest"],
+    "required_markers": ["Pinterest", "NASA"],
     "min_visible_chars": 100
   },
   {
     "id": "linkedin",
     "name": "LinkedIn",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=software%20engineer",
+    "url": "https://www.linkedin.com/company/microsoft/",
     "category": "social",
     "protection": "cloudflare",
     "required_markers": ["LinkedIn"],
@@ -488,7 +488,7 @@
   {
     "id": "instagram",
     "name": "Instagram",
-    "url": "https://www.instagram.com/explore/tags/travel/",
+    "url": "https://www.instagram.com/nasa/",
     "category": "social",
     "protection": "unknown",
     "required_markers": ["Instagram"],
@@ -497,7 +497,7 @@
   {
     "id": "tiktok",
     "name": "TikTok",
-    "url": "https://www.tiktok.com/search?q=travel",
+    "url": "https://www.tiktok.com/@nba",
     "category": "social",
     "protection": "akamai",
     "required_markers": ["TikTok"],
@@ -578,7 +578,7 @@
   {
     "id": "google",
     "name": "Google",
-    "url": "https://www.google.com/search?q=wireless%20headphones&tbm=shop",
+    "url": "https://www.google.com/search?q=openai",
     "category": "search",
     "protection": "unknown",
     "required_markers": ["Google"],
@@ -605,7 +605,7 @@
   {
     "id": "yelp",
     "name": "Yelp",
-    "url": "https://www.yelp.com/search?find_desc=restaurants&find_loc=New%20York",
+    "url": "https://www.yelp.com/search?find_desc=mexican+restaurant&find_loc=Chicago%2C+IL",
     "category": "local",
     "protection": "datadome",
     "required_markers": ["Yelp"],
@@ -614,10 +614,10 @@
   {
     "id": "yellowpages",
     "name": "Yellow Pages",
-    "url": "https://www.yellowpages.com/search?search_terms=plumber&geo_location_terms=New%20York",
+    "url": "https://www.yellowpages.com/chicago-il/restaurants",
     "category": "local",
     "protection": "cloudflare",
-    "required_markers": ["Yellow Pages", "plumber"],
+    "required_markers": ["Yellow Pages", "restaurants"],
     "min_visible_chars": 100
   },
   {
@@ -668,7 +668,7 @@
   {
     "id": "ziprecruiter",
     "name": "ZipRecruiter",
-    "url": "https://www.ziprecruiter.com/jobs-search?search=software%20engineer",
+    "url": "https://www.ziprecruiter.com/Jobs/Software-Engineer",
     "category": "jobs",
     "protection": "cloudflare",
     "required_markers": ["ZipRecruiter"],
