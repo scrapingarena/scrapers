@@ -10,9 +10,24 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 ROOT = Path(__file__).parents[1]
 CONFIG_PATH = ROOT / "benchmark-scrapers.json"
+
+
+def proxy_url(provider: str, environ: dict[str, str]) -> str:
+    """Build a proxy URL without importing the uv-managed project package."""
+    if provider != "oxylabs":
+        raise ValueError(f"unknown proxy provider: {provider}")
+    username = environ.get("OXYLABS_RESIDENTIAL_PROXIES_USERNAME")
+    password = environ.get("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD")
+    if not username or not password:
+        raise ValueError("Oxylabs proxy credentials are not configured")
+    return (
+        f"http://{quote(username, safe='')}:{quote(password, safe='')}"
+        "@pr.oxylabs.io:7777"
+    )
 
 
 def configurations(proxy_filter: str | None = None) -> list[dict[str, Any]]:
@@ -88,11 +103,7 @@ def execute(args: argparse.Namespace) -> None:
 
     env = os.environ | {"CLOAKBROWSER_AUTO_UPDATE": "false"}
     if config["scraper"] == "obscura" and config["proxy"] != "direct":
-        from scrapingarena.settings import configured_proxy
-
-        proxy = configured_proxy(config["proxy"])
-        assert proxy is not None
-        env["OBSCURA_PROXY"] = proxy.url
+        env["OBSCURA_PROXY"] = proxy_url(config["proxy"], env)
     for command in config["setup_commands"]:
         run_command(command, env=env)
 
