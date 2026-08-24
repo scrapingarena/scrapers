@@ -73,7 +73,7 @@ class ValidationResult(BaseModel):
     confidence: float = Field(ge=0, le=1)
     reasons: list[str] = Field(min_length=1)
     signals: dict[str, Any] = Field(default_factory=dict)
-    validator: str = "deterministic"
+    validator: str = "openai-binary-v1"
 
 
 class AttemptResult(BaseModel):

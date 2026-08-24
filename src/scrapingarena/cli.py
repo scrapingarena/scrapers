@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 from pathlib import Path
 from typing import Annotated
 
@@ -12,11 +11,8 @@ from scrapingarena.merging import merge_reports
 from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.registry import create_scraper, scraper_names
-from scrapingarena.settings import configured_proxy
+from scrapingarena.settings import configured_openai_validator, configured_proxy
 from scrapingarena.targets import default_targets_path, load_targets
-from scrapingarena.validation.base import Validator
-from scrapingarena.validation.composite import CompositeValidator
-from scrapingarena.validation.keyword_fallback import KeywordFallbackValidator
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -57,20 +53,6 @@ def benchmark(
         list[str] | None,
         typer.Option("--scraper", "-s", help="Adapter slug; repeat for multiple."),
     ] = None,
-    validator: Annotated[
-        str,
-        typer.Option(help="deterministic or openai"),
-    ] = "deterministic",
-    openai_fallback: Annotated[
-        bool,
-        typer.Option(
-            "--openai-fallback/--no-openai-fallback",
-            envvar="SCRAPINGARENA_OPENAI_FALLBACK",
-            help=(
-                "Use HTML block keywords when OpenAI is selected but its key is absent."
-            ),
-        ),
-    ] = True,
     targets_path: Annotated[
         Path,
         typer.Option("--targets", exists=True, dir_okay=False),
@@ -97,27 +79,13 @@ def benchmark(
     if limit:
         targets = targets[:limit]
 
-    adjudicator: Validator | None = None
-    if validator == "openai":
-        if os.getenv("OPENAI_API_KEY"):
-            from scrapingarena.validation.openai_validator import OpenAIValidator
-
-            adjudicator = OpenAIValidator()
-        elif openai_fallback:
-            adjudicator = KeywordFallbackValidator()
-            typer.echo(
-                "OPENAI_API_KEY is not set; using HTML block-keyword fallback",
-                err=True,
-            )
-        else:
-            raise typer.BadParameter(
-                "OPENAI_API_KEY is required when --no-openai-fallback is set"
-            )
-    elif validator != "deterministic":
-        raise typer.BadParameter("validator must be deterministic or openai")
+    openai_settings = configured_openai_validator()
+    if not openai_settings.api_key:
+        raise typer.BadParameter("OPENAI_API_KEY is required for validation")
+    from scrapingarena.validation.openai_validator import OpenAIValidator
 
     runner = BenchmarkRunner(
-        CompositeValidator(adjudicator=adjudicator),
+        OpenAIValidator(openai_settings),
         concurrency=concurrency,
         retries=retries,
         timeout_seconds=timeout,

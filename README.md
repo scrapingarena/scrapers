@@ -54,7 +54,7 @@ targets/targets.json                   versioned 100-URL corpus
 benchmark-scrapers.json                Actions runtime matrix
 scripts/benchmark_ci.py                CI setup and execution driver
 src/scrapingarena/scrapers/            scraper adapters
-src/scrapingarena/validation/          deterministic + optional LLM validation
+src/scrapingarena/validation/          OpenAI binary success validation
 src/scrapingarena/runner.py            concurrency, retries, orchestration
 src/scrapingarena/reporting.py         stable JSON reports and aggregation
 .github/workflows/benchmark.yml        scheduled/manual benchmark + commit
@@ -241,37 +241,21 @@ charts begin at the first schema-v3 run.
 
 ## Validation
 
-`CompositeValidator` evaluates evidence in descending order of reliability:
-
-1. transport failures and authoritative response headers;
-2. HTTP status and redirect behavior;
-3. known challenge/block-page HTML signatures;
-4. visible-content size, title, and target-specific required/forbidden markers;
-5. optional OpenAI adjudication for otherwise ambiguous HTML.
-
-The default is deterministic and has no API cost:
-
-```bash
-uv run scrapingarena benchmark --validator deterministic
-```
-
-To adjudicate only ambiguous responses with structured output:
+OpenAI independently classifies every scrape attempt with binary structured output:
 
 ```bash
 export OPENAI_API_KEY=...
 uv sync --extra openai
-uv run scrapingarena benchmark --validator openai
+uv run scrapingarena benchmark
 ```
 
-If `--validator openai` is selected but `OPENAI_API_KEY` is absent, the default
-fallback adjudicates otherwise ambiguous HTML using known block-page keywords.
-Any matching keyword is blocked; HTML with no match is accepted with lower
-confidence. Disable this behavior with `--no-openai-fallback` or
-`SCRAPINGARENA_OPENAI_FALLBACK=false` to require the key strictly.
+Every result goes directly to the model; there are no deterministic status,
+anti-bot signature, or keyword rules. `OPENAI_API_KEY` is required.
+The evidence includes filtered response metadata plus bounded samples from both
+raw HTML and extracted visible text.
 
 The model is configured with `SCRAPINGARENA_OPENAI_MODEL` and defaults to
-`gpt-5.6-luna`. An LLM decision never overrides hard response-header, status, or
-known challenge-signature evidence.
+`gpt-5.6-luna`.
 
 No detector is literally bulletproof. Block pages change, some sites return
 legitimate short pages, and geo/consent/login pages can be domain content but

@@ -5,11 +5,6 @@ on:
     - cron: "17 5 * * *"
   workflow_dispatch:
     inputs:
-      validator:
-        description: "Validation mode"
-        type: choice
-        options: [deterministic, openai]
-        default: deterministic
       limit:
         description: "Optional target limit for a smoke run"
         type: string
@@ -66,7 +61,6 @@ jobs:
         run: |
           python3 scripts/benchmark_ci.py execute \
             --scraper "${{ matrix.scraper.slug }}" \
-            --validator "${{ inputs.validator || 'deterministic' }}" \
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         if: ${{ always() }}
@@ -109,7 +103,6 @@ jobs:
         run: |
           python3 scripts/benchmark_ci.py execute \
             --scraper "${{ matrix.scraper.slug }}" \
-            --validator "${{ inputs.validator || 'deterministic' }}" \
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         if: ${{ always() }}

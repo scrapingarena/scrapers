@@ -4,8 +4,19 @@ import asyncio
 from typing import Any
 
 from scrapingarena.models import ScrapeRequest, Target
+from scrapingarena.scrapers.base import ScraperMetadata
 from scrapingarena.scrapers.lightpanda_scraper import LightpandaScraper
+from scrapingarena.scrapers.playwright_cdp import PlaywrightCdpScraper
 from scrapingarena.settings import ProxySettings
+
+
+class ProxyContextScraper(PlaywrightCdpScraper):
+    metadata = ScraperMetadata(
+        slug="proxy-context",
+        name="Proxy context",
+        kind="browser",
+        homepage="https://example.com",
+    )
 
 
 class FakeResponse:
@@ -130,7 +141,7 @@ async def test_cdp_scraper_times_out_when_cdp_operation_hangs() -> None:
 
 async def test_cdp_scraper_creates_isolated_proxy_context() -> None:
     browser = FakeBrowser([FakeContext()])
-    scraper = LightpandaScraper()
+    scraper = ProxyContextScraper()
     scraper._browser = browser
     proxy = ProxySettings(
         host="proxy.example.com",

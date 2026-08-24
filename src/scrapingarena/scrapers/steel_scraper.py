@@ -45,8 +45,12 @@ class SteelScraper(BaseScraper):
 
         try:
             self._session = await self._client.sessions.create(
-                proxy_url=self._proxy.url,
+                # Steel's current BYOP contract uses the structured useProxy
+                # option. proxyUrl is retained by the SDK for compatibility,
+                # but is no longer the documented custom-proxy path.
+                use_proxy={"server": self._proxy.url},
                 api_timeout=120_000,
+                timeout=150.0,
             )
             self._playwright = await async_playwright().start()
             endpoint = self._session.websocket_url

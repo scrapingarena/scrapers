@@ -6,6 +6,22 @@ from urllib.parse import quote
 
 
 @dataclass(frozen=True, slots=True)
+class OpenAIValidatorSettings:
+    api_key: str | None
+    model: str = "gpt-5.6-luna"
+    timeout_seconds: float = 45
+    max_evidence_chars: int = 12_000
+
+
+def configured_openai_validator() -> OpenAIValidatorSettings:
+    """Load OpenAI validator configuration from the process environment."""
+    return OpenAIValidatorSettings(
+        api_key=os.getenv("OPENAI_API_KEY"),
+        model=os.getenv("SCRAPINGARENA_OPENAI_MODEL", "gpt-5.6-luna"),
+    )
+
+
+@dataclass(frozen=True, slots=True)
 class ProxySettings:
     host: str
     port: int

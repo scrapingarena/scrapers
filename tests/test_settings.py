@@ -2,7 +2,19 @@ from __future__ import annotations
 
 import pytest
 
-from scrapingarena.settings import configured_proxy
+from scrapingarena.settings import configured_openai_validator, configured_proxy
+
+
+def test_openai_validator_settings_are_loaded_from_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("SCRAPINGARENA_OPENAI_MODEL", "test-model")
+
+    settings = configured_openai_validator()
+
+    assert settings.api_key == "test-key"
+    assert settings.model == "test-model"
 
 
 def test_configured_proxies_loads_oxylabs(monkeypatch: pytest.MonkeyPatch) -> None:

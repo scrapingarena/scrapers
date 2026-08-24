@@ -6,12 +6,33 @@ from typing import ClassVar
 
 import pytest
 
-from scrapingarena.models import ScrapeRequest, ScrapeResponse, Target
+from scrapingarena.models import (
+    ScrapeRequest,
+    ScrapeResponse,
+    Target,
+    ValidationResult,
+    Verdict,
+)
 from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
 from scrapingarena.settings import ProxySettings
-from scrapingarena.validation.composite import CompositeValidator
+
+
+class FakeValidator:
+    async def validate(
+        self,
+        target: Target,
+        response: ScrapeResponse,
+    ) -> ValidationResult:
+        del target
+        verdict = Verdict.SUCCESS if response.status_code == 200 else Verdict.FAILED
+        return ValidationResult(
+            verdict=verdict,
+            confidence=1,
+            reasons=["test decision"],
+            validator="fake",
+        )
 
 
 class FakeScraper(BaseScraper):
@@ -78,7 +99,7 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
         }
     )
     report = await BenchmarkRunner(
-        CompositeValidator(),
+        FakeValidator(),
         concurrency=1,
         retries=0,
     ).run([FakeScraper()], [target], targets_path=corpus)
@@ -115,7 +136,7 @@ async def test_runner_logs_and_reopens_scraper_for_three_retries(
         }
     )
 
-    report = await BenchmarkRunner(CompositeValidator(), concurrency=1, retries=3).run(
+    report = await BenchmarkRunner(FakeValidator(), concurrency=1, retries=3).run(
         [RetriedScraper()], [target]
     )
 
@@ -147,7 +168,7 @@ async def test_runner_benchmarks_each_proxy_provider() -> None:
         provider_url="https://example.com/proxy",
     )
 
-    report = await BenchmarkRunner(CompositeValidator(), concurrency=1, retries=0).run(
+    report = await BenchmarkRunner(FakeValidator(), concurrency=1, retries=0).run(
         [FakeScraper()], [target], proxy=proxy
     )
 
