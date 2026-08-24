@@ -56,9 +56,17 @@ def configuration(slug: str) -> dict[str, Any]:
         raise SystemExit(f"unknown scraper configuration: {slug}") from exc
 
 
-def run_command(command: str | list[str], *, env: dict[str, str] | None = None) -> None:
+def run_command(
+    command: str | list[str],
+    *,
+    env: dict[str, str] | None = None,
+    redact_values: tuple[str, ...] = (),
+) -> None:
     arguments = shlex.split(command) if isinstance(command, str) else command
-    print(f"+ {shlex.join(arguments)}", flush=True)
+    display_command = shlex.join(arguments)
+    for value in redact_values:
+        display_command = display_command.replace(value, "***")
+    print(f"+ {display_command}", flush=True)
     subprocess.run(arguments, cwd=ROOT, env=env, check=True)
 
 
@@ -97,8 +105,7 @@ def print_service_diagnostics() -> None:
 def execute(args: argparse.Namespace) -> None:
     config = configuration(args.scraper)
     install_command = shlex.split(config["install_command"])
-    if args.validator == "openai":
-        install_command.extend(("--extra", "openai"))
+    install_command.extend(("--extra", "openai"))
     run_command(install_command)
 
     env = os.environ | {"CLOAKBROWSER_AUTO_UPDATE": "false"}
@@ -108,7 +115,13 @@ def execute(args: argparse.Namespace) -> None:
         run_command(command, env=env)
 
     for command in config["service_commands"]:
-        run_command(command, env=env)
+        arguments = shlex.split(command)
+        redact_values: tuple[str, ...] = ()
+        if config["scraper"] == "lightpanda" and config["proxy"] != "direct":
+            upstream_proxy = proxy_url(config["proxy"], env)
+            arguments.extend(("--http-proxy", upstream_proxy))
+            redact_values = (upstream_proxy,)
+        run_command(arguments, env=env, redact_values=redact_values)
     if config["service_commands"]:
         wait_for_service(config["health_url"])
         if config["proxy"] == "direct":
@@ -118,8 +131,6 @@ def execute(args: argparse.Namespace) -> None:
         *shlex.split(config["benchmark_command"]),
         "--proxy",
         config["proxy"],
-        "--validator",
-        args.validator,
         "--concurrency",
         str(config["concurrency"]),
         "--retries",
@@ -190,9 +201,6 @@ def main() -> None:
 
     execute_parser = subparsers.add_parser("execute")
     execute_parser.add_argument("--scraper", required=True)
-    execute_parser.add_argument(
-        "--validator", choices=("deterministic", "openai"), required=True
-    )
     execute_parser.add_argument("--limit", default="")
 
     aggregate_parser = subparsers.add_parser("aggregate")
