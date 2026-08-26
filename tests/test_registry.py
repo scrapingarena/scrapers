@@ -41,3 +41,5 @@ def test_benchmark_matrix_matches_registry() -> None:
     assert all(
         item["health_url"] for item in configurations if item["service_commands"]
     )
+    obscura = next(item for item in configurations if item["slug"] == "obscura")
+    assert obscura["concurrency"] == 1

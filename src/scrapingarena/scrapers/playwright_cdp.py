@@ -32,15 +32,22 @@ class PlaywrightCdpScraper(BaseScraper):
 
         self._playwright = await async_playwright().start()
         endpoint = os.getenv(self.endpoint_env, "http://127.0.0.1:9222")
-        self._browser = await self._playwright.chromium.connect_over_cdp(endpoint)
+        try:
+            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint)
+        except BaseException:
+            # __aexit__ is not called when __aenter__ fails. Stop the Playwright
+            # driver here so repeated connection failures do not leak processes.
+            await self._close_bounded(self._playwright)
+            self._playwright = None
+            raise
         return self
 
     async def close(self) -> None:
         if self._browser is not None:
-            await self._browser.close()
+            await self._close_bounded(self._browser)
             self._browser = None
         if self._playwright is not None:
-            await self._playwright.stop()
+            await self._close_bounded(self._playwright)
             self._playwright = None
 
     async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
@@ -99,4 +106,5 @@ class PlaywrightCdpScraper(BaseScraper):
     async def _close_bounded(resource: Any) -> None:
         # A wedged CDP connection must not hold the entire benchmark open.
         with contextlib.suppress(Exception):
-            await asyncio.wait_for(resource.close(), timeout=5)
+            close = getattr(resource, "close", None) or resource.stop
+            await asyncio.wait_for(close(), timeout=5)
