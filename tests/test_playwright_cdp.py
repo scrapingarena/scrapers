@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 from typing import Any
 
 from scrapingarena.models import ScrapeRequest, Target
@@ -173,3 +174,44 @@ async def test_cdp_scraper_creates_isolated_proxy_context() -> None:
     }
     assert browser.created_context is not None
     assert browser.created_context.closed
+
+
+async def test_cdp_scraper_stops_playwright_when_connection_fails(
+    monkeypatch: Any,
+) -> None:
+    class Chromium:
+        async def connect_over_cdp(self, _endpoint: str) -> None:
+            raise ConnectionRefusedError("CDP service is unavailable")
+
+    class Playwright:
+        chromium = Chromium()
+
+        def __init__(self) -> None:
+            self.stopped = False
+
+        async def stop(self) -> None:
+            self.stopped = True
+
+    playwright = Playwright()
+
+    class Manager:
+        async def start(self) -> Playwright:
+            return playwright
+
+    fake_module = type(
+        "FakePlaywrightModule",
+        (),
+        {"async_playwright": staticmethod(lambda: Manager())},
+    )()
+    monkeypatch.setitem(sys.modules, "playwright.async_api", fake_module)
+
+    scraper = LightpandaScraper()
+    try:
+        await scraper.__aenter__()
+    except ConnectionRefusedError:
+        pass
+    else:
+        raise AssertionError("connection failure was not propagated")
+
+    assert playwright.stopped
+    assert scraper._playwright is None

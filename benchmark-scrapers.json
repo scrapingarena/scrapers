@@ -106,7 +106,7 @@
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 4
+      "concurrency": 1
     },
     {
       "slug": "steel",
