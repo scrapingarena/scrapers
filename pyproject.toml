@@ -16,6 +16,7 @@ camoufox-original = ["camoufox[geoip]>=0.4,<1"]
 cdp = ["playwright>=1.55,<2"]
 cloakbrowser = ["cloakbrowser[geoip]>=0.3,<1"]
 curl-cffi = ["curl-cffi>=0.14,<1"]
+fortress = ["playwright>=1.55,<2", "tilion-fortress>=149,<152"]
 niquests = ["niquests>=3.18,<4"]
 openai = ["openai>=1.99,<2"]
 shardbrowser = ["shardx>=0.1,<1"]
@@ -57,5 +58,5 @@ strict = true
 files = ["src", "tests"]
 
 [[tool.mypy.overrides]]
-module = ["camoufox.*", "cloakbrowser", "curl_cffi.*", "niquests.*", "openai.*", "playwright.*", "psutil", "shardx.*", "steel.*"]
+module = ["camoufox.*", "cloakbrowser", "curl_cffi.*", "niquests.*", "openai.*", "playwright.*", "psutil", "shardx.*", "steel.*", "tilion_fortress.*"]
 ignore_missing_imports = true

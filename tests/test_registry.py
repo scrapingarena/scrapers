@@ -9,6 +9,7 @@ def test_expected_scrapers_are_registered() -> None:
         "camoufox-original",
         "cloakbrowser",
         "curl-cffi",
+        "fortress",
         "lightpanda",
         "niquests",
         "obscura",
