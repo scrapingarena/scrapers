@@ -37,16 +37,14 @@
   "browser": [
     {
       "slug": "fortress",
-      "install_command": "uv sync --locked --extra fortress",
-      "benchmark_command": "xvfb-run -a uv run scrapingarena benchmark --scraper fortress",
-      "cache_paths": ["~/.cache/tilion-fortress"],
-      "setup_commands": [
-        "sudo apt-get update",
-        "sudo apt-get install -y xvfb",
-        "uv run python -c \"from tilion_fortress import Fortress; f = Fortress(); f.start(); f.close()\""
+      "install_command": "uv sync --locked --extra cdp",
+      "benchmark_command": "uv run scrapingarena benchmark --scraper fortress",
+      "cache_paths": [],
+      "setup_commands": [],
+      "service_commands": [
+        "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 tilion/fortress:149"
       ],
-      "service_commands": [],
-      "health_url": "",
+      "health_url": "http://127.0.0.1:9222/json/version",
       "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 1
     },

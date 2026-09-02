@@ -1,25 +1,7 @@
-from scrapingarena.scrapers.fortress_scraper import fortress_context_options
-from scrapingarena.settings import ProxySettings
+from scrapingarena.scrapers.fortress_scraper import FortressScraper
 
 
-def test_fortress_uses_authenticated_proxy_in_browser_context() -> None:
-    proxy = ProxySettings(
-        host="proxy.example",
-        port=7777,
-        username="user",
-        password="secret",
-        provider_name="test",
-        provider_url="https://proxy.example",
-    )
-
-    assert fortress_context_options(proxy) == {
-        "proxy": {
-            "server": "http://proxy.example:7777",
-            "username": "user",
-            "password": "secret",
-        }
-    }
-
-
-def test_fortress_direct_context_has_no_proxy() -> None:
-    assert fortress_context_options(None) == {}
+def test_fortress_uses_official_cdp_endpoint() -> None:
+    assert FortressScraper.supports_proxy is True
+    assert FortressScraper.endpoint_env == "FORTRESS_CDP_URL"
+    assert FortressScraper.default_endpoint == "http://127.0.0.1:9222"

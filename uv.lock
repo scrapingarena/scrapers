@@ -2077,10 +2077,6 @@ cloakbrowser = [
 curl-cffi = [
     { name = "curl-cffi" },
 ]
-fortress = [
-    { name = "playwright" },
-    { name = "tilion-fortress" },
-]
 niquests = [
     { name = "niquests" },
 ]
@@ -2110,16 +2106,14 @@ requires-dist = [
     { name = "niquests", marker = "extra == 'niquests'", specifier = ">=3.18,<4" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.99,<2" },
     { name = "playwright", marker = "extra == 'cdp'", specifier = ">=1.55,<2" },
-    { name = "playwright", marker = "extra == 'fortress'", specifier = ">=1.55,<2" },
     { name = "psutil", specifier = ">=7,<8" },
     { name = "pydantic", specifier = ">=2.11,<3" },
     { name = "shardx", marker = "extra == 'shardbrowser'", specifier = ">=0.1,<1" },
     { name = "steel-sdk", marker = "extra == 'steel'", specifier = ">=0.1,<1" },
-    { name = "tilion-fortress", marker = "extra == 'fortress'", specifier = ">=149,<152" },
     { name = "typer", specifier = ">=0.16,<1" },
     { name = "wreq", specifier = ">=0.7,<1" },
 ]
-provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "fortress", "niquests", "openai", "shardbrowser", "steel"]
+provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "openai", "shardbrowser", "steel"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2197,15 +2191,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b6/85/ff90f861d3163c61b1dc583cf2ba1e376bd959e2a19b31762a6fb24193eb/steel_sdk-0.19.0.tar.gz", hash = "sha256:02440a95cc4e0b00a2752f215b1c23066ab8b3a30429830adf2bbf040372a193", size = 172973 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/6d/2e/a79dfc99dac6989015ac15523206f8a2f8f08eeaefdc63b69c4703a362a1/steel_sdk-0.19.0-py3-none-any.whl", hash = "sha256:a05183f248638a1e3c58fdcd2f827345f86531e4a36f2cbeaa42aba29bdd3698", size = 153250 },
-]
-
-[[package]]
-name = "tilion-fortress"
-version = "151.0.7908.0.post5"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d7/53/2532d72ffda70e6c0bdb9ebcafdb6b449a870585d455f98568bb2578d0b4/tilion_fortress-151.0.7908.0.post5.tar.gz", hash = "sha256:5e020df42c28140449b237304f73d7547ed2dafd9edcbb1e5e6a6162302b7b0d", size = 10454 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/ac/f9325514c4935f1c08c70fd65837a7ca6d0998df2ff20e71bdbb848d35d3/tilion_fortress-151.0.7908.0.post5-py3-none-any.whl", hash = "sha256:1ec257e2f4406b2aba38024d9afee52e71cc482bd149caa8fe769bbe5bb0e073", size = 7809 },
 ]
 
 [[package]]
