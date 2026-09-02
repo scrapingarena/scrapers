@@ -34,8 +34,16 @@ def validator_with(
     return OpenAIValidator(settings, client=client), responses
 
 
+def page_validation(success: bool) -> PageValidation:
+    return PageValidation(
+        success=success,
+        reason="The page contains useful target data" if success else "No useful data",
+        evidence=["Example evidence"],
+    )
+
+
 async def test_openai_validator_uses_parsed_structured_output() -> None:
-    validator, responses = validator_with(PageValidation(success=False))
+    validator, responses = validator_with(page_validation(False))
     target = Target.model_validate(
         {
             "id": "example",
@@ -59,9 +67,12 @@ async def test_openai_validator_uses_parsed_structured_output() -> None:
 
     assert result.verdict is Verdict.FAILED
     assert result.confidence == 1
-    assert result.reasons == ["OpenAI classified the fetch as failed"]
-    assert result.validator == "openai-binary-v2"
-    assert result.signals == {"model": "test-model"}
+    assert result.reasons == ["No useful data"]
+    assert result.validator == "openai-content-v3"
+    assert result.signals == {
+        "model": "test-model",
+        "evidence": ["Example evidence"],
+    }
     assert responses.arguments["text_format"] is PageValidation
     assert responses.arguments["store"] is False
     evidence = json.loads(responses.arguments["input"])
@@ -80,10 +91,11 @@ async def test_openai_validator_uses_parsed_structured_output() -> None:
     assert evidence["final_url"] == "https://example.com/challenge"
     assert evidence["headers"] == {"content-type": "text/html"}
     sample = evidence["observed_page"]["visible_text_sample"]
-    assert "[...middle omitted...]" in sample
+    assert "[...]" in sample
+    assert len(sample) == 30
     assert sample.startswith("Wait ")
-    assert sample.endswith("x" * 10)
-    assert "<html>" in evidence["observed_page"]["html_sample"]
+    assert sample.endswith("x" * 6)
+    assert evidence["observed_page"]["html_sample"].startswith("<html")
 
 
 async def test_openai_validator_rejects_missing_parsed_output() -> None:
@@ -109,7 +121,7 @@ async def test_openai_validator_rejects_missing_parsed_output() -> None:
 
 
 async def test_openai_validator_maps_true_to_success() -> None:
-    validator, _ = validator_with(PageValidation(success=True))
+    validator, _ = validator_with(page_validation(True))
     target = Target.model_validate(
         {
             "id": "example",
@@ -135,7 +147,7 @@ async def test_openai_validator_maps_true_to_success() -> None:
 async def test_openai_validator_classifies_block_status_without_model(
     status_code: int,
 ) -> None:
-    validator, responses = validator_with(PageValidation(success=True))
+    validator, responses = validator_with(page_validation(True))
     target = Target.model_validate(
         {
             "id": "example",
@@ -158,7 +170,7 @@ async def test_openai_validator_classifies_block_status_without_model(
 
 
 async def test_openai_validator_rejects_scraper_error_without_model() -> None:
-    validator, responses = validator_with(PageValidation(success=True))
+    validator, responses = validator_with(page_validation(True))
     target = Target.model_validate(
         {
             "id": "example",
@@ -181,7 +193,7 @@ async def test_openai_validator_rejects_scraper_error_without_model() -> None:
 
 
 async def test_openai_validator_enforces_target_content_requirements() -> None:
-    validator, responses = validator_with(PageValidation(success=True))
+    validator, responses = validator_with(page_validation(True))
     target = Target.model_validate(
         {
             "id": "example",
@@ -282,7 +294,7 @@ async def test_labeled_failures_are_rejected_without_model(
     response_updates: dict[str, Any],
     expected_verdict: Verdict,
 ) -> None:
-    validator, responses = validator_with(PageValidation(success=True))
+    validator, responses = validator_with(page_validation(True))
 
     result = await validator.validate(
         labeled_target(), labeled_response(**response_updates)
@@ -293,7 +305,7 @@ async def test_labeled_failures_are_rejected_without_model(
 
 
 async def test_labeled_good_page_requires_content_judgment() -> None:
-    validator, responses = validator_with(PageValidation(success=True))
+    validator, responses = validator_with(page_validation(True))
 
     result = await validator.validate(labeled_target(), labeled_response())
 
@@ -302,8 +314,8 @@ async def test_labeled_good_page_requires_content_judgment() -> None:
 
 
 async def test_same_response_has_same_verdict_regardless_of_proxy_path() -> None:
-    direct_validator, _ = validator_with(PageValidation(success=True))
-    proxy_validator, _ = validator_with(PageValidation(success=True))
+    direct_validator, _ = validator_with(page_validation(True))
+    proxy_validator, _ = validator_with(page_validation(True))
     direct_response = labeled_response()
     proxy_response = direct_response.model_copy(deep=True)
 
@@ -311,4 +323,4 @@ async def test_same_response_has_same_verdict_regardless_of_proxy_path() -> None
     proxied = await proxy_validator.validate(labeled_target(), proxy_response)
 
     assert direct == proxied
-    assert direct.validator == "openai-binary-v2"
+    assert direct.validator == "openai-content-v3"
