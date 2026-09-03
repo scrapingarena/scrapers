@@ -42,13 +42,13 @@ jobs:
         scraper: ${{ fromJSON(needs.prepare.outputs.direct) }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: "0.11.32"
           enable-cache: true
       - name: Cache downloaded browser runtimes
         if: ${{ matrix.scraper.cache_paths != '' }}
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ matrix.scraper.cache_paths }}
           key: browser-${{ runner.os }}-${{ matrix.scraper.slug }}-${{ hashFiles('uv.lock') }}
@@ -64,7 +64,7 @@ jobs:
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-${{ matrix.scraper.slug }}
           path: shard-results/${{ matrix.scraper.slug }}/latest.json
@@ -82,13 +82,13 @@ jobs:
         scraper: ${{ fromJSON(needs.prepare.outputs.oxylabs) }}
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: "0.11.32"
           enable-cache: true
       - name: Cache downloaded browser runtimes
         if: ${{ matrix.scraper.cache_paths != '' }}
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ matrix.scraper.cache_paths }}
           key: browser-${{ runner.os }}-${{ matrix.scraper.slug }}-${{ hashFiles('uv.lock') }}
@@ -106,7 +106,7 @@ jobs:
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-${{ matrix.scraper.slug }}
           path: shard-results/${{ matrix.scraper.slug }}/latest.json
@@ -121,11 +121,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           version: "0.11.32"
           enable-cache: true
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: benchmark-*
           path: downloaded-shards
@@ -136,7 +136,7 @@ jobs:
             --ref "${GITHUB_REF_NAME}" \
             --limit "${{ inputs.limit }}"
       - name: Upload full report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: scrapingarena-results-${{ github.run_id }}-${{ github.run_attempt }}
           path: results/
