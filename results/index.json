@@ -2,6 +2,332 @@
   "schema_version": 3,
   "runs": [
     {
+      "run_id": "33957096912-1",
+      "started_at": "2026-09-05T09:07:10.265187+00:00",
+      "summaries": [
+        {
+          "benchmark": "camoufox-original-direct",
+          "scraper": "camoufox-original",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 40,
+          "blocked": 31,
+          "failed": 29,
+          "ambiguous": 0,
+          "success_rate": 40.0,
+          "median_success_ms": 3646.47,
+          "resources": {
+            "duration_ms": 1342368.97,
+            "peak_memory_mb": 1982.57,
+            "average_memory_mb": 901.82,
+            "peak_cpu_cores": 3.63,
+            "average_cpu_cores": 0.943
+          }
+        },
+        {
+          "benchmark": "camoufox-original-oxylabs",
+          "scraper": "camoufox-original",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 40,
+          "blocked": 26,
+          "failed": 34,
+          "ambiguous": 0,
+          "success_rate": 40.0,
+          "median_success_ms": 6924.09,
+          "resources": null
+        },
+        {
+          "benchmark": "cloakbrowser-direct",
+          "scraper": "cloakbrowser",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 37,
+          "blocked": 38,
+          "failed": 25,
+          "ambiguous": 0,
+          "success_rate": 37.0,
+          "median_success_ms": 1982.83,
+          "resources": {
+            "duration_ms": 558701.89,
+            "peak_memory_mb": 1686.21,
+            "average_memory_mb": 696.67,
+            "peak_cpu_cores": 2.737,
+            "average_cpu_cores": 0.292
+          }
+        },
+        {
+          "benchmark": "cloakbrowser-oxylabs",
+          "scraper": "cloakbrowser",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 36,
+          "blocked": 38,
+          "failed": 26,
+          "ambiguous": 0,
+          "success_rate": 36.0,
+          "median_success_ms": 6231.43,
+          "resources": null
+        },
+        {
+          "benchmark": "curl-cffi-direct",
+          "scraper": "curl-cffi",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 40,
+          "blocked": 27,
+          "failed": 33,
+          "ambiguous": 0,
+          "success_rate": 40.0,
+          "median_success_ms": 996.54,
+          "resources": {
+            "duration_ms": 44298.93,
+            "peak_memory_mb": 307.17,
+            "average_memory_mb": 247.79,
+            "peak_cpu_cores": 0.598,
+            "average_cpu_cores": 0.126
+          }
+        },
+        {
+          "benchmark": "curl-cffi-oxylabs",
+          "scraper": "curl-cffi",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 40,
+          "blocked": 30,
+          "failed": 30,
+          "ambiguous": 0,
+          "success_rate": 40.0,
+          "median_success_ms": 2195.15,
+          "resources": null
+        },
+        {
+          "benchmark": "fortress-direct",
+          "scraper": "fortress",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 44,
+          "blocked": 31,
+          "failed": 25,
+          "ambiguous": 0,
+          "success_rate": 44.0,
+          "median_success_ms": 2136.96,
+          "resources": {
+            "duration_ms": 620723.9,
+            "peak_memory_mb": 1527.93,
+            "average_memory_mb": 952.15,
+            "peak_cpu_cores": 3.901,
+            "average_cpu_cores": 1.153
+          }
+        },
+        {
+          "benchmark": "fortress-oxylabs",
+          "scraper": "fortress",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 32,
+          "blocked": 29,
+          "failed": 39,
+          "ambiguous": 0,
+          "success_rate": 32.0,
+          "median_success_ms": 4809.39,
+          "resources": null
+        },
+        {
+          "benchmark": "lightpanda-direct",
+          "scraper": "lightpanda",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 29,
+          "blocked": 44,
+          "failed": 27,
+          "ambiguous": 0,
+          "success_rate": 29.0,
+          "median_success_ms": 1720.9,
+          "resources": {
+            "duration_ms": 526128.54,
+            "peak_memory_mb": 821.6,
+            "average_memory_mb": 562.06,
+            "peak_cpu_cores": 1.627,
+            "average_cpu_cores": 0.229
+          }
+        },
+        {
+          "benchmark": "lightpanda-oxylabs",
+          "scraper": "lightpanda",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 31,
+          "blocked": 42,
+          "failed": 27,
+          "ambiguous": 0,
+          "success_rate": 31.0,
+          "median_success_ms": 5206.41,
+          "resources": null
+        },
+        {
+          "benchmark": "niquests-direct",
+          "scraper": "niquests",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 27,
+          "blocked": 51,
+          "failed": 22,
+          "ambiguous": 0,
+          "success_rate": 27.0,
+          "median_success_ms": 908.2,
+          "resources": {
+            "duration_ms": 89103.77,
+            "peak_memory_mb": 307.57,
+            "average_memory_mb": 281.14,
+            "peak_cpu_cores": 0.599,
+            "average_cpu_cores": 0.061
+          }
+        },
+        {
+          "benchmark": "niquests-oxylabs",
+          "scraper": "niquests",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 25,
+          "blocked": 49,
+          "failed": 26,
+          "ambiguous": 0,
+          "success_rate": 25.0,
+          "median_success_ms": 2706.15,
+          "resources": null
+        },
+        {
+          "benchmark": "obscura-direct",
+          "scraper": "obscura",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 4,
+          "blocked": 2,
+          "failed": 94,
+          "ambiguous": 0,
+          "success_rate": 4.0,
+          "median_success_ms": 3903.64,
+          "resources": {
+            "duration_ms": 626155.45,
+            "peak_memory_mb": 2283.95,
+            "average_memory_mb": 1397.77,
+            "peak_cpu_cores": 1.797,
+            "average_cpu_cores": 0.484
+          }
+        },
+        {
+          "benchmark": "obscura-oxylabs",
+          "scraper": "obscura",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 22,
+          "blocked": 35,
+          "failed": 43,
+          "ambiguous": 0,
+          "success_rate": 22.0,
+          "median_success_ms": 13164.01,
+          "resources": null
+        },
+        {
+          "benchmark": "shardbrowser-direct",
+          "scraper": "shardbrowser",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 45,
+          "blocked": 23,
+          "failed": 32,
+          "ambiguous": 0,
+          "success_rate": 45.0,
+          "median_success_ms": 4237.23,
+          "resources": {
+            "duration_ms": 339704.06,
+            "peak_memory_mb": 9241.88,
+            "average_memory_mb": 4347.69,
+            "peak_cpu_cores": 3.922,
+            "average_cpu_cores": 1.13
+          }
+        },
+        {
+          "benchmark": "shardbrowser-oxylabs",
+          "scraper": "shardbrowser",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 49,
+          "blocked": 22,
+          "failed": 29,
+          "ambiguous": 0,
+          "success_rate": 49.0,
+          "median_success_ms": 5606.37,
+          "resources": null
+        },
+        {
+          "benchmark": "steel-direct",
+          "scraper": "steel",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 41,
+          "blocked": 0,
+          "failed": 59,
+          "ambiguous": 0,
+          "success_rate": 41.0,
+          "median_success_ms": 2088.88,
+          "resources": {
+            "duration_ms": 516984.13,
+            "peak_memory_mb": 4129.65,
+            "average_memory_mb": 2728.9,
+            "peak_cpu_cores": 3.433,
+            "average_cpu_cores": 1.968
+          }
+        },
+        {
+          "benchmark": "steel-oxylabs",
+          "scraper": "steel",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 3,
+          "blocked": 1,
+          "failed": 96,
+          "ambiguous": 0,
+          "success_rate": 3.0,
+          "median_success_ms": 2120.63,
+          "resources": null
+        },
+        {
+          "benchmark": "wreq-direct",
+          "scraper": "wreq",
+          "proxy_provider": null,
+          "total": 100,
+          "success": 27,
+          "blocked": 42,
+          "failed": 31,
+          "ambiguous": 0,
+          "success_rate": 27.0,
+          "median_success_ms": 771.71,
+          "resources": {
+            "duration_ms": 36983.31,
+            "peak_memory_mb": 262.88,
+            "average_memory_mb": 227.06,
+            "peak_cpu_cores": 0.568,
+            "average_cpu_cores": 0.098
+          }
+        },
+        {
+          "benchmark": "wreq-oxylabs",
+          "scraper": "wreq",
+          "proxy_provider": "oxylabs",
+          "total": 100,
+          "success": 27,
+          "blocked": 44,
+          "failed": 29,
+          "ambiguous": 0,
+          "success_rate": 27.0,
+          "median_success_ms": 1744.19,
+          "resources": null
+        }
+      ]
+    },
+    {
       "run_id": "33859558523-1",
       "started_at": "2026-09-04T09:41:36.877364+00:00",
       "summaries": [
