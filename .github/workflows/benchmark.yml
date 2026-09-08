@@ -95,6 +95,8 @@ jobs:
       - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OXYLABS_PROXIES_USERNAME: ${{ secrets.OXYLABS_PROXIES_USERNAME }}
+          OXYLABS_PROXIES_PASSWORD: ${{ secrets.OXYLABS_PROXIES_PASSWORD }}
           OXYLABS_RESIDENTIAL_PROXIES_USERNAME: ${{ secrets.OXYLABS_RESIDENTIAL_PROXIES_USERNAME }}
           OXYLABS_RESIDENTIAL_PROXIES_PASSWORD: ${{ secrets.OXYLABS_RESIDENTIAL_PROXIES_PASSWORD }}
           SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}

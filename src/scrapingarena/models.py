@@ -128,7 +128,9 @@ class ScraperSummary(BaseModel):
     failed: int
     ambiguous: int
     success_rate: float
+    proxy_connect_failures: int = 0
     median_success_ms: float | None
+    median_total_ms: float | None = None
     resources: ResourceUsage | None = None
 
 

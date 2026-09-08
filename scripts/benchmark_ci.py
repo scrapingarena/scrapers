@@ -20,10 +20,27 @@ def proxy_url(provider: str, environ: dict[str, str]) -> str:
     """Build a proxy URL without importing the uv-managed project package."""
     if provider != "oxylabs":
         raise ValueError(f"unknown proxy provider: {provider}")
-    username = environ.get("OXYLABS_RESIDENTIAL_PROXIES_USERNAME")
-    password = environ.get("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD")
+    username = environ.get("OXYLABS_PROXIES_USERNAME")
+    password = environ.get("OXYLABS_PROXIES_PASSWORD")
+    if not username and not password:
+        username = environ.get("OXYLABS_RESIDENTIAL_PROXIES_USERNAME")
+        password = environ.get("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD")
     if not username or not password:
         raise ValueError("Oxylabs proxy credentials are not configured")
+    if "-cc-" not in username:
+        username = f"{username}-cc-US"
+    # Service-backed browsers cannot receive the per-target session generated
+    # by the Python runner. Give the whole isolated matrix job one stable US IP.
+    if "-sessid-" not in username:
+        run_session = "".join(
+            c
+            for c in environ.get(
+                "SCRAPINGARENA_PROXY_SESSION",
+                environ.get("SCRAPINGARENA_RUN_ID", "benchmark"),
+            )
+            if c.isalnum()
+        )[:24]
+        username = f"{username}-sessid-{run_session}-sesstime-10"
     return (
         f"http://{quote(username, safe='')}:{quote(password, safe='')}"
         "@pr.oxylabs.io:7777"
@@ -108,7 +125,10 @@ def execute(args: argparse.Namespace) -> None:
     install_command.extend(("--extra", "openai"))
     run_command(install_command)
 
-    env = os.environ | {"CLOAKBROWSER_AUTO_UPDATE": "false"}
+    env = os.environ | {
+        "CLOAKBROWSER_AUTO_UPDATE": "false",
+        "SCRAPINGARENA_PROXY_SESSION": config["slug"],
+    }
     if config["scraper"] == "obscura" and config["proxy"] != "direct":
         env["OBSCURA_PROXY"] = proxy_url(config["proxy"], env)
     for command in config["setup_commands"]:

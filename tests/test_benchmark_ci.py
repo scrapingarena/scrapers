@@ -19,7 +19,10 @@ def test_proxy_url_is_available_to_system_python_driver() -> None:
         },
     )
 
-    assert url == "http://user%40example.com:p%2Fa%3Ass@pr.oxylabs.io:7777"
+    assert url == (
+        "http://user%40example.com-cc-US-sessid-benchmark-sesstime-10:"
+        "p%2Fa%3Ass@pr.oxylabs.io:7777"
+    )
 
 
 def test_proxy_url_rejects_missing_credentials() -> None:
