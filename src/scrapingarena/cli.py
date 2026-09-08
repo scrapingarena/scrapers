@@ -107,7 +107,9 @@ def benchmark(
     for summary in report.summaries:
         typer.echo(
             f"{summary.benchmark}: {summary.success}/{summary.total} success "
-            f"({summary.success_rate:.2f}%), median={summary.median_success_ms}ms"
+            f"({summary.success_rate:.2f}%), "
+            f"median-total={summary.median_total_ms}ms, "
+            f"proxy-connect-failures={summary.proxy_connect_failures}"
         )
     typer.echo(f"Wrote {run_path} and {latest_path}")
 

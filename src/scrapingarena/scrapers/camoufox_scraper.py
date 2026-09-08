@@ -62,6 +62,9 @@ class CamoufoxScraper(BaseScraper):
                 wait_until="domcontentloaded",
                 timeout=request.timeout_seconds * 1000,
             )
+            wait_for_timeout = getattr(page, "wait_for_timeout", None)
+            if wait_for_timeout is not None:
+                await wait_for_timeout(2_000)
             return ScrapeResponse(
                 requested_url=request.target.url_string,
                 final_url=page.url,

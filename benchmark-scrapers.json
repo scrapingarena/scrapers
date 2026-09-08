@@ -9,7 +9,7 @@
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 10
+      "concurrency": 1
     },
     {
       "slug": "niquests",
@@ -20,7 +20,7 @@
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 10
+      "concurrency": 1
     },
     {
       "slug": "wreq",
@@ -31,7 +31,7 @@
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 10
+      "concurrency": 1
     }
   ],
   "browser": [
@@ -91,7 +91,7 @@
       "service_commands": [],
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
-      "concurrency": 4
+      "concurrency": 1
     }
   ],
   "agent": [

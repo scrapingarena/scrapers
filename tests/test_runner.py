@@ -110,6 +110,7 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
     index = json.loads((tmp_path / "results" / "index.json").read_text())
 
     assert report.summaries[0].success_rate == 100
+    assert report.summaries[0].median_total_ms is not None
     assert report.summaries[0].resources is not None
     assert report.summaries[0].resources.samples
     assert "samples" not in index["runs"][0]["summaries"][0]["resources"]
@@ -122,7 +123,7 @@ async def test_runner_scores_and_report_excludes_html_and_headers(
     )
 
 
-async def test_runner_logs_and_reopens_scraper_for_three_retries(
+async def test_sequential_runner_reuses_one_scraper_for_three_retries(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     RetriedScraper.opened = 0
@@ -141,8 +142,9 @@ async def test_runner_logs_and_reopens_scraper_for_three_retries(
     )
 
     assert len(report.results["retried-direct"][0].attempts) == 4
-    assert RetriedScraper.opened == 4
-    assert RetriedScraper.closed == 4
+    assert RetriedScraper.opened == 1
+    # The unused prototype and the active benchmark instance are both closed.
+    assert RetriedScraper.closed == 2
     output = capsys.readouterr().out
     assert "[retried-direct] example attempt 1/4 start" in output
     assert "[retried-direct] example attempt 4/4 result=failed status=500" in output

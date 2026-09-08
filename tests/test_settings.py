@@ -27,7 +27,38 @@ def test_configured_proxies_loads_oxylabs(monkeypatch: pytest.MonkeyPatch) -> No
     assert proxy.provider_name == "oxylabs"
     assert proxy.host == "pr.oxylabs.io"
     assert proxy.port == 7777
-    assert proxy.url == "http://user%40example.com:p%2Fa%3Ass@pr.oxylabs.io:7777"
+    assert proxy.url == (
+        "http://user%40example.com-cc-US:p%2Fa%3Ass@pr.oxylabs.io:7777"
+    )
+
+
+def test_generic_oxylabs_credentials_are_supported(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OXYLABS_PROXIES_USERNAME", "premium-user")
+    monkeypatch.setenv("OXYLABS_PROXIES_PASSWORD", "secret")
+
+    proxy = configured_proxy("oxylabs")
+
+    assert proxy is not None
+    assert proxy.provider_name == "oxylabs"
+    assert proxy.username == "premium-user-cc-US"
+
+
+def test_proxy_session_is_stable_and_target_specific(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OXYLABS_RESIDENTIAL_PROXIES_USERNAME", "user")
+    monkeypatch.setenv("OXYLABS_RESIDENTIAL_PROXIES_PASSWORD", "secret")
+    proxy = configured_proxy("oxylabs")
+
+    assert proxy is not None
+    first = proxy.with_session("target-one")
+    repeated = proxy.with_session("target-one")
+    second = proxy.with_session("target-two")
+    assert first.username == repeated.username
+    assert first.username != second.username
+    assert "-cc-US-sessid-targetone-sesstime-10" in first.username
 
 
 def test_configured_proxies_rejects_partial_credentials(
