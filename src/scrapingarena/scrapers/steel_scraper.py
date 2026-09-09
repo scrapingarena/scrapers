@@ -45,11 +45,9 @@ class SteelScraper(BaseScraper):
 
         try:
             self._session = await self._client.sessions.create(
-                # Steel's current BYOP contract uses the structured useProxy
-                # option. proxyUrl is retained by the SDK for compatibility,
-                # but is no longer the documented custom-proxy path.
-                use_proxy={"server": self._proxy.url},
-                api_timeout=120_000,
+                # The self-hosted steel-browser schema reads proxyUrl. The
+                # cloud-only useProxy option is ignored by this server.
+                proxy_url=self._proxy.url,
                 timeout=150.0,
             )
             self._playwright = await async_playwright().start()
@@ -65,17 +63,22 @@ class SteelScraper(BaseScraper):
         return self
 
     async def close(self) -> None:
+        browser, playwright, session = (self._browser, self._playwright, self._session)
+        self._browser = self._playwright = self._session = None
+        # A disconnected CDP client must not prevent releasing the server
+        # session or closing the SDK client.
         try:
-            if self._browser is not None:
-                await self._browser.close()
-            if self._playwright is not None:
-                await self._playwright.stop()
-            if self._session is not None:
-                await self._client.sessions.release(self._session.id)
+            try:
+                if browser is not None:
+                    await browser.close()
+            finally:
+                try:
+                    if playwright is not None:
+                        await playwright.stop()
+                finally:
+                    if session is not None:
+                        await self._client.sessions.release(session.id)
         finally:
-            self._browser = None
-            self._playwright = None
-            self._session = None
             await self._client.close()
 
     async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
@@ -108,6 +111,7 @@ class SteelScraper(BaseScraper):
             response = await self._client.scrape(
                 url=request.target.url_string,
                 format=["html"],
+                delay=2_000,
                 timeout=request.timeout_seconds,
             )
             return ScrapeResponse(

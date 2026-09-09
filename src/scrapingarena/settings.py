@@ -45,21 +45,6 @@ class ProxySettings:
             redacted = redacted.replace(quote(secret, safe=""), "***")
         return redacted
 
-    def with_session(self, session_id: str) -> ProxySettings:
-        """Return credentials pinned to one exit IP for a target's retries."""
-        safe_session = "".join(c for c in session_id.lower() if c.isalnum())[:24]
-        username = self.username
-        if "-sessid-" not in username:
-            username = f"{username}-sessid-{safe_session}-sesstime-10"
-        return ProxySettings(
-            host=self.host,
-            port=self.port,
-            username=username,
-            password=self.password,
-            provider_name=self.provider_name,
-            provider_url=self.provider_url,
-        )
-
 
 def configured_proxy(provider_name: str) -> ProxySettings | None:
     """Load one named provider, with ``direct`` representing no proxy."""
@@ -80,9 +65,7 @@ def configured_proxy(provider_name: str) -> ProxySettings | None:
         raise ValueError(f"{username_key} and {password_key} must be set together")
     if not username or not password:
         raise ValueError("Oxylabs proxy credentials are not configured")
-    # The purchased Oxylabs account selects the underlying premium proxy pool.
-    if "-cc-" not in username:
-        username = f"{username}-cc-US"
+    # Preserve provider-issued credentials, including any explicit routing options.
     return ProxySettings(
         host="pr.oxylabs.io",
         port=7777,

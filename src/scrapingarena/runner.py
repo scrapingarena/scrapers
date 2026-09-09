@@ -122,7 +122,7 @@ class BenchmarkRunner:
         # sessions exhausted Steel's local API and turned almost every proxied
         # target into APIConnectionError rather than a meaningful scrape result.
         if self._concurrency == 1:
-            session_proxy = proxy.with_session(benchmark_name) if proxy else None
+            session_proxy = proxy
             session_scraper = type(scraper)(proxy=session_proxy)
             # The registry supplies a prototype instance. Once a configured
             # session instance exists, release any constructor-owned client on
@@ -164,9 +164,7 @@ class BenchmarkRunner:
         reuse_scraper: bool,
     ) -> TargetResult:
         attempts: list[AttemptResult] = []
-        target_proxy = (
-            proxy.with_session(f"{benchmark_name}-{target.id}") if proxy else None
-        )
+        target_proxy = proxy
         request = ScrapeRequest(
             target=target,
             timeout_seconds=self._timeout_seconds,
