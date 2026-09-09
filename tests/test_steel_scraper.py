@@ -16,7 +16,7 @@ class AsyncContextManager:
 
 
 @pytest.mark.asyncio
-async def test_steel_uses_structured_byop_proxy(
+async def test_steel_uses_self_hosted_proxy_url(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     create_arguments: dict[str, Any] = {}
@@ -70,9 +70,34 @@ async def test_steel_uses_structured_byop_proxy(
         pass
 
     assert create_arguments == {
-        "use_proxy": {
-            "server": ("http://user%40example.com:p%40ss%3Aword@proxy.example.com:8080")
-        },
-        "api_timeout": 120_000,
+        "proxy_url": "http://user%40example.com:p%40ss%3Aword@proxy.example.com:8080",
         "timeout": 150.0,
     }
+
+
+@pytest.mark.asyncio
+async def test_steel_cleanup_releases_session_when_cdp_close_fails() -> None:
+    from unittest.mock import AsyncMock
+
+    scraper = object.__new__(SteelScraper)
+    scraper._browser = SimpleNamespace(
+        close=AsyncMock(side_effect=RuntimeError("disconnected"))
+    )
+    stop = AsyncMock()
+    release = AsyncMock()
+    close = AsyncMock()
+    scraper._playwright = SimpleNamespace(stop=stop)
+    scraper._session = SimpleNamespace(id="session-id")
+    scraper._client = SimpleNamespace(
+        sessions=SimpleNamespace(release=release), close=close
+    )
+
+    with pytest.raises(RuntimeError, match="disconnected"):
+        await scraper.close()
+
+    stop.assert_awaited_once()
+    release.assert_awaited_once_with("session-id")
+    close.assert_awaited_once()
+    assert scraper._browser is None
+    assert scraper._session is None
+    assert scraper._playwright is None

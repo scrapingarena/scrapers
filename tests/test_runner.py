@@ -179,3 +179,43 @@ async def test_runner_benchmarks_each_proxy_provider() -> None:
     assert report.summaries[0].scraper == "fake"
     assert report.summaries[0].proxy_provider == "example-proxy"
     assert report.summaries[0].resources is None
+
+
+@pytest.mark.parametrize("concurrency", [1, 2])
+async def test_runner_preserves_proxy_credentials_across_retries(
+    concurrency: int,
+) -> None:
+    proxy = ProxySettings(
+        host="pr.oxylabs.io",
+        port=7777,
+        username="customer-test",
+        password="secret",
+        provider_name="oxylabs",
+        provider_url="https://oxylabs.io",
+    )
+    seen: list[ProxySettings | None] = []
+
+    class CredentialScraper(FakeScraper):
+        async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
+            assert self._proxy == proxy
+            seen.append(request.proxy)
+            return ScrapeResponse(
+                requested_url=request.target.url_string,
+                status_code=500,
+                duration_ms=1,
+            )
+
+    target = Target.model_validate(
+        {
+            "id": "example",
+            "name": "Example",
+            "url": "https://example.com/",
+            "category": "test",
+        }
+    )
+    await BenchmarkRunner(FakeValidator(), concurrency=concurrency, retries=1).run(
+        [CredentialScraper()],
+        [target],
+        proxy=proxy,
+    )
+    assert seen == [proxy, proxy]
