@@ -88,22 +88,32 @@ def wait_for_service(url: str) -> None:
 
 def print_service_diagnostics() -> None:
     """Leave useful evidence when a service dies without failing the job."""
-    subprocess.run(
-        [
-            "docker",
-            "inspect",
-            "--format",
-            "{{json .State}}",
-            "scrapingarena-browser",
-        ],
-        cwd=ROOT,
-        check=False,
-    )
-    subprocess.run(
-        ["docker", "logs", "--tail", "200", "scrapingarena-browser"],
-        cwd=ROOT,
-        check=False,
-    )
+    grouped = os.getenv("GITHUB_ACTIONS") == "true"
+    if grouped:
+        print(
+            "::group::Browser container diagnostics (benchmark traceback is above)",
+            flush=True,
+        )
+    try:
+        subprocess.run(
+            [
+                "docker",
+                "inspect",
+                "--format",
+                "{{json .State}}",
+                "scrapingarena-browser",
+            ],
+            cwd=ROOT,
+            check=False,
+        )
+        subprocess.run(
+            ["docker", "logs", "--tail", "200", "scrapingarena-browser"],
+            cwd=ROOT,
+            check=False,
+        )
+    finally:
+        if grouped:
+            print("::endgroup::", flush=True)
 
 
 def execute(args: argparse.Namespace) -> None:

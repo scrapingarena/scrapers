@@ -58,6 +58,8 @@ class PlaywrightCdpScraper(BaseScraper):
         context = None
         owns_context = False
         page = None
+        response = None
+        stage = "creating page"
         try:
             async with asyncio.timeout(request.timeout_seconds):
                 if request.proxy:
@@ -77,36 +79,58 @@ class PlaywrightCdpScraper(BaseScraper):
                     context = await self._browser.new_context()
                     owns_context = True
                 page = await context.new_page()
+                stage = "navigating"
+                remaining = request.timeout_seconds - (time.perf_counter() - started)
+                # Let Playwright finish its own timeout before the outer CDP
+                # watchdog cancels the call. Reserve time for capture/cleanup.
+                navigation_timeout_ms = max(1, remaining * 0.8 * 1000)
                 response = await page.goto(
                     request.target.url_string,
                     wait_until="domcontentloaded",
-                    timeout=request.timeout_seconds * 1000,
+                    timeout=navigation_timeout_ms,
                 )
                 # DOMContentLoaded often precedes hydration and result-list API
                 # responses. Give client-rendered pages a small, fixed window so
                 # HTTP clients are not advantaged by premature browser capture.
+                stage = "waiting for page rendering"
                 wait_for_timeout = getattr(page, "wait_for_timeout", None)
                 if wait_for_timeout is not None:
                     await wait_for_timeout(2_000)
+                stage = "capturing page"
+                html = await self._page_content(page)
                 return ScrapeResponse(
                     requested_url=request.target.url_string,
                     final_url=page.url,
                     status_code=response.status if response else None,
                     headers=await response.all_headers() if response else {},
-                    html=await page.content(),
+                    html=html,
                     duration_ms=(time.perf_counter() - started) * 1000,
                 )
         except Exception as exc:
+            detail = str(exc) or f"CDP deadline exceeded while {stage}"
             return ScrapeResponse(
                 requested_url=request.target.url_string,
                 duration_ms=(time.perf_counter() - started) * 1000,
-                error=f"{type(exc).__name__}: {exc}",
+                status_code=response.status if response else None,
+                error=f"{type(exc).__name__}: {detail}",
             )
         finally:
             if page is not None:
                 await self._close_bounded(page)
             if owns_context and context is not None:
                 await self._close_bounded(context)
+
+    @staticmethod
+    async def _page_content(page: Any) -> str:
+        # Redirects/hydration can replace the document between goto and content.
+        # Retry only this transient capture race, under the attempt's deadline.
+        while True:
+            try:
+                return str(await page.content())
+            except Exception as exc:
+                if "page is navigating and changing the content" not in str(exc):
+                    raise
+                await asyncio.sleep(0.1)
 
     @staticmethod
     async def _close_bounded(resource: Any) -> None:
