@@ -215,3 +215,71 @@ async def test_cdp_scraper_stops_playwright_when_connection_fails(
 
     assert playwright.stopped
     assert scraper._playwright is None
+
+
+async def test_capture_retries_navigation_race_within_attempt() -> None:
+    class NavigatingPage(FakePage):
+        calls = 0
+
+        async def goto(self, *_args: Any, **kwargs: Any) -> FakeResponse:
+            assert 0 < kwargs["timeout"] < 1000
+            return FakeResponse()
+
+        async def content(self) -> str:
+            self.calls += 1
+            if self.calls == 1:
+                raise RuntimeError(
+                    "Unable to retrieve content because the "
+                    "page is navigating and changing the content."
+                )
+            return "<html>ready</html>"
+
+    context = FakeContext()
+    page = NavigatingPage()
+    context.page = page
+    scraper = LightpandaScraper()
+    scraper._browser = FakeBrowser([context])
+    response = await scraper.scrape(
+        ScrapeRequest(
+            target=Target.model_validate(
+                {
+                    "id": "example",
+                    "name": "Example",
+                    "url": "https://example.com",
+                    "category": "test",
+                }
+            ),
+            timeout_seconds=1,
+        )
+    )
+    assert response.html == "<html>ready</html>"
+    assert response.status_code == 200
+    assert page.calls == 2
+    assert page.closed
+
+
+async def test_capture_race_is_bounded_and_preserves_http_status() -> None:
+    class NavigatingPage(FakePage):
+        async def content(self) -> str:
+            raise RuntimeError("page is navigating and changing the content")
+
+    context = FakeContext()
+    context.page = NavigatingPage()
+    scraper = LightpandaScraper()
+    scraper._browser = FakeBrowser([context])
+    response = await scraper.scrape(
+        ScrapeRequest(
+            target=Target.model_validate(
+                {
+                    "id": "example",
+                    "name": "Example",
+                    "url": "https://example.com",
+                    "category": "test",
+                }
+            ),
+            timeout_seconds=0.02,
+        )
+    )
+    assert response.error == "TimeoutError: CDP deadline exceeded while capturing page"
+    assert response.status_code == 200
+    assert context.page.closed

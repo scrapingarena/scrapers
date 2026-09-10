@@ -155,9 +155,9 @@ To add a provider:
 2. Confirm that each adapter which will use the provider passes
    `request.proxy` to its underlying HTTP or browser client. Adding a provider
    to the matrix does not add proxy support to an adapter. At present,
-   All current adapters support external proxy requests. Steel uses its quick
-   scrape endpoint for direct requests and its session/CDP API for external
-   proxies because the quick endpoint only exposes Steel-managed proxies.
+   All current adapters support external proxy requests. Steel uses its self-hosted quick
+   scrape endpoint for both direct and external-proxy requests, passing the
+   provider URL through the endpoint’s `proxyUrl` field.
 3. Add the provider name to that adapter's `proxy_providers` list in
    `benchmark-scrapers.json`:
 

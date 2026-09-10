@@ -29,89 +29,20 @@ class SteelScraper(BaseScraper):
             steel_api_key=os.getenv("STEEL_API_KEY"),
             base_url=os.getenv("STEEL_BASE_URL", "http://127.0.0.1:3000"),
         )
-        self._session: Any = None
-        self._playwright: Any = None
-        self._browser: Any = None
-
-    async def __aenter__(self) -> SteelScraper:
-        if not self._proxy:
-            return self
-        try:
-            from playwright.async_api import async_playwright
-        except ImportError as exc:
-            raise RuntimeError(
-                "proxied steel requires the 'cdp' project extra"
-            ) from exc
-
-        try:
-            self._session = await self._client.sessions.create(
-                # The self-hosted steel-browser schema reads proxyUrl. The
-                # cloud-only useProxy option is ignored by this server.
-                proxy_url=self._proxy.url,
-                timeout=150.0,
-            )
-            self._playwright = await async_playwright().start()
-            endpoint = self._session.websocket_url
-            api_key = os.getenv("STEEL_API_KEY")
-            if api_key:
-                separator = "&" if "?" in endpoint else "?"
-                endpoint = f"{endpoint}{separator}apiKey={api_key}"
-            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint)
-        except BaseException:
-            await self.close()
-            raise
-        return self
 
     async def close(self) -> None:
-        browser, playwright, session = (self._browser, self._playwright, self._session)
-        self._browser = self._playwright = self._session = None
-        # A disconnected CDP client must not prevent releasing the server
-        # session or closing the SDK client.
-        try:
-            try:
-                if browser is not None:
-                    await browser.close()
-            finally:
-                try:
-                    if playwright is not None:
-                        await playwright.stop()
-                finally:
-                    if session is not None:
-                        await self._client.sessions.release(session.id)
-        finally:
-            await self._client.close()
+        await self._client.close()
 
     async def scrape(self, request: ScrapeRequest) -> ScrapeResponse:
         started = time.perf_counter()
         try:
-            if request.proxy:
-                if self._browser is None:
-                    raise RuntimeError("steel proxy session is not connected")
-                context = self._browser.contexts[0]
-                page = await context.new_page()
-                try:
-                    response = await page.goto(
-                        request.target.url_string,
-                        wait_until="domcontentloaded",
-                        timeout=request.timeout_seconds * 1000,
-                    )
-                    wait_for_timeout = getattr(page, "wait_for_timeout", None)
-                    if wait_for_timeout is not None:
-                        await wait_for_timeout(2_000)
-                    return ScrapeResponse(
-                        requested_url=request.target.url_string,
-                        final_url=page.url,
-                        status_code=response.status if response else None,
-                        headers=await response.all_headers() if response else {},
-                        html=await page.content(),
-                        duration_ms=(time.perf_counter() - started) * 1000,
-                    )
-                finally:
-                    await page.close()
             response = await self._client.scrape(
                 url=request.target.url_string,
                 format=["html"],
                 delay=2_000,
+                # The self-hosted quick action supports BYOP even though the
+                # cloud SDK exposes only use_proxy as a named argument.
+                extra_body={"proxyUrl": request.proxy.url if request.proxy else None},
                 timeout=request.timeout_seconds,
             )
             return ScrapeResponse(

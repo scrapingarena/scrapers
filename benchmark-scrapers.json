@@ -123,7 +123,7 @@
     },
     {
       "slug": "steel",
-      "install_command": "uv sync --locked --extra steel --extra cdp",
+      "install_command": "uv sync --locked --extra steel",
       "benchmark_command": "uv run scrapingarena benchmark --scraper steel",
       "cache_paths": [],
       "setup_commands": [],
