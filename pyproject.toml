@@ -17,7 +17,7 @@ cdp = ["playwright>=1.55,<2"]
 cloakbrowser = ["cloakbrowser[geoip]>=0.3,<1"]
 curl-cffi = ["curl-cffi>=0.14,<1"]
 niquests = ["niquests>=3.18,<4"]
-openai = ["openai>=1.99,<2"]
+openai = ["openai>=1.99,<4"]
 shardbrowser = ["shardx>=0.1,<1"]
 steel = ["steel-sdk>=0.1,<1"]
 
