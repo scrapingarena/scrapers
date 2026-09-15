@@ -46,6 +46,10 @@ jobs:
         with:
           version: "0.11.32"
           enable-cache: true
+      - uses: actions/setup-node@v4
+        if: ${{ matrix.scraper.scraper == 'agent-browser' }}
+        with:
+          node-version: "24"
       - name: Cache downloaded browser runtimes
         if: ${{ matrix.scraper.cache_paths != '' }}
         uses: actions/cache@v4
@@ -86,6 +90,10 @@ jobs:
         with:
           version: "0.11.32"
           enable-cache: true
+      - uses: actions/setup-node@v4
+        if: ${{ matrix.scraper.scraper == 'agent-browser' }}
+        with:
+          node-version: "24"
       - name: Cache downloaded browser runtimes
         if: ${{ matrix.scraper.cache_paths != '' }}
         uses: actions/cache@v4

@@ -12,6 +12,9 @@ from scrapingarena.scrapers.niquests_scraper import NiquestsScraper
 from scrapingarena.scrapers.obscura_scraper import ObscuraScraper
 from scrapingarena.scrapers.shardbrowser_scraper import ShardBrowserScraper
 from scrapingarena.scrapers.steel_scraper import SteelScraper
+from scrapingarena.scrapers.vercel_agent_browser_scraper import (
+    VercelAgentBrowserScraper,
+)
 from scrapingarena.scrapers.wreq_scraper import WreqScraper
 
 ScraperFactory = Callable[[], BaseScraper]
@@ -19,6 +22,7 @@ ScraperFactory = Callable[[], BaseScraper]
 _SCRAPERS: dict[str, ScraperFactory] = {
     scraper.metadata.slug: scraper
     for scraper in (
+        VercelAgentBrowserScraper,
         CamoufoxOriginalScraper,
         CloakBrowserScraper,
         CurlCffiScraper,

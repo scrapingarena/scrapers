@@ -130,6 +130,19 @@ def execute(args: argparse.Namespace) -> None:
     for command in config["setup_commands"]:
         run_command(command, env=env)
 
+    if config["scraper"] == "agent-browser":
+        run_command(
+            [
+                "uv",
+                "run",
+                "python",
+                "scripts/smoke_agent_browser.py",
+                "--proxy",
+                config["proxy"],
+            ],
+            env=env,
+        )
+
     for command in config["service_commands"]:
         arguments = shlex.split(command)
         redact_values: tuple[str, ...] = ()
