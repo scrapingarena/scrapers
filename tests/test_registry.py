@@ -6,6 +6,7 @@ from scrapingarena.scrapers.registry import scraper_names
 
 def test_expected_scrapers_are_registered() -> None:
     assert scraper_names() == [
+        "agent-browser",
         "camoufox-original",
         "cloakbrowser",
         "curl-cffi",

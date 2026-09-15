@@ -89,9 +89,27 @@ Start one of the service-backed browsers locally, then run its adapter:
 ```bash
 docker compose -f compose.browsers.yml --profile obscura up -d obscura
 uv sync --extra cdp
-uv run scrapingarena benchmark --scraper obscura --limit 5 --concurrency 2
+uv run scrapingarena benchmark --scraper obscura --limit 5 --concurrency 1
 docker compose -f compose.browsers.yml --profile obscura down
 ```
+
+Obscura pages share a V8 isolate, so keep concurrency at 1 for this benchmark.
+Each attempt uses a disposable context; failures discard the CDP connection and
+reconnect on the next attempt. Connection failures are recorded per attempt.
+Compose and CI configure server navigation (20s), script (15s), fetch (10s), and
+CDP command (25s) budgets below the default 30s client deadline. The server
+watchdog is essential: cancelling a Playwright call cannot interrupt server-side
+JavaScript. These limits deliberately trade long SPA loads for bounded attempts.
+The container restarts on process failure and pulls the current image to pick up
+upstream watchdog fixes. Record/pin the tested image digest for reproducible runs.
+For proxied local runs, export `OBSCURA_PROXY` before starting Compose and pass
+`--proxy oxylabs` to the benchmark with the matching credentials configured.
+
+Upstream references: [Playwright](https://github.com/h4ckf0r0day/obscura/blob/main/docs/Use-with-Playwright.md)
+and [timeout settings](https://github.com/h4ckf0r0day/obscura/blob/main/docs/Environment-variables.md).
+A successful `/json/version` probe checks discovery only; use a small benchmark
+run to verify page creation and navigation. If the service still stalls, inspect
+`docker compose -f compose.browsers.yml logs --tail 200 obscura`.
 
 Replace `obscura` with `lightpanda` for the other CDP service. Steel listens on
 port 3000 and uses its SDK instead:
@@ -299,3 +317,41 @@ can fetch `results/latest.json` from GitHub without a database or server.
 
 Scheduled Actions may be delayed and, for inactive public repositories, can be
 disabled by GitHub. The manual trigger remains available.
+
+
+### Vercel agent-browser
+
+`agent-browser` is a separate Agent entry using Chrome and agent-browser's
+native Rust daemon, without Playwright or an LLM for fetching. Install Node 24:
+
+```bash
+npm install --global agent-browser@0.37.1
+agent-browser install --with-deps
+uv run python scripts/smoke_agent_browser.py
+uv run scrapingarena benchmark --scraper agent-browser --proxy direct
+```
+
+For Oxylabs US residential proxies, use `OXYLABS_PROXIES_USERNAME` and
+`OXYLABS_PROXIES_PASSWORD`, or the legacy `OXYLABS_RESIDENTIAL_PROXIES_USERNAME`
+and `OXYLABS_RESIDENTIAL_PROXIES_PASSWORD` pair. This adapter adds `-cc-US` when
+absent, preserves explicit US/session options, and rejects an explicit non-US
+country. Other adapters retain their existing routing. Credentials are sent as
+separate daemon fields, never CLI arguments.
+
+```bash
+uv run python scripts/smoke_agent_browser.py --proxy oxylabs
+uv run scrapingarena benchmark --scraper agent-browser --proxy oxylabs
+```
+
+GitHub Actions installs the pinned runtime and Chrome dependencies. PR CI checks
+redirects, HTTP status/headers, and hydrated HTML with a local fixture. Both
+benchmark jobs run that smoke check; the Oxylabs job additionally requires an
+authenticated HTTPS request to report US across the location endpoint's returned
+geolocation providers before running targets.
+
+Each attempt owns a fresh daemon and browser, with an overall deadline and
+bounded graceful cleanup followed by process termination. These child processes
+are included in the arena's resource monitor. The integration uses agent-browser's
+version-specific Unix socket JSON protocol; rerun smoke checks when upgrading
+the pinned version in both workflow/config locations. Linux and macOS are
+supported. Set `SCRAPINGARENA_AGENT_BROWSER_BINARY` for a specific executable.

@@ -16,6 +16,7 @@ class PlaywrightCdpScraper(BaseScraper):
 
     supports_proxy = True
     endpoint_env = "SCRAPINGARENA_CDP_ENDPOINT"
+    isolate_context = False
 
     def __init__(self, proxy: ProxySettings | None = None) -> None:
         super().__init__(proxy)
@@ -73,7 +74,7 @@ class PlaywrightCdpScraper(BaseScraper):
                         }
                     )
                     owns_context = True
-                elif self._browser.contexts:
+                elif self._browser.contexts and not self.isolate_context:
                     context = self._browser.contexts[0]
                 else:
                     context = await self._browser.new_context()

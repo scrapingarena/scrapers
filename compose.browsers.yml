@@ -2,6 +2,14 @@ services:
   obscura:
     profiles: [obscura]
     image: h4ckf0r0day/obscura
+    pull_policy: always
+    restart: on-failure
+    environment:
+      - OBSCURA_PROXY
+      - OBSCURA_NAV_TIMEOUT_MS=20000
+      - OBSCURA_SCRIPT_DEADLINE_MS=15000
+      - OBSCURA_FETCH_TIMEOUT_MS=10000
+      - OBSCURA_CDP_COMMAND_TIMEOUT_MS=25000
     shm_size: 2gb
     ports:
       - "127.0.0.1:9222:9222"

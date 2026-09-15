@@ -23,3 +23,19 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest
       - run: uv run scrapingarena doctor
+
+  agent-browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: uv sync --locked
+      - run: npm install --global agent-browser@0.37.1
+      - run: agent-browser install --with-deps
+      - run: uv run python scripts/smoke_agent_browser.py

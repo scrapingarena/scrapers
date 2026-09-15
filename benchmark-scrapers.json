@@ -96,6 +96,20 @@
   ],
   "agent": [
     {
+      "slug": "agent-browser",
+      "install_command": "uv sync --locked",
+      "benchmark_command": "uv run scrapingarena benchmark --scraper agent-browser",
+      "cache_paths": [],
+      "setup_commands": [
+        "npm install --global agent-browser@0.37.1",
+        "agent-browser install --with-deps"
+      ],
+      "service_commands": [],
+      "health_url": "",
+      "proxy_providers": ["direct", "oxylabs"],
+      "concurrency": 1
+    },
+    {
       "slug": "lightpanda",
       "install_command": "uv sync --locked --extra cdp",
       "benchmark_command": "uv run scrapingarena benchmark --scraper lightpanda",
@@ -115,7 +129,7 @@
       "cache_paths": [],
       "setup_commands": [],
       "service_commands": [
-        "docker run -d --name scrapingarena-browser --shm-size=2g -e OBSCURA_PROXY -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
+        "docker run -d --name scrapingarena-browser --pull=always --restart=on-failure --shm-size=2g -e OBSCURA_NAV_TIMEOUT_MS=20000 -e OBSCURA_SCRIPT_DEADLINE_MS=15000 -e OBSCURA_FETCH_TIMEOUT_MS=10000 -e OBSCURA_CDP_COMMAND_TIMEOUT_MS=25000 -e OBSCURA_PROXY -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
       "proxy_providers": ["direct", "oxylabs"],
