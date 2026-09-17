@@ -335,8 +335,11 @@ For Oxylabs US residential proxies, use `OXYLABS_PROXIES_USERNAME` and
 `OXYLABS_PROXIES_PASSWORD`, or the legacy `OXYLABS_RESIDENTIAL_PROXIES_USERNAME`
 and `OXYLABS_RESIDENTIAL_PROXIES_PASSWORD` pair. This adapter adds `-cc-US` when
 absent, preserves explicit US/session options, and rejects an explicit non-US
-country. Other adapters retain their existing routing. Credentials are sent as
-separate daemon fields, never CLI arguments.
+country. Other adapters retain their existing routing. An attempt-owned loopback
+HTTP proxy bridge sends Basic proxy authentication upstream, keeping credentials
+out of CLI arguments and Chrome. This works around native v0.37.1 proxy-auth
+interception stalling `Page.navigate`. HTTPS uses opaque CONNECT tunnels; TLS
+verification remains enabled. The bridge and its connections close after each attempt.
 
 ```bash
 uv run python scripts/smoke_agent_browser.py --proxy oxylabs
@@ -344,7 +347,8 @@ uv run scrapingarena benchmark --scraper agent-browser --proxy oxylabs
 ```
 
 GitHub Actions installs the pinned runtime and Chrome dependencies. PR CI checks
-redirects, HTTP status/headers, and hydrated HTML with a local fixture. Both
+redirects, HTTP status/headers, hydrated HTML, and authenticated proxy routing
+with local fixtures. Both
 benchmark jobs run that smoke check; the Oxylabs job additionally requires an
 authenticated HTTPS request to report US across the location endpoint's returned
 geolocation providers before running targets.

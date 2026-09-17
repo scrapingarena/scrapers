@@ -7,6 +7,7 @@ import os
 import re
 import tempfile
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -14,6 +15,7 @@ from uuid import uuid4
 import psutil
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
+from scrapingarena.scrapers.agent_browser_proxy import ProxyBridge
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
 from scrapingarena.settings import ProxySettings
 
@@ -48,6 +50,7 @@ class VercelAgentBrowserScraper(BaseScraper):
         self._process: asyncio.subprocess.Process | None = None
         self._directory: tempfile.TemporaryDirectory[str] | None = None
         self._socket: Path | None = None
+        self._proxy_bridge: ProxyBridge | None = None
 
     async def _start(self) -> None:
         # Short Unix socket paths also work on macOS (104-byte path limit).
@@ -109,11 +112,10 @@ class VercelAgentBrowserScraper(BaseScraper):
                         if proxy.provider_name == "oxylabs"
                         else proxy.username
                     )
-                    launch["proxy"] = {
-                        "server": f"http://{proxy.host}:{proxy.port}",
-                        "username": username,
-                        "password": proxy.password,
-                    }
+                    # v0.37.1 can stall Page.navigate with Fetch proxy auth.
+                    # Authenticate upstream in an owned loopback bridge instead.
+                    self._proxy_bridge = ProxyBridge(replace(proxy, username=username))
+                    launch["proxy"] = {"server": await self._proxy_bridge.start()}
                 await self._start()
                 await self._command("launch", **launch)
                 # Tracking must be enabled before navigation to capture status/headers.
@@ -174,3 +176,6 @@ class VercelAgentBrowserScraper(BaseScraper):
             self._directory.cleanup()
             self._directory = None
         self._socket = None
+        if self._proxy_bridge is not None:
+            await self._proxy_bridge.close()
+            self._proxy_bridge = None
