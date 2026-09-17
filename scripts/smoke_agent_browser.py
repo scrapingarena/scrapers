@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import base64
 import json
 from html.parser import HTMLParser
 
@@ -11,7 +12,7 @@ from scrapingarena.models import ScrapeRequest, Target
 from scrapingarena.scrapers.vercel_agent_browser_scraper import (
     VercelAgentBrowserScraper,
 )
-from scrapingarena.settings import configured_proxy
+from scrapingarena.settings import ProxySettings, configured_proxy
 
 
 class PageText(HTMLParser):
@@ -86,6 +87,62 @@ async def smoke(provider: str) -> None:
     print(
         "agent-browser direct smoke passed (redirect, status, headers, rendered HTML)"
     )
+
+    # Exercise authenticated proxy routing in PR CI without provider secrets.
+    authenticated = asyncio.Event()
+
+    async def proxy_serve(
+        reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+    ) -> None:
+        try:
+            header = await reader.readuntil(b"\r\n\r\n")
+            expected = base64.b64encode(b"smoke-user:p/@:%ss")
+            if b"Proxy-Authorization: Basic " + expected in header:
+                authenticated.set()
+                body = b"<html><body>arena-proxy-passed</body></html>"
+                writer.write(
+                    b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n"
+                    b"Content-Length: "
+                    + str(len(body)).encode()
+                    + b"\r\nConnection: close\r\n\r\n"
+                    + body
+                )
+            else:
+                writer.write(
+                    b"HTTP/1.1 407 Proxy Authentication Required\r\n"
+                    b'Proxy-Authenticate: Basic realm="smoke"\r\n'
+                    b"Content-Length: 0\r\n\r\n"
+                )
+            await writer.drain()
+        finally:
+            writer.close()
+            await writer.wait_closed()
+
+    proxy_server = await asyncio.start_server(proxy_serve, "127.0.0.1", 0)
+    async with proxy_server:
+        response = await VercelAgentBrowserScraper().scrape(
+            ScrapeRequest(
+                target=Target(
+                    id="local-proxy-smoke",
+                    name="Local proxy smoke",
+                    category="test",
+                    url="http://proxy-smoke.invalid/page",
+                ),
+                proxy=ProxySettings(
+                    "127.0.0.1",
+                    proxy_server.sockets[0].getsockname()[1],
+                    "smoke-user",
+                    "p/@:%ss",
+                    "fixture",
+                    "https://example.com",
+                ),
+            )
+        )
+        assert response.error is None, response.error
+        assert response.status_code == 200, response.status_code
+        assert "arena-proxy-passed" in response.html
+        assert authenticated.is_set()
+    print("agent-browser local authenticated proxy smoke passed")
 
     if provider == "oxylabs":
         proxy = configured_proxy(provider)

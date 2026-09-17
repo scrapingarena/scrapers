@@ -5,7 +5,7 @@ import json
 import tempfile
 from pathlib import Path
 from typing import Any
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pydantic import HttpUrl
@@ -78,6 +78,12 @@ async def test_capture_uses_final_document_and_raw_proxy_credentials(
         ]
     )
     close = AsyncMock()
+    bridge = MagicMock()
+    bridge.start = AsyncMock(return_value="http://127.0.0.1:12345")
+    factory = MagicMock(return_value=bridge)
+    monkeypatch.setattr(
+        "scrapingarena.scrapers.vercel_agent_browser_scraper.ProxyBridge", factory
+    )
     monkeypatch.setattr(scraper, "_start", AsyncMock())
     monkeypatch.setattr(scraper, "_command", command)
     monkeypatch.setattr(scraper, "close", close)
@@ -88,10 +94,10 @@ async def test_capture_uses_final_document_and_raw_proxy_credentials(
     assert result.headers == {"server": "test"}
     assert result.html == "<html>done</html>"
     assert command.call_args_list[0].kwargs["proxy"] == {
-        "server": "http://pr.oxylabs.io:7777",
-        "username": "customer-test-cc-US",
-        "password": "p/@:%ss",
+        "server": "http://127.0.0.1:12345",
     }
+    assert factory.call_args.args[0].username == "customer-test-cc-US"
+    assert factory.call_args.args[0].password == "p/@:%ss"
     assert command.call_args_list[1].args == ("requests",)
     assert command.call_args_list[2].kwargs["waitUntil"] == "domcontentloaded"
     close.assert_awaited_once()
