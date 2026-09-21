@@ -143,6 +143,21 @@ def execute(args: argparse.Namespace) -> None:
             env=env,
         )
 
+    if config["scraper"] in {"patchright", "moli"}:
+        smoke_command = [
+            "uv",
+            "run",
+            "python",
+            "scripts/smoke_browser.py",
+            "--scraper",
+            config["scraper"],
+            "--proxy",
+            config["proxy"],
+        ]
+        if config["scraper"] == "patchright":
+            smoke_command = ["xvfb-run", "-a", *smoke_command]
+        run_command(smoke_command, env=env)
+
     for command in config["service_commands"]:
         arguments = shlex.split(command)
         redact_values: tuple[str, ...] = ()

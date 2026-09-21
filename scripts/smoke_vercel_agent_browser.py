@@ -9,9 +9,7 @@ import json
 from html.parser import HTMLParser
 
 from scrapingarena.models import ScrapeRequest, Target
-from scrapingarena.scrapers.vercel_agent_browser_scraper import (
-    VercelAgentBrowserScraper,
-)
+from scrapingarena.scrapers.registry import create_scraper
 from scrapingarena.settings import ProxySettings, configured_proxy
 
 
@@ -20,18 +18,26 @@ class PageText(HTMLParser):
         super().__init__()
         self.parts: list[str] = []
         self.in_pre = False
+        self.body_parts: list[str] = []
+        self.in_body = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "body":
+            self.in_body = True
         if tag == "pre":
             self.in_pre = True
 
     def handle_endtag(self, tag: str) -> None:
+        if tag == "body":
+            self.in_body = False
         if tag == "pre":
             self.in_pre = False
 
     def handle_data(self, data: str) -> None:
         if self.in_pre:
             self.parts.append(data)
+        if self.in_body:
+            self.body_parts.append(data)
 
 
 async def serve(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
@@ -64,11 +70,11 @@ async def serve(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> N
         await writer.wait_closed()
 
 
-async def smoke(provider: str) -> None:
+async def smoke(provider: str, scraper_name: str = "vercel-agent-browser") -> None:
     server = await asyncio.start_server(serve, "127.0.0.1", 0)
     async with server:
         port = server.sockets[0].getsockname()[1]
-        scraper = VercelAgentBrowserScraper()
+        scraper = create_scraper(scraper_name)
         response = await scraper.scrape(
             ScrapeRequest(
                 target=Target(
@@ -86,10 +92,9 @@ async def smoke(provider: str) -> None:
             "x-arena-smoke"
         ] == "passed"
         assert '<main id="result">arena-hydrated</main>' in response.html
-        assert scraper._process is None
+        assert getattr(scraper, "_process", None) is None
     print(
-        "vercel-agent-browser direct smoke passed "
-        "(redirect, status, headers, rendered HTML)"
+        f"{scraper_name} direct smoke passed (redirect, status, headers, rendered HTML)"
     )
 
     # Exercise authenticated proxy routing in PR CI without provider secrets.
@@ -124,7 +129,7 @@ async def smoke(provider: str) -> None:
 
     proxy_server = await asyncio.start_server(proxy_serve, "127.0.0.1", 0)
     async with proxy_server:
-        response = await VercelAgentBrowserScraper().scrape(
+        response = await create_scraper(scraper_name).scrape(
             ScrapeRequest(
                 target=Target(
                     id="local-proxy-smoke",
@@ -146,11 +151,11 @@ async def smoke(provider: str) -> None:
         assert response.status_code == 200, response.status_code
         assert "arena-proxy-passed" in response.html
         assert authenticated.is_set()
-    print("vercel-agent-browser local authenticated proxy smoke passed")
+    print(f"{scraper_name} local authenticated proxy smoke passed")
 
     if provider == "oxylabs":
         proxy = configured_proxy(provider)
-        response = await VercelAgentBrowserScraper().scrape(
+        response = await create_scraper(scraper_name).scrape(
             ScrapeRequest(
                 target=Target(
                     id="proxy-smoke",
@@ -166,7 +171,7 @@ async def smoke(provider: str) -> None:
         assert response.status_code == 200, response.status_code
         text = PageText()
         text.feed(response.html)
-        location = json.loads("".join(text.parts))
+        location = json.loads("".join(text.parts or text.body_parts))
         countries = {
             data["country"]
             for data in location["providers"].values()
@@ -174,7 +179,7 @@ async def smoke(provider: str) -> None:
         }
         assert countries, "Proxy location response did not include a country"
         print(
-            "vercel-agent-browser Oxylabs smoke passed "
+            f"{scraper_name} Oxylabs smoke passed "
             "(authenticated HTTPS, reported exit country)"
         )
 

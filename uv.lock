@@ -2083,6 +2083,9 @@ niquests = [
 openai = [
     { name = "openai" },
 ]
+patchright = [
+    { name = "patchright" },
+]
 shardbrowser = [
     { name = "shardx" },
 ]
@@ -2105,6 +2108,7 @@ requires-dist = [
     { name = "curl-cffi", marker = "extra == 'curl-cffi'", specifier = ">=0.14,<1" },
     { name = "niquests", marker = "extra == 'niquests'", specifier = ">=3.18,<4" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.99,<2" },
+    { name = "patchright", marker = "extra == 'patchright'", specifier = ">=1.55,<2" },
     { name = "playwright", marker = "extra == 'cdp'", specifier = ">=1.55,<2" },
     { name = "psutil", specifier = ">=7,<8" },
     { name = "pydantic", specifier = ">=2.11,<3" },
@@ -2113,7 +2117,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.16,<1" },
     { name = "wreq", specifier = ">=0.7,<1" },
 ]
-provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "openai", "shardbrowser", "steel"]
+provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "patchright", "openai", "shardbrowser", "steel"]
 
 [package.metadata.requires-dev]
 dev = [

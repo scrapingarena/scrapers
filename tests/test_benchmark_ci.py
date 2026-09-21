@@ -59,3 +59,34 @@ def test_vercel_agent_browser_smoke_precedes_benchmark(provider: str) -> None:
         "vercel-agent-browser",
     ]
     assert calls[3][1] == calls[4][1]
+
+
+@pytest.mark.parametrize("scraper", ["patchright", "moli"])
+@pytest.mark.parametrize("provider", ["direct", "oxylabs"])
+def test_native_browser_smoke_precedes_benchmark(scraper: str, provider: str) -> None:
+    driver = run_path(str(Path(__file__).parents[1] / "scripts/benchmark_ci.py"))
+    calls: list[Any] = []
+    execute = driver["execute"]
+    execute.__globals__["run_command"] = lambda command, **kwargs: calls.append(command)
+    execute(argparse.Namespace(scraper=f"{scraper}-{provider}", limit="1"))
+    prefix = ["xvfb-run", "-a"] if scraper == "patchright" else []
+    assert calls[-2] == [
+        *prefix,
+        "uv",
+        "run",
+        "python",
+        "scripts/smoke_browser.py",
+        "--scraper",
+        scraper,
+        "--proxy",
+        provider,
+    ]
+    assert calls[-1][: len(prefix) + 6] == [
+        *prefix,
+        "uv",
+        "run",
+        "scrapingarena",
+        "benchmark",
+        "--scraper",
+        scraper,
+    ]
