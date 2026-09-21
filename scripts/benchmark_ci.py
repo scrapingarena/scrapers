@@ -130,13 +130,13 @@ def execute(args: argparse.Namespace) -> None:
     for command in config["setup_commands"]:
         run_command(command, env=env)
 
-    if config["scraper"] == "agent-browser":
+    if config["scraper"] == "vercel-agent-browser":
         run_command(
             [
                 "uv",
                 "run",
                 "python",
-                "scripts/smoke_agent_browser.py",
+                "scripts/smoke_vercel_agent_browser.py",
                 "--proxy",
                 config["proxy"],
             ],

@@ -10,8 +10,8 @@
   },
   "summaries": [
     {
-      "benchmark": "agent-browser-direct",
-      "scraper": "agent-browser",
+      "benchmark": "vercel-agent-browser-direct",
+      "scraper": "vercel-agent-browser",
       "proxy_provider": null,
       "total": 100,
       "success": 28,
@@ -42039,7 +42039,7 @@
     }
   ],
   "results": {
-    "agent-browser-direct": [
+    "vercel-agent-browser-direct": [
       {
         "target_id": "vinted",
         "url": "https://www.vinted.fr/catalog?search_text=nike",

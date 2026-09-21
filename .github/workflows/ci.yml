@@ -24,7 +24,7 @@ jobs:
       - run: uv run pytest
       - run: uv run scrapingarena doctor
 
-  agent-browser-smoke:
+  vercel-agent-browser-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -38,4 +38,4 @@ jobs:
       - run: uv sync --locked
       - run: npm install --global agent-browser@0.37.1
       - run: agent-browser install --with-deps
-      - run: uv run python scripts/smoke_agent_browser.py
+      - run: uv run python scripts/smoke_vercel_agent_browser.py
