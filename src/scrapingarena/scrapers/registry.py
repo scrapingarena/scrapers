@@ -8,8 +8,10 @@ from scrapingarena.scrapers.cloakbrowser_scraper import CloakBrowserScraper
 from scrapingarena.scrapers.curl_cffi_scraper import CurlCffiScraper
 from scrapingarena.scrapers.fortress_scraper import FortressScraper
 from scrapingarena.scrapers.lightpanda_scraper import LightpandaScraper
+from scrapingarena.scrapers.moli_scraper import MoliScraper
 from scrapingarena.scrapers.niquests_scraper import NiquestsScraper
 from scrapingarena.scrapers.obscura_scraper import ObscuraScraper
+from scrapingarena.scrapers.patchright_scraper import PatchrightScraper
 from scrapingarena.scrapers.shardbrowser_scraper import ShardBrowserScraper
 from scrapingarena.scrapers.steel_scraper import SteelScraper
 from scrapingarena.scrapers.vercel_agent_browser_scraper import (
@@ -23,6 +25,8 @@ _SCRAPERS: dict[str, ScraperFactory] = {
     scraper.metadata.slug: scraper
     for scraper in (
         VercelAgentBrowserScraper,
+        MoliScraper,
+        PatchrightScraper,
         CamoufoxOriginalScraper,
         CloakBrowserScraper,
         CurlCffiScraper,

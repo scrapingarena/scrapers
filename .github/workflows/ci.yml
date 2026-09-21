@@ -39,3 +39,28 @@ jobs:
       - run: npm install --global agent-browser@0.37.1
       - run: agent-browser install --with-deps
       - run: uv run python scripts/smoke_vercel_agent_browser.py
+
+  native-browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        scraper: [patchright, moli]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.32"
+      - if: matrix.scraper == 'patchright'
+        run: |
+          uv sync --locked --extra patchright
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          uv run patchright install --with-deps chrome
+          xvfb-run -a uv run python scripts/smoke_browser.py --scraper patchright
+      - if: matrix.scraper == 'moli'
+        run: |
+          uv sync --locked
+          uv run python scripts/install_moli.py
+          uv run python scripts/smoke_browser.py --scraper moli

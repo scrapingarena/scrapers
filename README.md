@@ -359,3 +359,48 @@ are included in the arena's resource monitor. The integration uses agent-browser
 version-specific Unix socket JSON protocol; rerun smoke checks when upgrading
 the pinned version in both workflow/config locations. Linux and macOS are
 supported. Set `SCRAPINGARENA_VERCEL_AGENT_BROWSER_BINARY` for a specific executable.
+
+### Patchright
+
+`patchright` runs Patchright's patched Playwright driver against Google Chrome,
+using upstream's recommended headed persistent context with no viewport override.
+Each attempt gets a fresh temporary profile; no custom fingerprint headers are
+injected. On Linux, use Xvfb:
+
+```bash
+uv sync --locked --extra patchright
+uv run patchright install --with-deps chrome
+xvfb-run -a uv run python scripts/smoke_browser.py --scraper patchright
+xvfb-run -a uv run scrapingarena benchmark --scraper patchright --proxy direct
+```
+
+On macOS, omit `xvfb-run -a`; Chrome opens normally. Add `--proxy oxylabs` to
+exercise authenticated proxy fetching. Credentials and routing options are passed
+unchanged to Patchright. The driver and browser close after every attempt.
+
+### Moli
+
+`moli` runs the native Moli **1.1.9** CLI in a fresh child process for every attempt.
+It captures JSON containing rendered HTML, response headers, status and final URL.
+The adapter uses DOMContentLoaded plus the same two-second rendering window as
+other browser adapters. It uses Moli's default DOM-focused mode, without optional
+layout/paint or optional image/font/media loading. These resource-policy differences
+should be considered when comparing resource usage with Chrome-based browsers.
+
+```bash
+uv sync --locked
+uv run python scripts/install_moli.py
+uv run python scripts/smoke_browser.py --scraper moli
+uv run scrapingarena benchmark --scraper moli --proxy direct
+```
+
+The installer downloads the pinned official Linux/macOS binary into
+`~/.cache/scrapingarena/moli/1.1.9/moli`. Set `SCRAPINGARENA_MOLI_BINARY` to use a
+specific executable. No browser service or Playwright dependency is required.
+Oxylabs authentication uses an attempt-owned loopback bridge, preserving credentials
+and keeping them out of process arguments. HTTPS uses CONNECT with TLS verification
+enabled. Timeouts terminate and reap the child process.
+
+PR CI runs direct and local authenticated-proxy smoke tests for both adapters.
+Benchmark CI also checks the configured Oxylabs HTTPS connection before running
+proxy targets. Both native runtimes run as children of the measured scraper process.

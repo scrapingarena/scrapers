@@ -92,6 +92,24 @@
       "health_url": "",
       "proxy_providers": ["direct", "oxylabs"],
       "concurrency": 1
+    },
+    {
+      "slug": "patchright",
+      "install_command": "uv sync --locked --extra patchright",
+      "benchmark_command": "xvfb-run -a uv run scrapingarena benchmark --scraper patchright",
+      "cache_paths": [],
+      "setup_commands": [
+        "sudo apt-get update",
+        "sudo apt-get install -y xvfb",
+        "uv run patchright install --with-deps chrome"
+      ],
+      "service_commands": [],
+      "health_url": "",
+      "proxy_providers": [
+        "direct",
+        "oxylabs"
+      ],
+      "concurrency": 1
     }
   ],
   "agent": [
@@ -146,6 +164,24 @@
       ],
       "health_url": "http://127.0.0.1:3000/v1/health",
       "proxy_providers": ["direct", "oxylabs"],
+      "concurrency": 1
+    },
+    {
+      "slug": "moli",
+      "install_command": "uv sync --locked",
+      "benchmark_command": "uv run scrapingarena benchmark --scraper moli",
+      "cache_paths": [
+        "~/.cache/scrapingarena/moli"
+      ],
+      "setup_commands": [
+        "uv run python scripts/install_moli.py"
+      ],
+      "service_commands": [],
+      "health_url": "",
+      "proxy_providers": [
+        "direct",
+        "oxylabs"
+      ],
       "concurrency": 1
     }
   ]
