@@ -1,0 +1,53 @@
+name: Validation result looks wrong
+description: A page was scored success/failed/blocked incorrectly.
+title: "Validation: "
+labels: ["validation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Misjudged pages are useful bug reports — they're how the validator gets
+        better. The fix is usually a fixture, tighter `required_markers`, or a
+        `min_visible_chars` adjustment on the target.
+  - type: input
+    id: target
+    attributes:
+      label: Target id
+      placeholder: vinted
+    validations:
+      required: true
+  - type: input
+    id: benchmark
+    attributes:
+      label: Benchmark variant
+      placeholder: wreq-oxylabs
+    validations:
+      required: true
+  - type: input
+    id: run
+    attributes:
+      label: Run id
+      description: From results/latest.json → metadata.run_id
+  - type: dropdown
+    id: recorded
+    attributes:
+      label: What the validator decided
+      options: ["success", "blocked", "failed", "ambiguous"]
+    validations:
+      required: true
+  - type: dropdown
+    id: correct
+    attributes:
+      label: What it should have been
+      options: ["success", "blocked", "failed"]
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Why
+      description: >
+        What was actually on the page? Paste the recorded reason and evidence
+        from the report. Don't paste full page HTML.
+    validations:
+      required: true
