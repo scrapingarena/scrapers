@@ -1,0 +1,71 @@
+name: Target proposal
+description: Propose adding, changing, or removing a benchmark URL.
+title: "Target: "
+labels: ["targets"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The corpus is the benchmark's control variable and is meant to be hard
+        to change. Its hash is recorded in every report, so changing it makes past
+        runs non-comparable. Please read
+        [targets/README.md](https://github.com/scrapingarena/scrapers/blob/main/targets/README.md) first.
+
+        The corpus holds exactly 100 entries with one URL per domain, so an
+        addition normally means proposing a removal too.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Proposal type
+      options: ["Add a target", "Change an existing target", "Remove a target"]
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL
+      description: Must be a deep search, listing, catalog, or product route.
+    validations:
+      required: true
+  - type: input
+    id: protection
+    attributes:
+      label: Observed protection
+      description: >
+        none, cloudflare, akamai, datadome, human-security, imperva, fastly,
+        kasada, or unknown. Canonical targets cannot be "none".
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence for that protection
+      description: >
+        A bot-manager cookie or header seen on a live request (__cf_bm, _abck,
+        datadome, _px, visid_incap, x-kpsdk). CDN delivery headers like cf-ray
+        or x-served-by are not evidence of bot defence.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: What record set does this page return?
+      description: >
+        A target must return data somebody would pay to have: listings, offers,
+        search results, profiles, reviews, jobs, properties, vehicles, stays.
+        Not marketing pages, docs, blogs, or data published as a free dump.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checks
+      options:
+        - label: The URL is public and reachable without a login.
+          required: true
+        - label: No other target uses this domain.
+          required: true
+        - label: It's read-only and deterministic, with no cart, checkout, or booking flow.
+          required: true
+        - label: I've reviewed the site's terms and robots policy.
+          required: true

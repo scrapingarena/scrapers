@@ -1,0 +1,92 @@
+name: New scraper
+description: Propose adding a scraping library, browser, or service to the benchmark.
+title: "Add scraper: "
+labels: ["new-scraper"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vendors are welcome to propose their own tools. Adapters only fetch, and
+        scoring is done by shared code, so integrating your own tool cannot
+        influence its score.
+
+        Please read [docs/adding-a-scraper.md](https://github.com/scrapingarena/scrapers/blob/main/docs/adding-a-scraper.md) first.
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: Example Browser
+    validations:
+      required: true
+  - type: input
+    id: homepage
+    attributes:
+      label: Homepage or repository
+      placeholder: https://github.com/org/example
+    validations:
+      required: true
+  - type: dropdown
+    id: family
+    attributes:
+      label: Family
+      options:
+        - HTTP client
+        - Anti-bot browser
+        - Agent / service browser
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How does it install?
+      options:
+        - Python package (pip / uv extra)
+        - Python package that downloads a browser runtime
+        - Docker image running as a service
+        - Native binary downloaded by an installer
+        - npm package
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: licensing
+    attributes:
+      label: Licensing and cost
+      description: >
+        Open source? Free tier? Does the free tier limit concurrent sessions or
+        request volume? CI must be able to run it on a public repository.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Known constraints
+      description: >
+        Concurrency limits, display requirements (Xvfb), memory needs, startup
+        cost, per-attempt isolation, or anything else affecting how it must be run.
+  - type: dropdown
+    id: proxy
+    attributes:
+      label: Does it support authenticated HTTP proxies?
+      options:
+        - "Yes, natively with username/password"
+        - "Yes, but authentication needs a workaround"
+        - "No"
+        - "Unsure"
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before submitting
+      options:
+        - label: I've checked this scraper isn't already registered.
+          required: true
+        - label: It can run unattended on a GitHub-hosted Ubuntu runner.
+          required: true
+  - type: input
+    id: contributing
+    attributes:
+      label: Will you write the adapter?
+      placeholder: "Yes / No / Happy to help test"

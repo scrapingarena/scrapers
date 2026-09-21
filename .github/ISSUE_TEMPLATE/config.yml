@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Live leaderboard
+    url: https://www.scrapingarena.org
+    about: Current published results.
+  - name: How the benchmark works
+    url: https://github.com/scrapingarena/scrapers/blob/main/docs/architecture.md
+    about: The pipeline, validation, and report schema explained.
+  - name: Report a security vulnerability
+    url: https://github.com/scrapingarena/scrapers/security
+    about: Please use private reporting, not a public issue.

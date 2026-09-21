@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in the harness, an adapter, or the CLI is broken.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Include the exact command. Redact any credentials.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: scraper
+    attributes:
+      label: Scraper slug
+      placeholder: wreq
+  - type: dropdown
+    id: proxy
+    attributes:
+      label: Proxy mode
+      options: ["direct", "oxylabs", "not applicable"]
+  - type: textarea
+    id: output
+    attributes:
+      label: Output or traceback
+      description: Redact credentials and API keys.
+      render: shell
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: "Output of: python3 --version, uv --version, and your OS."
+      render: shell
+    validations:
+      required: true
