@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Vendors are welcome to propose their own tools. Adapters only fetch —
+        Vendors are welcome to propose their own tools. Adapters only fetch, and
         scoring is done by shared code, so integrating your own tool cannot
         influence its score.
 
@@ -64,7 +64,7 @@ body:
       label: Known constraints
       description: >
         Concurrency limits, display requirements (Xvfb), memory needs, startup
-        cost, per-attempt isolation — anything affecting how it must be run.
+        cost, per-attempt isolation, or anything else affecting how it must be run.
   - type: dropdown
     id: proxy
     attributes:

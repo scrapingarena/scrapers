@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Misjudged pages are useful bug reports — they're how the validator gets
-        better. The fix is usually a fixture, tighter `required_markers`, or a
+        Misjudged pages are useful bug reports, and how the validator gets better.
+        The fix is usually a fixture, tighter `required_markers`, or a
         `min_visible_chars` adjustment on the target.
   - type: input
     id: target

@@ -34,7 +34,7 @@ Every run below needs `OPENAI_API_KEY` exported for validation.
 
 ### wreq
 
-[`wreq`](https://github.com/0x676e67/wreq-python) — Rust-backed client with TLS
+[`wreq`](https://github.com/0x676e67/wreq-python). Rust-backed client with TLS
 and HTTP/2 emulation.
 
 ```bash
@@ -45,12 +45,12 @@ uv run scrapingarena benchmark --scraper wreq --limit 5
 It **does not add or override request headers**. At startup it selects the
 numerically newest `Chrome*` emulation profile the installed, locked release
 exposes, so bumping the dependency advances the browser profile automatically.
-The emulation profile owns the complete fingerprint, headers included — adding
-headers on top would desynchronize it.
+The emulation profile owns the complete fingerprint, headers included, so
+adding headers on top would desynchronize it.
 
 ### curl-cffi
 
-[`curl_cffi`](https://github.com/lexiforest/curl_cffi) — curl-impersonate
+[`curl_cffi`](https://github.com/lexiforest/curl_cffi). Curl-impersonate
 bindings, using the `chrome` impersonation target.
 
 ```bash
@@ -60,7 +60,7 @@ uv run scrapingarena benchmark --scraper curl-cffi --limit 5
 
 ### niquests
 
-[`Niquests`](https://github.com/jawah/niquests) — a `requests`-compatible client
+[`Niquests`](https://github.com/jawah/niquests). A `requests`-compatible client
 with HTTP/2 and HTTP/3.
 
 ```bash
@@ -74,7 +74,7 @@ uv run scrapingarena benchmark --scraper niquests --limit 5
 
 ### camoufox-original
 
-[Camoufox](https://github.com/daijro/camoufox) — a Firefox fork with
+[Camoufox](https://github.com/daijro/camoufox). A Firefox fork with
 fingerprint injection below the JS layer.
 
 ```bash
@@ -84,14 +84,14 @@ uv run scrapingarena benchmark --scraper camoufox-original --limit 5
 ```
 
 > **Camoufox distributions both import as `camoufox`.** Never install their
-> extras together — they will shadow each other and you'll benchmark whichever
-> won. CI gives each one a separate environment.
+> extras together. They shadow each other, and you end up benchmarking
+> whichever won. CI gives each one a separate environment.
 
 On Linux, run under `xvfb-run -a`.
 
 ### cloakbrowser
 
-[CloakBrowser](https://github.com/CloakHQ/CloakBrowser) — packaged Chromium.
+[CloakBrowser](https://github.com/CloakHQ/CloakBrowser). Packaged Chromium.
 
 ```bash
 uv sync --extra cloakbrowser
@@ -105,7 +105,7 @@ reproducible.
 
 ### fortress
 
-[Fortress](https://github.com/tiliondev/fortress) — official container driven
+[Fortress](https://github.com/tiliondev/fortress). Official container driven
 over its raw CDP endpoint. Pinned to image tag `149`.
 
 ```bash
@@ -118,11 +118,11 @@ docker rm -f scrapingarena-browser
 
 Endpoint override: `FORTRESS_CDP_URL` (default `http://127.0.0.1:9222`).
 
-> Fortress has no `compose.browsers.yml` profile — use `docker run` as above.
+> Fortress has no `compose.browsers.yml` profile, so use `docker run` as above.
 
 ### patchright
 
-[Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright) — a patched
+[Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright). A patched
 Playwright driver against real Google Chrome, using upstream's recommended
 headed persistent context with **no viewport override**. Each attempt gets a
 fresh temporary profile; no custom fingerprint headers are injected.
@@ -140,7 +140,7 @@ attempt.
 
 ### shardbrowser
 
-[ShardBrowser](https://github.com/ProxyShard/ShardBrowser) — ShardX packaged
+[ShardBrowser](https://github.com/ProxyShard/ShardBrowser). ShardX packaged
 Chromium; the runtime downloads on first use.
 
 ```bash
@@ -157,7 +157,7 @@ bundled template.
 
 ### lightpanda
 
-[Lightpanda](https://github.com/lightpanda-io/browser) — a lightweight browser
+[Lightpanda](https://github.com/lightpanda-io/browser). A lightweight browser
 built for automation, driven over CDP.
 
 ```bash
@@ -172,7 +172,7 @@ container start, so the value is redacted from CI logs.
 
 ### moli
 
-[Moli](https://github.com/lexmount/moli) — native CLI, pinned to **1.1.9**, run
+[Moli](https://github.com/lexmount/moli). Native CLI, pinned to 1.1.9, run
 as a fresh child process for every attempt. Returns JSON with rendered HTML,
 headers, status, and final URL.
 
@@ -188,7 +188,7 @@ The installer downloads the pinned official Linux/macOS binary to
 `SCRAPINGARENA_MOLI_BINARY`. No browser service or Playwright needed.
 
 > **Resource comparisons need a caveat.** Moli runs in its default DOM-focused
-> mode — no layout/paint, no image/font/media loading. Its CPU and memory
+> mode, with no layout/paint and no image/font/media loading. Its CPU and memory
 > numbers are not directly comparable to Chrome-based browsers doing full
 > rendering.
 
@@ -199,7 +199,7 @@ the child process.
 
 ### obscura
 
-[Obscura](https://github.com/h4ckf0r0day/obscura) — CDP browser service.
+[Obscura](https://github.com/h4ckf0r0day/obscura). CDP browser service.
 
 ```bash
 docker compose -f compose.browsers.yml --profile obscura up -d obscura
@@ -212,11 +212,11 @@ docker compose -f compose.browsers.yml --profile obscura down
 a disposable context; a failure discards the CDP connection and reconnects next
 attempt, and connection failures are recorded per attempt.
 
-Compose and CI set server-side budgets below the 30s client deadline —
+Compose and CI set server-side budgets below the 30s client deadline:
 navigation 20s, script 15s, fetch 10s, CDP command 25s. **The server watchdog
 is essential:** cancelling a Playwright call cannot interrupt server-side
-JavaScript, so without it a stuck page hangs the whole shard. These limits
-deliberately trade long SPA loads for bounded attempts.
+JavaScript, so without it a stuck page hangs the whole shard. The tradeoff is
+intentional: long SPA loads are given up in exchange for bounded attempts.
 
 The container pulls the current image and restarts on failure, picking up
 upstream watchdog fixes. For reproducible runs, pin and record the tested image
@@ -235,7 +235,7 @@ Upstream docs:
 
 ### steel
 
-[Steel Browser](https://github.com/steel-dev/steel-browser) — browser API
+[Steel Browser](https://github.com/steel-dev/steel-browser). Browser API
 service on port 3000, driven through its SDK rather than CDP.
 
 ```bash
@@ -256,7 +256,7 @@ passing the provider URL through the endpoint's `proxyUrl` field. Base URL:
 
 ### vercel-agent-browser
 
-[agent-browser](https://github.com/vercel-labs/agent-browser) — Chrome driven
+[agent-browser](https://github.com/vercel-labs/agent-browser). Chrome driven
 by agent-browser's native Rust daemon. No Playwright, and no LLM involved in
 fetching. Pinned to **0.37.1**. Needs Node 24.
 

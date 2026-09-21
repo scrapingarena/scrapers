@@ -24,12 +24,12 @@ uv run scrapingarena doctor
 - [ ] All five pass locally
 - [ ] Tests added or updated, using synthetic responses (no live sites)
 - [ ] Docs updated where behavior changed
-- [ ] No `results/` changes committed — that directory is written by CI
+- [ ] No `results/` changes committed. CI writes that directory
 - [ ] No credentials, tokens, or `.env` files
 
 ## For a new scraper
 
-- [ ] Adapter only fetches — it doesn't score, retry, or special-case targets
+- [ ] Adapter only fetches: it doesn't score, retry, or special-case targets
 - [ ] Optional dependency imported inside `__init__`, not at module level
 - [ ] Registered in `scrapers/registry.py` and added to `tests/test_registry.py`
 - [ ] Entry added to `benchmark-scrapers.json`
@@ -44,7 +44,7 @@ Smoke run output:
 
 ## For a new proxy provider
 
-- [ ] `configured_proxy()` fails loudly on missing or partial credentials — never falls back to direct
+- [ ] `configured_proxy()` fails loudly on missing or partial credentials, never falling back to direct
 - [ ] `redact()` covers the provider's username format
 - [ ] Provider added to `proxy_url()` in `scripts/benchmark_ci.py`
 - [ ] Sibling job added to `benchmark.yml` and included in `aggregate.needs`

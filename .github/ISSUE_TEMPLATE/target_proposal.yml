@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        The corpus is the benchmark's control variable and is deliberately hard
-        to change — its hash is recorded in every report, and changing it makes
-        past runs non-comparable. Please read
+        The corpus is the benchmark's control variable and is meant to be hard
+        to change. Its hash is recorded in every report, so changing it makes past
+        runs non-comparable. Please read
         [targets/README.md](https://github.com/scrapingarena/scrapers/blob/main/targets/README.md) first.
 
         The corpus holds exactly 100 entries with one URL per domain, so an
@@ -51,7 +51,7 @@ body:
     attributes:
       label: What record set does this page return?
       description: >
-        A target must return data somebody would pay to have — listings, offers,
+        A target must return data somebody would pay to have: listings, offers,
         search results, profiles, reviews, jobs, properties, vehicles, stays.
         Not marketing pages, docs, blogs, or data published as a free dump.
     validations:
@@ -65,7 +65,7 @@ body:
           required: true
         - label: No other target uses this domain.
           required: true
-        - label: It's read-only and deterministic — no cart, checkout, or booking flow.
+        - label: It's read-only and deterministic, with no cart, checkout, or booking flow.
           required: true
         - label: I've reviewed the site's terms and robots policy.
           required: true

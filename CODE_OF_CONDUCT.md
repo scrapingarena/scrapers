@@ -46,7 +46,7 @@ welcome:
 - Attempting to game a score through per-target special-casing, self-scoring
   adapters, or other methodology bypasses.
 
-Disagreement about methodology is healthy — raise it in an issue, in public,
+Disagreement about methodology is healthy. Raise it in an issue, in public,
 with your reasoning. Proposals that make the benchmark more accurate are
 welcome even when they lower somebody's score.
 
