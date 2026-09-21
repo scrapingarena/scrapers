@@ -30,7 +30,7 @@ def test_proxy_url_rejects_missing_credentials() -> None:
 
 
 @pytest.mark.parametrize("provider", ["direct", "oxylabs"])
-def test_agent_browser_smoke_precedes_benchmark(provider: str) -> None:
+def test_vercel_agent_browser_smoke_precedes_benchmark(provider: str) -> None:
     driver = run_path(str(Path(__file__).parents[1] / "scripts/benchmark_ci.py"))
     calls: list[tuple[Any, Any]] = []
 
@@ -39,14 +39,14 @@ def test_agent_browser_smoke_precedes_benchmark(provider: str) -> None:
 
     execute = driver["execute"]
     execute.__globals__["run_command"] = record
-    execute(argparse.Namespace(scraper=f"agent-browser-{provider}", limit="1"))
+    execute(argparse.Namespace(scraper=f"vercel-agent-browser-{provider}", limit="1"))
     assert calls[1][0] == "npm install --global agent-browser@0.37.1"
     assert calls[2][0] == "agent-browser install --with-deps"
     assert calls[3][0] == [
         "uv",
         "run",
         "python",
-        "scripts/smoke_agent_browser.py",
+        "scripts/smoke_vercel_agent_browser.py",
         "--proxy",
         provider,
     ]
@@ -56,6 +56,6 @@ def test_agent_browser_smoke_precedes_benchmark(provider: str) -> None:
         "scrapingarena",
         "benchmark",
         "--scraper",
-        "agent-browser",
+        "vercel-agent-browser",
     ]
     assert calls[3][1] == calls[4][1]

@@ -319,43 +319,43 @@ Scheduled Actions may be delayed and, for inactive public repositories, can be
 disabled by GitHub. The manual trigger remains available.
 
 
-### Vercel agent-browser
+### Vercel Agent Browser
 
-`agent-browser` is a separate Agent entry using Chrome and agent-browser's
+`vercel-agent-browser` is a separate Agent entry using Chrome and agent-browser's
 native Rust daemon, without Playwright or an LLM for fetching. Install Node 24:
 
 ```bash
 npm install --global agent-browser@0.37.1
 agent-browser install --with-deps
-uv run python scripts/smoke_agent_browser.py
-uv run scrapingarena benchmark --scraper agent-browser --proxy direct
+uv run python scripts/smoke_vercel_agent_browser.py
+uv run scrapingarena benchmark --scraper vercel-agent-browser --proxy direct
 ```
 
-For Oxylabs US residential proxies, use `OXYLABS_PROXIES_USERNAME` and
+For Oxylabs residential proxies, use `OXYLABS_PROXIES_USERNAME` and
 `OXYLABS_PROXIES_PASSWORD`, or the legacy `OXYLABS_RESIDENTIAL_PROXIES_USERNAME`
-and `OXYLABS_RESIDENTIAL_PROXIES_PASSWORD` pair. This adapter adds `-cc-US` when
-absent, preserves explicit US/session options, and rejects an explicit non-US
-country. Other adapters retain their existing routing. An attempt-owned loopback
+and `OXYLABS_RESIDENTIAL_PROXIES_PASSWORD` pair. The adapter preserves the
+configured username and routing options exactly, matching the other scrapers.
+An attempt-owned loopback
 HTTP proxy bridge sends Basic proxy authentication upstream, keeping credentials
 out of CLI arguments and Chrome. This works around native v0.37.1 proxy-auth
 interception stalling `Page.navigate`. HTTPS uses opaque CONNECT tunnels; TLS
 verification remains enabled. The bridge and its connections close after each attempt.
 
 ```bash
-uv run python scripts/smoke_agent_browser.py --proxy oxylabs
-uv run scrapingarena benchmark --scraper agent-browser --proxy oxylabs
+uv run python scripts/smoke_vercel_agent_browser.py --proxy oxylabs
+uv run scrapingarena benchmark --scraper vercel-agent-browser --proxy oxylabs
 ```
 
 GitHub Actions installs the pinned runtime and Chrome dependencies. PR CI checks
 redirects, HTTP status/headers, hydrated HTML, and authenticated proxy routing
 with local fixtures. Both
 benchmark jobs run that smoke check; the Oxylabs job additionally requires an
-authenticated HTTPS request to report US across the location endpoint's returned
-geolocation providers before running targets.
+authenticated HTTPS request with a country reported by the location endpoint
+before running targets.
 
 Each attempt owns a fresh daemon and browser, with an overall deadline and
 bounded graceful cleanup followed by process termination. These child processes
 are included in the arena's resource monitor. The integration uses agent-browser's
 version-specific Unix socket JSON protocol; rerun smoke checks when upgrading
 the pinned version in both workflow/config locations. Linux and macOS are
-supported. Set `SCRAPINGARENA_AGENT_BROWSER_BINARY` for a specific executable.
+supported. Set `SCRAPINGARENA_VERCEL_AGENT_BROWSER_BINARY` for a specific executable.

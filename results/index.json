@@ -6,8 +6,8 @@
       "started_at": "2026-09-17T10:01:11.764803+00:00",
       "summaries": [
         {
-          "benchmark": "agent-browser-direct",
-          "scraper": "agent-browser",
+          "benchmark": "vercel-agent-browser-direct",
+          "scraper": "vercel-agent-browser",
           "proxy_provider": null,
           "total": 100,
           "success": 28,
@@ -393,8 +393,8 @@
       "started_at": "2026-09-16T09:59:16.608223+00:00",
       "summaries": [
         {
-          "benchmark": "agent-browser-direct",
-          "scraper": "agent-browser",
+          "benchmark": "vercel-agent-browser-direct",
+          "scraper": "vercel-agent-browser",
           "proxy_provider": null,
           "total": 100,
           "success": 31,

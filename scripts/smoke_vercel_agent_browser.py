@@ -1,4 +1,4 @@
-"""Fail CI before benchmarking if the pinned runtime or US proxy is broken."""
+"""Fail CI before benchmarking if the pinned runtime or configured proxy is broken."""
 
 from __future__ import annotations
 
@@ -56,6 +56,9 @@ async def serve(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> N
             )
         writer.write(reply)
         await writer.drain()
+    except asyncio.IncompleteReadError:
+        # Chrome may close a speculative connection before sending a request.
+        pass
     finally:
         writer.close()
         await writer.wait_closed()
@@ -85,7 +88,8 @@ async def smoke(provider: str) -> None:
         assert '<main id="result">arena-hydrated</main>' in response.html
         assert scraper._process is None
     print(
-        "agent-browser direct smoke passed (redirect, status, headers, rendered HTML)"
+        "vercel-agent-browser direct smoke passed "
+        "(redirect, status, headers, rendered HTML)"
     )
 
     # Exercise authenticated proxy routing in PR CI without provider secrets.
@@ -142,7 +146,7 @@ async def smoke(provider: str) -> None:
         assert response.status_code == 200, response.status_code
         assert "arena-proxy-passed" in response.html
         assert authenticated.is_set()
-    print("agent-browser local authenticated proxy smoke passed")
+    print("vercel-agent-browser local authenticated proxy smoke passed")
 
     if provider == "oxylabs":
         proxy = configured_proxy(provider)
@@ -168,8 +172,11 @@ async def smoke(provider: str) -> None:
             for data in location["providers"].values()
             if data.get("country")
         }
-        assert countries == {"US"}, f"Expected US proxy exit, received {countries!r}"
-        print("agent-browser Oxylabs smoke passed (authenticated HTTPS, US exit)")
+        assert countries, "Proxy location response did not include a country"
+        print(
+            "vercel-agent-browser Oxylabs smoke passed "
+            "(authenticated HTTPS, reported exit country)"
+        )
 
 
 if __name__ == "__main__":

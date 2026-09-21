@@ -96,9 +96,9 @@
   ],
   "agent": [
     {
-      "slug": "agent-browser",
+      "slug": "vercel-agent-browser",
       "install_command": "uv sync --locked",
-      "benchmark_command": "uv run scrapingarena benchmark --scraper agent-browser",
+      "benchmark_command": "uv run scrapingarena benchmark --scraper vercel-agent-browser",
       "cache_paths": [],
       "setup_commands": [
         "npm install --global agent-browser@0.37.1",

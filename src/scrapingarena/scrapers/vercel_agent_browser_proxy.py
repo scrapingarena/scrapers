@@ -1,4 +1,4 @@
-"""Per-attempt HTTP proxy bridge for agent-browser's native auth workaround."""
+"""Per-attempt HTTP proxy bridge for vercel-agent-browser."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ class ProxyBridge:
         self.proxy = proxy
         self.server: asyncio.Server | None = None
         self.tasks: set[asyncio.Task[None]] = set()
+        self.error: str | None = None
 
     async def start(self) -> str:
         self.server = await asyncio.start_server(self._accept, "127.0.0.1", 0)
@@ -68,11 +69,34 @@ class ProxyBridge:
                     dst.write(data)
                     await dst.drain()
 
+            async def respond() -> None:
+                async with asyncio.timeout(30):
+                    # Never pass the upstream's auth challenge to Chrome: credentials
+                    # belong to this bridge, and Chrome cannot satisfy that challenge.
+                    response = await remote.readuntil(b"\r\n\r\n")
+                    if response.split(b"\r\n", 1)[0].split()[1:2] == [b"407"]:
+                        self.error = (
+                            "Upstream proxy rejected the configured credentials "
+                            "(HTTP 407); check the proxy username, password, "
+                            "and routing options"
+                        )
+                        writer.write(
+                            b"HTTP/1.1 502 Bad Gateway\r\nContent-Length: 0\r\n"
+                            b"Connection: close\r\n\r\n"
+                        )
+                        await writer.drain()
+                        return
+                    writer.write(response)
+                    await writer.drain()
+                await copy(remote, writer)
+
             pumps = [
                 asyncio.create_task(copy(reader, upstream)),
-                asyncio.create_task(copy(remote, writer)),
+                asyncio.create_task(respond()),
             ]
-            await asyncio.wait(pumps, return_when=asyncio.FIRST_COMPLETED)
+            done, _ = await asyncio.wait(pumps, return_when=asyncio.FIRST_COMPLETED)
+            for task in done:
+                task.result()
         except (
             OSError,
             TimeoutError,

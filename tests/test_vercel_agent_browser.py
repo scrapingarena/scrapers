@@ -13,7 +13,6 @@ from pydantic import HttpUrl
 from scrapingarena.models import ScrapeRequest, Target
 from scrapingarena.scrapers.vercel_agent_browser_scraper import (
     VercelAgentBrowserScraper,
-    us_proxy_username,
 )
 from scrapingarena.settings import ProxySettings
 
@@ -30,26 +29,17 @@ def request(proxy: ProxySettings | None = None) -> ScrapeRequest:
     )
 
 
-@pytest.mark.parametrize("username", ["customer-test", "customer-test-sessid-abc"])
-def test_us_routing_is_added(username: str) -> None:
-    assert us_proxy_username(username) == username + "-cc-US"
-
-
-def test_explicit_country_routing() -> None:
-    assert us_proxy_username("customer-test-cc-us-sessid-abc") == (
-        "customer-test-cc-us-sessid-abc"
-    )
-    with pytest.raises(ValueError, match="US country"):
-        us_proxy_username("customer-test-cc-DE")
-
-
+@pytest.mark.parametrize(
+    "username", ["plain-user", "customer-test", "customer-test-cc-DE-sessid-abc"]
+)
 async def test_capture_uses_final_document_and_raw_proxy_credentials(
     monkeypatch: pytest.MonkeyPatch,
+    username: str,
 ) -> None:
     proxy = ProxySettings(
         "pr.oxylabs.io",
         7777,
-        "customer-test",
+        username,
         "p/@:%ss",
         "oxylabs",
         "https://oxylabs.io",
@@ -79,6 +69,7 @@ async def test_capture_uses_final_document_and_raw_proxy_credentials(
     )
     close = AsyncMock()
     bridge = MagicMock()
+    bridge.error = None
     bridge.start = AsyncMock(return_value="http://127.0.0.1:12345")
     factory = MagicMock(return_value=bridge)
     monkeypatch.setattr(
@@ -96,7 +87,7 @@ async def test_capture_uses_final_document_and_raw_proxy_credentials(
     assert command.call_args_list[0].kwargs["proxy"] == {
         "server": "http://127.0.0.1:12345",
     }
-    assert factory.call_args.args[0].username == "customer-test-cc-US"
+    assert factory.call_args.args[0] is proxy
     assert factory.call_args.args[0].password == "p/@:%ss"
     assert command.call_args_list[1].args == ("requests",)
     assert command.call_args_list[2].kwargs["waitUntil"] == "domcontentloaded"
@@ -161,3 +152,38 @@ async def test_protocol_handles_large_html_and_command_errors() -> None:
     directory.cleanup()
     assert received[1]["url"] == "https://example.com"
     assert received[0]["id"] != received[1]["id"]
+
+
+@pytest.mark.parametrize("navigation_fails", [False, True])
+async def test_proxy_rejection_surfaces_upstream_error(
+    monkeypatch: pytest.MonkeyPatch,
+    navigation_fails: bool,
+) -> None:
+    proxy = ProxySettings("host", 7777, "user", "secret", "fixture", "url")
+    scraper = VercelAgentBrowserScraper()
+    bridge = MagicMock()
+    bridge.start = AsyncMock(return_value="http://127.0.0.1:12345")
+    bridge.error = None
+    bridge.close = AsyncMock()
+
+    async def command(action: str, **parameters: Any) -> dict[str, Any]:
+        if action == "navigate":
+            bridge.error = (
+                "Upstream proxy rejected the configured credentials (HTTP 407)"
+            )
+            if navigation_fails:
+                raise RuntimeError(
+                    "Navigation failed: net::ERR_TUNNEL_CONNECTION_FAILED"
+                )
+        return {}
+
+    monkeypatch.setattr(
+        "scrapingarena.scrapers.vercel_agent_browser_scraper.ProxyBridge",
+        MagicMock(return_value=bridge),
+    )
+    monkeypatch.setattr(scraper, "_start", AsyncMock())
+    monkeypatch.setattr(scraper, "_command", command)
+    response = await scraper.scrape(request(proxy))
+    assert response.error and "HTTP 407" in response.error
+    assert "ERR_TUNNEL_CONNECTION_FAILED" not in response.error
+    bridge.close.assert_awaited_once()

@@ -4,10 +4,8 @@ import asyncio
 import contextlib
 import json
 import os
-import re
 import tempfile
 import time
-from dataclasses import replace
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -15,19 +13,9 @@ from uuid import uuid4
 import psutil
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
-from scrapingarena.scrapers.agent_browser_proxy import ProxyBridge
 from scrapingarena.scrapers.base import BaseScraper, ScraperMetadata
+from scrapingarena.scrapers.vercel_agent_browser_proxy import ProxyBridge
 from scrapingarena.settings import ProxySettings
-
-
-def us_proxy_username(username: str) -> str:
-    """Keep explicit US/session options; reject conflicting country routing."""
-    country = re.search(r"-cc-([^-]+)", username, re.IGNORECASE)
-    if country:
-        if country.group(1).upper() != "US":
-            raise ValueError("agent-browser requires Oxylabs US country routing")
-        return username
-    return f"{username}-cc-US"
 
 
 class VercelAgentBrowserScraper(BaseScraper):
@@ -39,7 +27,7 @@ class VercelAgentBrowserScraper(BaseScraper):
 
     supports_proxy = True
     metadata = ScraperMetadata(
-        slug="agent-browser",
+        slug="vercel-agent-browser",
         name="Vercel Agent Browser",
         kind="agent-browser",
         homepage="https://github.com/vercel-labs/agent-browser",
@@ -67,19 +55,21 @@ class VercelAgentBrowserScraper(BaseScraper):
             AGENT_BROWSER_IDLE_TIMEOUT_MS="60000",
         )
         self._process = await asyncio.create_subprocess_exec(
-            os.getenv("SCRAPINGARENA_AGENT_BROWSER_BINARY", "agent-browser"),
+            os.getenv("SCRAPINGARENA_VERCEL_AGENT_BROWSER_BINARY", "agent-browser"),
             env=env,
             stdout=asyncio.subprocess.DEVNULL,
             stderr=asyncio.subprocess.DEVNULL,
         )
         while not self._socket.exists():
             if self._process.returncode is not None:
-                raise RuntimeError("agent-browser daemon exited before becoming ready")
+                raise RuntimeError(
+                    "vercel-agent-browser daemon exited before becoming ready"
+                )
             await asyncio.sleep(0.02)
 
     async def _command(self, action: str, **parameters: Any) -> dict[str, Any]:
         if self._socket is None:
-            raise RuntimeError("agent-browser daemon is not started")
+            raise RuntimeError("vercel-agent-browser daemon is not started")
         reader, writer = await asyncio.open_unix_connection(
             str(self._socket), limit=64 * 1024 * 1024
         )
@@ -90,11 +80,13 @@ class VercelAgentBrowserScraper(BaseScraper):
             response = json.loads(await reader.readline())
             if response.get("success") is not True:
                 raise RuntimeError(
-                    str(response.get("error", "agent-browser command failed"))
+                    str(response.get("error", "vercel-agent-browser command failed"))
                 )
             data = response.get("data", {})
             if not isinstance(data, dict):
-                raise RuntimeError("agent-browser returned invalid response data")
+                raise RuntimeError(
+                    "vercel-agent-browser returned invalid response data"
+                )
             return data
         finally:
             writer.close()
@@ -107,14 +99,9 @@ class VercelAgentBrowserScraper(BaseScraper):
             async with asyncio.timeout(request.timeout_seconds):
                 launch: dict[str, Any] = {"headless": True}
                 if proxy:
-                    username = (
-                        us_proxy_username(proxy.username)
-                        if proxy.provider_name == "oxylabs"
-                        else proxy.username
-                    )
                     # v0.37.1 can stall Page.navigate with Fetch proxy auth.
                     # Authenticate upstream in an owned loopback bridge instead.
-                    self._proxy_bridge = ProxyBridge(replace(proxy, username=username))
+                    self._proxy_bridge = ProxyBridge(proxy)
                     launch["proxy"] = {"server": await self._proxy_bridge.start()}
                 await self._start()
                 await self._command("launch", **launch)
@@ -125,6 +112,8 @@ class VercelAgentBrowserScraper(BaseScraper):
                     url=request.target.url_string,
                     waitUntil="domcontentloaded",
                 )
+                if self._proxy_bridge is not None and self._proxy_bridge.error:
+                    raise RuntimeError(self._proxy_bridge.error)
                 await asyncio.sleep(2)
                 content = await self._command("content")
                 final_url = str(content["origin"])
@@ -146,7 +135,9 @@ class VercelAgentBrowserScraper(BaseScraper):
                     duration_ms=(time.perf_counter() - started) * 1000,
                 )
         except Exception as exc:
-            detail = str(exc) or "agent-browser attempt deadline exceeded"
+            detail = str(exc) or "vercel-agent-browser attempt deadline exceeded"
+            if self._proxy_bridge is not None and self._proxy_bridge.error:
+                detail = self._proxy_bridge.error
             error = f"{type(exc).__name__}: {detail}"
             return ScrapeResponse(
                 requested_url=request.target.url_string,
