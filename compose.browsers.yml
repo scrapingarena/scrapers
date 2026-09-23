@@ -5,6 +5,7 @@ services:
     pull_policy: always
     restart: on-failure
     environment:
+      - OBSCURA_CDP_TOKEN=${OBSCURA_CDP_TOKEN:?Export OBSCURA_CDP_TOKEN with at least 32 bytes}
       - OBSCURA_PROXY
       - OBSCURA_NAV_TIMEOUT_MS=20000
       - OBSCURA_SCRIPT_DEADLINE_MS=15000

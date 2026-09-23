@@ -90,3 +90,45 @@ def test_native_browser_smoke_precedes_benchmark(scraper: str, provider: str) ->
         "--scraper",
         scraper,
     ]
+
+
+@pytest.mark.parametrize("provider", ["direct", "oxylabs"])
+def test_obscura_shares_generated_token_with_service_probe_and_client(
+    monkeypatch: Any, provider: str
+) -> None:
+    monkeypatch.setenv("OXYLABS_PROXIES_USERNAME", "user")
+    monkeypatch.setenv("OXYLABS_PROXIES_PASSWORD", "password")
+    driver = run_path(str(Path(__file__).parents[1] / "scripts/benchmark_ci.py"))
+    calls: list[tuple[Any, Any]] = []
+    probes: list[tuple[str, Any]] = []
+    execute = driver["execute"]
+    execute.__globals__["run_command"] = lambda command, **kwargs: calls.append(
+        (command, kwargs.get("env"))
+    )
+    execute.__globals__["wait_for_service"] = lambda url, **kwargs: probes.append(
+        (url, kwargs.get("token"))
+    )
+    execute.__globals__["print_service_diagnostics"] = lambda: None
+    execute(argparse.Namespace(scraper=f"obscura-{provider}", limit="1"))
+    container, service_env = next(
+        (cmd, env) for cmd, env in calls if cmd[:2] == ["docker", "run"]
+    )
+    token = service_env["OBSCURA_CDP_TOKEN"]
+    assert len(token.encode()) >= 32
+    assert container[container.index("OBSCURA_CDP_TOKEN") - 1] == "-e"
+    assert token not in " ".join(container)
+    assert probes == [("http://127.0.0.1:9222/json/version", token)]
+    assert calls[-1][1]["OBSCURA_CDP_TOKEN"] == token
+
+
+def test_service_probe_sends_bearer_header(monkeypatch: Any) -> None:
+    from unittest.mock import MagicMock
+
+    driver = run_path(str(Path(__file__).parents[1] / "scripts/benchmark_ci.py"))
+    response = MagicMock()
+    response.__enter__.return_value.status = 200
+    urlopen = MagicMock(return_value=response)
+    monkeypatch.setattr("urllib.request.urlopen", urlopen)
+    driver["wait_for_service"]("http://localhost:9222/json/version", token="secret")
+    request = urlopen.call_args.args[0]
+    assert request.get_header("Authorization") == "Bearer secret"

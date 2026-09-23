@@ -23,6 +23,9 @@ class PlaywrightCdpScraper(BaseScraper):
         self._playwright: Any = None
         self._browser: Any = None
 
+    def _cdp_connect_options(self) -> dict[str, Any]:
+        return {}
+
     async def __aenter__(self) -> PlaywrightCdpScraper:
         try:
             from playwright.async_api import async_playwright
@@ -34,7 +37,9 @@ class PlaywrightCdpScraper(BaseScraper):
         self._playwright = await async_playwright().start()
         endpoint = os.getenv(self.endpoint_env, "http://127.0.0.1:9222")
         try:
-            self._browser = await self._playwright.chromium.connect_over_cdp(endpoint)
+            self._browser = await self._playwright.chromium.connect_over_cdp(
+                endpoint, **self._cdp_connect_options()
+            )
         except BaseException:
             # __aexit__ is not called when __aenter__ fails. Stop the Playwright
             # driver here so repeated connection failures do not leak processes.

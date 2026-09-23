@@ -185,3 +185,38 @@ async def test_connection_deadline_is_bounded(monkeypatch: Any) -> None:
     async with ObscuraScraper() as scraper:
         response = await asyncio.wait_for(scraper.scrape(request), timeout=1)
         assert response.error == "TimeoutError: CDP connection deadline exceeded"
+
+
+async def test_obscura_authenticates_cdp_connection(monkeypatch: Any) -> None:
+    import sys
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    from scrapingarena.scrapers.playwright_cdp import PlaywrightCdpScraper
+
+    token = "test-token-" * 4
+    monkeypatch.setenv("OBSCURA_CDP_TOKEN", token)
+    monkeypatch.setenv("SCRAPINGARENA_CDP_ENDPOINT", "http://localhost:9222")
+    connect = AsyncMock()
+    driver = SimpleNamespace(
+        chromium=SimpleNamespace(connect_over_cdp=connect), stop=AsyncMock()
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "playwright.async_api",
+        SimpleNamespace(
+            async_playwright=lambda: SimpleNamespace(
+                start=AsyncMock(return_value=driver)
+            )
+        ),
+    )
+    scraper = ObscuraScraper()
+    await PlaywrightCdpScraper.__aenter__(scraper)
+    connect.assert_awaited_once_with(
+        "http://localhost:9222", headers={"Authorization": f"Bearer {token}"}
+    )
+    await scraper.close()
+    # Other CDP services must not receive Obscura's credential.
+    assert PlaywrightCdpScraper()._cdp_connect_options() == {}
+    monkeypatch.delenv("OBSCURA_CDP_TOKEN")
+    assert scraper._cdp_connect_options() == {}
