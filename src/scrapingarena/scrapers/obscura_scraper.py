@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import time
+from typing import Any
 
 from scrapingarena.models import ScrapeRequest, ScrapeResponse
 from scrapingarena.scrapers.base import ScraperMetadata
@@ -12,6 +14,12 @@ class ObscuraScraper(PlaywrightCdpScraper):
     """Connect to Obscura, whose proxy is configured when its server starts."""
 
     isolate_context = True
+
+    def _cdp_connect_options(self) -> dict[str, Any]:
+        token = os.getenv("OBSCURA_CDP_TOKEN")
+        if not token:
+            return {}
+        return {"headers": {"Authorization": f"Bearer {token}"}}
 
     async def __aenter__(self) -> ObscuraScraper:
         # Connect inside the attempt so an unavailable service is recorded as a

@@ -202,11 +202,17 @@ the child process.
 [Obscura](https://github.com/h4ckf0r0day/obscura). CDP browser service.
 
 ```bash
+export OBSCURA_CDP_TOKEN="$(openssl rand -hex 32)"
 docker compose -f compose.browsers.yml --profile obscura up -d obscura
 uv sync --extra cdp
 uv run scrapingarena benchmark --scraper obscura --limit 5 --concurrency 1
 docker compose -f compose.browsers.yml --profile obscura down
 ```
+
+The container requires a CDP token of at least 32 bytes. Keep the same exported
+`OBSCURA_CDP_TOKEN` for Compose and the benchmark; the scraper sends it as a
+bearer header for discovery and WebSocket connections. CI generates a fresh
+token per run and authenticates its health probe too.
 
 **Keep concurrency at 1.** Obscura pages share a V8 isolate. Each attempt uses
 a disposable context; a failure discards the CDP connection and reconnects next
@@ -310,6 +316,7 @@ Linux and macOS are supported. Set
 | `SCRAPINGARENA_CDP_ENDPOINT` | CDP adapters | Default CDP endpoint. |
 | `FORTRESS_CDP_URL` | fortress | Fortress CDP endpoint. |
 | `STEEL_BASE_URL` | steel | Steel API base URL. |
+| `OBSCURA_CDP_TOKEN` | obscura | CDP bearer token (at least 32 bytes); export before starting Compose and the benchmark. |
 | `OBSCURA_PROXY` | obscura | Upstream proxy, set before container start. |
 | `SHARDX_PROFILE` | shardbrowser | Bundled fingerprint template. |
 | `CLOAKBROWSER_AUTO_UPDATE` | cloakbrowser | CI sets `false` for reproducibility. |

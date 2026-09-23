@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import secrets
 import shlex
 import subprocess
 import time
@@ -74,10 +75,13 @@ def run_command(
     subprocess.run(arguments, cwd=ROOT, env=env, check=True)
 
 
-def wait_for_service(url: str) -> None:
+def wait_for_service(url: str, *, token: str | None = None) -> None:
+    request = urllib.request.Request(
+        url, headers={"Authorization": f"Bearer {token}"} if token else {}
+    )
     for _ in range(60):
         try:
-            with urllib.request.urlopen(url, timeout=2) as response:
+            with urllib.request.urlopen(request, timeout=2) as response:
                 if response.status < 400:
                     return
         except (OSError, urllib.error.URLError):
@@ -125,8 +129,10 @@ def execute(args: argparse.Namespace) -> None:
     env = os.environ | {
         "CLOAKBROWSER_AUTO_UPDATE": "false",
     }
-    if config["scraper"] == "obscura" and config["proxy"] != "direct":
-        env["OBSCURA_PROXY"] = proxy_url(config["proxy"], env)
+    if config["scraper"] == "obscura":
+        env["OBSCURA_CDP_TOKEN"] = secrets.token_hex(32)
+        if config["proxy"] != "direct":
+            env["OBSCURA_PROXY"] = proxy_url(config["proxy"], env)
     for command in config["setup_commands"]:
         run_command(command, env=env)
 
@@ -167,7 +173,10 @@ def execute(args: argparse.Namespace) -> None:
             redact_values = (upstream_proxy,)
         run_command(arguments, env=env, redact_values=redact_values)
     if config["service_commands"]:
-        wait_for_service(config["health_url"])
+        wait_for_service(
+            config["health_url"],
+            token=env["OBSCURA_CDP_TOKEN"] if config["scraper"] == "obscura" else None,
+        )
         if config["proxy"] == "direct":
             env["SCRAPINGARENA_RESOURCE_CONTAINER"] = "scrapingarena-browser"
 
