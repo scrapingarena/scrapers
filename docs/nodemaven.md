@@ -49,3 +49,45 @@ Credentials are URL-escaped for transport and redacted from reported errors.
   available to system Python before dependencies are installed.
 - `benchmark-scrapers.json`: enabled provider variants.
 - `.github/workflows/benchmark.yml`: NodeMaven secrets, jobs, and aggregation.
+
+## Manual GitHub tests without publishing
+
+Once `.github/workflows/benchmark-test.yml` is on the default branch, open
+**Actions → Benchmark test (no publishing) → Run workflow**.
+
+- **scrapers**: defaults to `all`; optionally choose slugs such as `wreq,curl-cffi`.
+- **proxies**: defaults to `nodemaven-filtered,nodemaven-unfiltered`. You can also
+  select `direct` and `oxylabs`, alone or in a comma-separated combination.
+- **limit**: blank by default, running the full target corpus for every scraper.
+  Optionally enter a target limit for a smaller run.
+
+The same NodeMaven secrets are used for both variants. The test requires country
+and sticky-session fields in the username, removes any existing `-filter-...`
+field, and adds `-filter-medium` only for the filtered variant. Country and
+session remain unchanged, so this does not guarantee different exit IPs between
+variants. Each combination gets a separately named job with its result in the
+Actions log.
+
+This workflow runs only on manual dispatch or the explicit PR label below,
+has read-only repository permissions, and has
+no aggregation, commit, push, or result artifact upload. Reports are written to
+a temporary directory and removed when execution finishes, including on failure.
+GitHub still retains normal workflow logs and dependency/browser caches. The
+regular publishing benchmark workflow remains separate.
+
+### Run before merging
+
+Push the workflow and scripts to a branch in this repository and open a PR
+(a draft PR works). Create the repository label `benchmark-test` if needed,
+then apply it to the PR. This starts the test without merging. Fork PRs are
+excluded because the test requires repository secrets.
+
+The label trigger runs all scrapers, both NodeMaven filtering variants, and
+the full target corpus by default. To change those selections before merging, edit `PR_TEST_SCRAPERS`,
+`PR_TEST_PROXIES`, and `PR_TEST_LIMIT` in the workflow on your branch and push.
+Remove and reapply the label to start another run; ordinary pushes do not
+start this benchmark.
+
+Find results under the PR's Checks tab or Actions, open the benchmark job,
+and expand **Run temporary benchmark**. Results are printed in logs; no
+benchmark records or result artifacts are published.

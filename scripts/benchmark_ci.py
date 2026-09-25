@@ -202,7 +202,7 @@ def execute(args: argparse.Namespace) -> None:
         "--retries",
         "3",
         "--output-dir",
-        f"shard-results/{args.scraper}",
+        getattr(args, "output_dir", f"shard-results/{args.scraper}"),
     ]
     if args.limit:
         command.extend(("--limit", args.limit))

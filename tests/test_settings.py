@@ -106,8 +106,7 @@ def test_nodemaven_preserves_routing_and_redacts_credentials(
     )
     assert configured_proxy("nodemaven") == proxy  # Session stays fixed across loads.
     error = (
-        f"{proxy.url} {username} "
-        "user@example.com user%40example.com p/a:ss p%2Fa%3Ass"
+        f"{proxy.url} {username} user@example.com user%40example.com p/a:ss p%2Fa%3Ass"
     )
     assert proxy.redact(error) == (
         "http://***@gate.nodemaven.com:8080 *** *** *** *** ***"
