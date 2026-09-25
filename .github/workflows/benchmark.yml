@@ -161,6 +161,7 @@ jobs:
         run: |
           python3 scripts/benchmark_ci.py execute \
             --scraper "${{ matrix.scraper.slug }}" \
+            --nodemaven-filter-medium \
             --limit "${{ inputs.limit }}"
       - name: Upload scraper shard
         if: ${{ always() }}

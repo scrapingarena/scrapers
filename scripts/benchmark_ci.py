@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import secrets
 import shlex
 import subprocess
@@ -142,6 +143,16 @@ def execute(args: argparse.Namespace) -> None:
     env = os.environ | {
         "CLOAKBROWSER_AUTO_UPDATE": "false",
     }
+    if config["proxy"] == "nodemaven" and getattr(
+        args, "nodemaven_filter_medium", False
+    ):
+        username = env.get("NODEMAVEN_USERNAME", "")
+        if not username:
+            raise ValueError("NODEMAVEN_USERNAME is not configured")
+        username = re.sub(r"-filter-[^-]+", "", username) + "-filter-medium"
+        if env.get("GITHUB_ACTIONS") == "true":
+            print(f"::add-mask::{username}", flush=True)
+        env["NODEMAVEN_USERNAME"] = username
     if config["scraper"] == "obscura":
         env["OBSCURA_CDP_TOKEN"] = secrets.token_hex(32)
         if config["proxy"] != "direct":
@@ -202,7 +213,7 @@ def execute(args: argparse.Namespace) -> None:
         "--retries",
         "3",
         "--output-dir",
-        f"shard-results/{args.scraper}",
+        getattr(args, "output_dir", f"shard-results/{args.scraper}"),
     ]
     if args.limit:
         command.extend(("--limit", args.limit))
@@ -268,6 +279,7 @@ def main() -> None:
     execute_parser = subparsers.add_parser("execute")
     execute_parser.add_argument("--scraper", required=True)
     execute_parser.add_argument("--limit", default="")
+    execute_parser.add_argument("--nodemaven-filter-medium", action="store_true")
 
     aggregate_parser = subparsers.add_parser("aggregate")
     aggregate_parser.add_argument("--run-id", required=True)
