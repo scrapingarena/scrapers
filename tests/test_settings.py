@@ -87,3 +87,46 @@ def test_proxy_preserves_explicit_credentials(
     proxy = configured_proxy("oxylabs")
     assert proxy is not None
     assert proxy.username == username
+
+
+@pytest.mark.parametrize("suffix", ["", "-filter-medium"])
+def test_nodemaven_preserves_routing_and_redacts_credentials(
+    monkeypatch: pytest.MonkeyPatch, suffix: str
+) -> None:
+    username = f"user@example.com-country-us-region-california-sid-abc123{suffix}"
+    monkeypatch.setenv("NODEMAVEN_USERNAME", username)
+    monkeypatch.setenv("NODEMAVEN_PASSWORD", "p/a:ss")
+    proxy = configured_proxy("nodemaven")
+    assert proxy is not None
+    assert proxy.username == username
+    assert proxy.provider_name == "nodemaven"
+    assert proxy.url == (
+        f"http://user%40example.com-country-us-region-california-sid-abc123{suffix}"
+        ":p%2Fa%3Ass@gate.nodemaven.com:8080"
+    )
+    assert configured_proxy("nodemaven") == proxy  # Session stays fixed across loads.
+    error = (
+        f"{proxy.url} {username} "
+        "user@example.com user%40example.com p/a:ss p%2Fa%3Ass"
+    )
+    assert proxy.redact(error) == (
+        "http://***@gate.nodemaven.com:8080 *** *** *** *** ***"
+    )
+
+
+@pytest.mark.parametrize(
+    ("username", "password", "message"),
+    [("", "", "not configured"), ("user", "", "together"), ("", "pass", "together")],
+)
+def test_nodemaven_requires_credentials(
+    monkeypatch: pytest.MonkeyPatch, username: str, password: str, message: str
+) -> None:
+    monkeypatch.setenv("NODEMAVEN_USERNAME", username)
+    monkeypatch.setenv("NODEMAVEN_PASSWORD", password)
+    with pytest.raises(ValueError, match=message):
+        configured_proxy("nodemaven")
+
+
+def test_unknown_proxy_provider_is_rejected() -> None:
+    with pytest.raises(ValueError, match="unknown proxy provider"):
+        configured_proxy("unknown")

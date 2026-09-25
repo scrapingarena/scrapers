@@ -8,7 +8,7 @@
       "setup_commands": [],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -19,7 +19,7 @@
       "setup_commands": [],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -30,7 +30,7 @@
       "setup_commands": [],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     }
   ],
@@ -45,7 +45,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 tilion/fortress:149"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -60,7 +60,7 @@
       ],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -76,7 +76,7 @@
       ],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -90,7 +90,7 @@
       ],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -107,7 +107,8 @@
       "health_url": "",
       "proxy_providers": [
         "direct",
-        "oxylabs"
+        "oxylabs",
+        "nodemaven"
       ],
       "concurrency": 1
     }
@@ -124,7 +125,7 @@
       ],
       "service_commands": [],
       "health_url": "",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -137,7 +138,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:9222:9222 lightpanda/browser:nightly lightpanda serve --host 0.0.0.0 --port 9222"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -150,7 +151,7 @@
         "docker run -d --name scrapingarena-browser --pull=always --restart=on-failure --shm-size=2g -e OBSCURA_NAV_TIMEOUT_MS=20000 -e OBSCURA_SCRIPT_DEADLINE_MS=15000 -e OBSCURA_FETCH_TIMEOUT_MS=10000 -e OBSCURA_CDP_COMMAND_TIMEOUT_MS=25000 -e OBSCURA_CDP_TOKEN -e OBSCURA_PROXY -p 127.0.0.1:9222:9222 h4ckf0r0day/obscura"
       ],
       "health_url": "http://127.0.0.1:9222/json/version",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -163,7 +164,7 @@
         "docker run -d --name scrapingarena-browser --shm-size=2g -p 127.0.0.1:3000:3000 -p 127.0.0.1:9223:9223 ghcr.io/steel-dev/steel-browser"
       ],
       "health_url": "http://127.0.0.1:3000/v1/health",
-      "proxy_providers": ["direct", "oxylabs"],
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
       "concurrency": 1
     },
     {
@@ -180,7 +181,8 @@
       "health_url": "",
       "proxy_providers": [
         "direct",
-        "oxylabs"
+        "oxylabs",
+        "nodemaven"
       ],
       "concurrency": 1
     }

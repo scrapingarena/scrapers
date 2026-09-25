@@ -132,3 +132,40 @@ def test_service_probe_sends_bearer_header(monkeypatch: Any) -> None:
     driver["wait_for_service"]("http://localhost:9222/json/version", token="secret")
     request = urlopen.call_args.args[0]
     assert request.get_header("Authorization") == "Bearer secret"
+
+
+@pytest.mark.parametrize("suffix", ["", "-filter-medium"])
+def test_nodemaven_service_url_matches_client_settings(
+    monkeypatch: pytest.MonkeyPatch, suffix: str
+) -> None:
+    from scrapingarena.settings import configured_proxy
+
+    environ = {
+        "NODEMAVEN_USERNAME": f"user@example.com-country-us-sid-abc123{suffix}",
+        "NODEMAVEN_PASSWORD": "p/a:ss",
+    }
+    for key, value in environ.items():
+        monkeypatch.setenv(key, value)
+    proxy = configured_proxy("nodemaven")
+    assert proxy is not None
+    assert proxy_url("nodemaven", environ) == proxy.url
+
+
+@pytest.mark.parametrize(
+    "environ", [{}, {"NODEMAVEN_USERNAME": "user"}, {"NODEMAVEN_PASSWORD": "pass"}]
+)
+def test_nodemaven_service_rejects_incomplete_credentials(
+    environ: dict[str, str],
+) -> None:
+    with pytest.raises(ValueError, match=r"not configured|must be set together"):
+        proxy_url("nodemaven", environ)
+
+
+def test_nodemaven_matrix_has_separate_variants() -> None:
+    driver = run_path(str(Path(__file__).parents[1] / "scripts/benchmark_ci.py"))
+    direct = driver["configurations"]("direct")
+    nodemaven = driver["configurations"]("nodemaven")
+    assert {item["scraper"] for item in nodemaven} == {
+        item["scraper"] for item in direct
+    }
+    assert all(item["slug"] == f"{item['scraper']}-nodemaven" for item in nodemaven)

@@ -171,3 +171,7 @@ config entry, and tests using synthetic responses.
 ## License
 
 [MIT](LICENSE).
+
+NodeMaven residential proxies are also supported with `--proxy nodemaven`. See
+[NodeMaven setup](docs/nodemaven.md) for credentials, sticky sessions, country
+targeting, and manual filtering comparisons.

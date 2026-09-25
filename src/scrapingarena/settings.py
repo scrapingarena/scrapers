@@ -40,6 +40,8 @@ class ProxySettings:
         """Remove proxy credentials from an error before it reaches a report."""
         redacted = value.replace(self.url, f"http://***@{self.host}:{self.port}")
         base_username = self.username.split("-cc-", 1)[0].split("-sessid-", 1)[0]
+        if self.provider_name == "nodemaven":
+            base_username = self.username.split("-country-", 1)[0].split("-sid-", 1)[0]
         for secret in (self.username, base_username, self.password):
             redacted = redacted.replace(secret, "***")
             redacted = redacted.replace(quote(secret, safe=""), "***")
@@ -50,6 +52,8 @@ def configured_proxy(provider_name: str) -> ProxySettings | None:
     """Load one named provider, with ``direct`` representing no proxy."""
     if provider_name == "direct":
         return None
+    if provider_name == "nodemaven":
+        return configured_nodemaven_proxy()
     if provider_name != "oxylabs":
         raise ValueError(f"unknown proxy provider: {provider_name}")
     username_key = "OXYLABS_PROXIES_USERNAME"
@@ -73,4 +77,24 @@ def configured_proxy(provider_name: str) -> ProxySettings | None:
         password=password,
         provider_name="oxylabs",
         provider_url="https://oxylabs.io/products/proxy-solutions",
+    )
+
+
+def configured_nodemaven_proxy() -> ProxySettings:
+    """Preserve the dashboard username, including routing and filtering."""
+    username = os.getenv("NODEMAVEN_USERNAME")
+    password = os.getenv("NODEMAVEN_PASSWORD")
+    if bool(username) != bool(password):
+        raise ValueError(
+            "NODEMAVEN_USERNAME and NODEMAVEN_PASSWORD must be set together"
+        )
+    if not username or not password:
+        raise ValueError("NodeMaven proxy credentials are not configured")
+    return ProxySettings(
+        host="gate.nodemaven.com",
+        port=8080,
+        username=username,
+        password=password,
+        provider_name="nodemaven",
+        provider_url="https://nodemaven.com/",
     )
