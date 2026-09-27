@@ -70,7 +70,7 @@ def benchmark(
     timeout: Annotated[float, typer.Option(min=1, max=120)] = 30,
     proxy: Annotated[
         str,
-        typer.Option(help="Proxy provider: direct or oxylabs."),
+        typer.Option(help="Proxy provider: direct, oxylabs, or nodemaven."),
     ] = "direct",
 ) -> None:
     """Run selected scraper adapters against the versioned target corpus."""

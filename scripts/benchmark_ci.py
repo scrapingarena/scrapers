@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import secrets
 import shlex
 import subprocess
@@ -19,6 +20,19 @@ CONFIG_PATH = ROOT / "benchmark-scrapers.json"
 
 def proxy_url(provider: str, environ: dict[str, str]) -> str:
     """Build a proxy URL without importing the uv-managed project package."""
+    if provider == "nodemaven":
+        username = environ.get("NODEMAVEN_USERNAME")
+        password = environ.get("NODEMAVEN_PASSWORD")
+        if bool(username) != bool(password):
+            raise ValueError(
+                "NODEMAVEN_USERNAME and NODEMAVEN_PASSWORD must be set together"
+            )
+        if not username or not password:
+            raise ValueError("NodeMaven proxy credentials are not configured")
+        return (
+            f"http://{quote(username, safe='')}:{quote(password, safe='')}"
+            "@gate.nodemaven.com:8080"
+        )
     if provider != "oxylabs":
         raise ValueError(f"unknown proxy provider: {provider}")
     username = environ.get("OXYLABS_PROXIES_USERNAME")
@@ -129,6 +143,16 @@ def execute(args: argparse.Namespace) -> None:
     env = os.environ | {
         "CLOAKBROWSER_AUTO_UPDATE": "false",
     }
+    if config["proxy"] == "nodemaven" and getattr(
+        args, "nodemaven_filter_medium", False
+    ):
+        username = env.get("NODEMAVEN_USERNAME", "")
+        if not username:
+            raise ValueError("NODEMAVEN_USERNAME is not configured")
+        username = re.sub(r"-filter-[^-]+", "", username) + "-filter-medium"
+        if env.get("GITHUB_ACTIONS") == "true":
+            print(f"::add-mask::{username}", flush=True)
+        env["NODEMAVEN_USERNAME"] = username
     if config["scraper"] == "obscura":
         env["OBSCURA_CDP_TOKEN"] = secrets.token_hex(32)
         if config["proxy"] != "direct":
@@ -189,7 +213,7 @@ def execute(args: argparse.Namespace) -> None:
         "--retries",
         "3",
         "--output-dir",
-        f"shard-results/{args.scraper}",
+        getattr(args, "output_dir", f"shard-results/{args.scraper}"),
     ]
     if args.limit:
         command.extend(("--limit", args.limit))
@@ -255,6 +279,7 @@ def main() -> None:
     execute_parser = subparsers.add_parser("execute")
     execute_parser.add_argument("--scraper", required=True)
     execute_parser.add_argument("--limit", default="")
+    execute_parser.add_argument("--nodemaven-filter-medium", action="store_true")
 
     aggregate_parser = subparsers.add_parser("aggregate")
     aggregate_parser.add_argument("--run-id", required=True)

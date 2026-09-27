@@ -6,7 +6,8 @@ shard, so results accumulate side by side instead of overwriting each other.
 The useful number is how much a proxy moves a given scraper, and that is only
 visible if both runs survive into the report.
 
-The repo currently ships `direct` and `oxylabs`. Adding a third means touching
+The repo currently ships `direct`, `oxylabs`, and `nodemaven` (see
+[NodeMaven setup](nodemaven.md)). Adding another means touching
 five places.
 
 ```mermaid
