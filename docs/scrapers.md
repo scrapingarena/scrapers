@@ -308,7 +308,6 @@ Linux and macOS are supported. Set
 | Variable | Used by | Purpose |
 | --- | --- | --- |
 | `OPENAI_API_KEY` | all | Required for validation. |
-| `SCRAPINGARENA_OPENAI_MODEL` | validator | Override the judge model. |
 | `OXYLABS_PROXIES_USERNAME` / `_PASSWORD` | proxied runs | Preferred credential pair. |
 | `OXYLABS_RESIDENTIAL_PROXIES_USERNAME` / `_PASSWORD` | proxied runs | Legacy fallback. |
 | `SCRAPINGARENA_RUN_ID` | reporting | Pin the run id instead of generating one. |
@@ -335,3 +334,5 @@ docker compose -f compose.browsers.yml --profile <name> down
 CI uses the equivalent `docker run` lines from `benchmark-scrapers.json`
 instead, naming the container `scrapingarena-browser` so resource sampling and
 failure diagnostics can find it.
+
+The validator model is fixed to `gpt-6` in `settings.py`.

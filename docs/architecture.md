@@ -119,7 +119,7 @@ Configuration lives in `settings.py`:
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `OPENAI_API_KEY` | Required. Benchmarks refuse to start without it. | none |
-| `SCRAPINGARENA_OPENAI_MODEL` | Model used for stage two. | `gpt-5.6-luna` |
+| Validator model (fixed in code) | Model used for stage two; no environment override. | `gpt-6` |
 
 The validator stamps its name (`openai-content-v3`) into every result. That
 string is versioned on purpose: when scoring semantics change, it changes too,

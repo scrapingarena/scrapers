@@ -5,7 +5,7 @@ import pytest
 from scrapingarena.settings import configured_openai_validator, configured_proxy
 
 
-def test_openai_validator_settings_are_loaded_from_environment(
+def test_openai_validator_uses_fixed_model_and_environment_api_key(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
@@ -14,7 +14,7 @@ def test_openai_validator_settings_are_loaded_from_environment(
     settings = configured_openai_validator()
 
     assert settings.api_key == "test-key"
-    assert settings.model == "test-model"
+    assert settings.model == "gpt-6"
 
 
 def test_configured_proxies_loads_oxylabs(monkeypatch: pytest.MonkeyPatch) -> None:
