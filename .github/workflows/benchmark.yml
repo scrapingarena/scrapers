@@ -61,6 +61,7 @@ jobs:
       - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MRSCRAPER_API_KEY: ${{ secrets.MRSCRAPER_API_KEY }}
           SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
           STEEL_BASE_URL: http://127.0.0.1:3000
           SCRAPINGARENA_CDP_ENDPOINT: http://127.0.0.1:9222
@@ -105,6 +106,7 @@ jobs:
       - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MRSCRAPER_API_KEY: ${{ secrets.MRSCRAPER_API_KEY }}
           OXYLABS_PROXIES_USERNAME: ${{ secrets.OXYLABS_PROXIES_USERNAME }}
           OXYLABS_PROXIES_PASSWORD: ${{ secrets.OXYLABS_PROXIES_PASSWORD }}
           OXYLABS_RESIDENTIAL_PROXIES_USERNAME: ${{ secrets.OXYLABS_RESIDENTIAL_PROXIES_USERNAME }}
@@ -153,6 +155,7 @@ jobs:
       - name: Prepare and run scraper
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MRSCRAPER_API_KEY: ${{ secrets.MRSCRAPER_API_KEY }}
           NODEMAVEN_USERNAME: ${{ secrets.NODEMAVEN_USERNAME }}
           NODEMAVEN_PASSWORD: ${{ secrets.NODEMAVEN_PASSWORD }}
           SCRAPINGARENA_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}

@@ -78,6 +78,7 @@ jobs:
       - name: Run temporary benchmark
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MRSCRAPER_API_KEY: ${{ secrets.MRSCRAPER_API_KEY }}
           NODEMAVEN_USERNAME: ${{ secrets.NODEMAVEN_USERNAME }}
           NODEMAVEN_PASSWORD: ${{ secrets.NODEMAVEN_PASSWORD }}
           OXYLABS_PROXIES_USERNAME: ${{ secrets.OXYLABS_PROXIES_USERNAME }}

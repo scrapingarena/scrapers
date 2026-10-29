@@ -9,6 +9,7 @@ from scrapingarena.scrapers.curl_cffi_scraper import CurlCffiScraper
 from scrapingarena.scrapers.fortress_scraper import FortressScraper
 from scrapingarena.scrapers.lightpanda_scraper import LightpandaScraper
 from scrapingarena.scrapers.moli_scraper import MoliScraper
+from scrapingarena.scrapers.mrscraper_scraper import MrScraperScraper
 from scrapingarena.scrapers.niquests_scraper import NiquestsScraper
 from scrapingarena.scrapers.obscura_scraper import ObscuraScraper
 from scrapingarena.scrapers.patchright_scraper import PatchrightScraper
@@ -26,6 +27,7 @@ _SCRAPERS: dict[str, ScraperFactory] = {
     for scraper in (
         VercelAgentBrowserScraper,
         MoliScraper,
+        MrScraperScraper,
         PatchrightScraper,
         CamoufoxOriginalScraper,
         CloakBrowserScraper,

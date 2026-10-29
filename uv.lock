@@ -2077,6 +2077,9 @@ cloakbrowser = [
 curl-cffi = [
     { name = "curl-cffi" },
 ]
+mrscraper = [
+    { name = "httpx" },
+]
 niquests = [
     { name = "niquests" },
 ]
@@ -2095,6 +2098,7 @@ steel = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "httpx" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -2106,6 +2110,7 @@ requires-dist = [
     { name = "camoufox", extras = ["geoip"], marker = "extra == 'camoufox-original'", specifier = ">=0.4,<1" },
     { name = "cloakbrowser", extras = ["geoip"], marker = "extra == 'cloakbrowser'", specifier = ">=0.3,<1" },
     { name = "curl-cffi", marker = "extra == 'curl-cffi'", specifier = ">=0.14,<1" },
+    { name = "httpx", marker = "extra == 'mrscraper'", specifier = ">=0.28,<1" },
     { name = "niquests", marker = "extra == 'niquests'", specifier = ">=3.18,<4" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.99,<2" },
     { name = "patchright", marker = "extra == 'patchright'", specifier = ">=1.55,<2" },
@@ -2117,10 +2122,11 @@ requires-dist = [
     { name = "typer", specifier = ">=0.16,<1" },
     { name = "wreq", specifier = ">=0.7,<1" },
 ]
-provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "patchright", "openai", "shardbrowser", "steel"]
+provides-extras = ["camoufox-original", "cdp", "cloakbrowser", "curl-cffi", "niquests", "mrscraper", "patchright", "openai", "shardbrowser", "steel"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "mypy", specifier = ">=1.17,<2" },
     { name = "pytest", specifier = ">=8.4,<9" },
     { name = "pytest-asyncio", specifier = ">=1.1,<2" },

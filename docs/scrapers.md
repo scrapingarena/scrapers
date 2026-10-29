@@ -11,6 +11,7 @@ and `oxylabs`, and all published configurations run at **concurrency 1**.
 | [`wreq`](#wreq) | wreq | HTTP | `uv sync` |
 | [`curl-cffi`](#curl-cffi) | curl_cffi | HTTP | `uv sync --extra curl-cffi` |
 | [`niquests`](#niquests) | Niquests | HTTP | `uv sync --extra niquests` |
+| [`mrscraper`](#mrscraper) | MrScraper | HTTP API | `uv sync --extra mrscraper` + API key |
 | [`camoufox-original`](#camoufox-original) | Camoufox (original) | Anti-bot browser | `uv sync --extra camoufox-original` + fetch |
 | [`cloakbrowser`](#cloakbrowser) | CloakBrowser | Anti-bot browser | `uv sync --extra cloakbrowser` + install |
 | [`fortress`](#fortress) | Fortress | Anti-bot browser | `uv sync --extra cdp` + Docker |
@@ -67,6 +68,28 @@ with HTTP/2 and HTTP/3.
 uv sync --extra niquests
 uv run scrapingarena benchmark --scraper niquests --limit 5
 ```
+
+---
+
+### mrscraper
+
+[MrScraper](https://mrscraper.com). Hosted REST API with browser rendering.
+
+```bash
+uv sync --locked --extra mrscraper
+export MRSCRAPER_API_KEY="your-api-key"
+uv run scrapingarena benchmark --scraper mrscraper --proxy direct --limit 5
+```
+
+The adapter requests rendered HTML, disables service retries (`maxRetries=0`),
+and uses the runner's timeout. Direct runs send `useProxy=false`; proxy variants
+forward the selected provider to MrScraper as a custom target-page proxy. The
+API request itself always connects directly to MrScraper. Target HTTP status
+comes from `X-Status-Code`, independently of the API's HTTP status.
+
+CPU and memory measurements cover the local client only; remote browser
+resources are not measured. See [MrScraper integration](mrscraper.md) for
+Account, scraperAPI (HTML/Markdown/screenshots), webSearch, CI, and MCP details.
 
 ---
 
@@ -308,6 +331,7 @@ Linux and macOS are supported. Set
 | Variable | Used by | Purpose |
 | --- | --- | --- |
 | `OPENAI_API_KEY` | all | Required for validation. |
+| `MRSCRAPER_API_KEY` | mrscraper | REST API credential; also configure this GitHub Actions secret. |
 | `OXYLABS_PROXIES_USERNAME` / `_PASSWORD` | proxied runs | Preferred credential pair. |
 | `OXYLABS_RESIDENTIAL_PROXIES_USERNAME` / `_PASSWORD` | proxied runs | Legacy fallback. |
 | `SCRAPINGARENA_RUN_ID` | reporting | Pin the run id instead of generating one. |

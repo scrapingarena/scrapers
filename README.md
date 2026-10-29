@@ -100,16 +100,19 @@ uv run scrapingarena benchmark --scraper wreq --proxy oxylabs --limit 5
 
 ## The scrapers
 
-13 adapters across three families. Slugs are what you pass to `--scraper`.
+14 adapters across three families. Slugs are what you pass to `--scraper`.
 
 | Family | Adapters |
 | --- | --- |
-| HTTP clients | `wreq`, `curl-cffi`, `niquests` |
+| HTTP clients and APIs | `wreq`, `curl-cffi`, `niquests`, `mrscraper` |
 | Anti-bot browsers | `camoufox-original`, `cloakbrowser`, `fortress`, `patchright`, `shardbrowser` |
 | Agent / service browsers | `lightpanda`, `moli`, `obscura`, `steel`, `vercel-agent-browser` |
 
 Per-adapter setup, known constraints, and local run commands are in
 [docs/scrapers.md](docs/scrapers.md).
+
+MrScraper also includes Account, scraperAPI, and webSearch utility commands.
+See [MrScraper integration](docs/mrscraper.md) for setup and examples.
 
 ## Repository layout
 

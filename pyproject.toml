@@ -17,6 +17,7 @@ cdp = ["playwright>=1.55,<2"]
 cloakbrowser = ["cloakbrowser[geoip]>=0.3,<1"]
 curl-cffi = ["curl-cffi>=0.14,<1"]
 niquests = ["niquests>=3.18,<4"]
+mrscraper = ["httpx>=0.28,<1"]
 patchright = ["patchright>=1.55,<2"]
 openai = ["openai>=1.99,<2"]
 shardbrowser = ["shardx>=0.1,<1"]
@@ -24,6 +25,7 @@ steel = ["steel-sdk>=0.1,<1"]
 
 [dependency-groups]
 dev = [
+  "httpx>=0.28,<1",
   "mypy>=1.17,<2",
   "pytest>=8.4,<9",
   "pytest-asyncio>=1.1,<2",

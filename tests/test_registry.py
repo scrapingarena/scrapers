@@ -12,6 +12,7 @@ def test_expected_scrapers_are_registered() -> None:
         "fortress",
         "lightpanda",
         "moli",
+        "mrscraper",
         "niquests",
         "obscura",
         "patchright",

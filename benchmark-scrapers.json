@@ -1,6 +1,17 @@
 {
   "http": [
     {
+      "slug": "mrscraper",
+      "install_command": "uv sync --locked --extra mrscraper",
+      "benchmark_command": "uv run scrapingarena benchmark --scraper mrscraper",
+      "cache_paths": [],
+      "setup_commands": [],
+      "service_commands": [],
+      "health_url": "",
+      "proxy_providers": ["direct", "oxylabs", "nodemaven"],
+      "concurrency": 1
+    },
+    {
       "slug": "curl-cffi",
       "install_command": "uv sync --locked --extra curl-cffi",
       "benchmark_command": "uv run scrapingarena benchmark --scraper curl-cffi",

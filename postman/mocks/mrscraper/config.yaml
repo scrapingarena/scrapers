@@ -1,0 +1,11 @@
+version: 1
+id: 7b508b5b-b848-4846-9d44-3de378abdc95
+name: MrScraper
+slug: mrscraper
+protocol: http
+interceptRequests: true
+port: 4500
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true

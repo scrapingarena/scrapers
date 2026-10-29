@@ -8,6 +8,8 @@ from typing import Annotated
 import typer
 
 from scrapingarena.merging import merge_reports
+from scrapingarena.mrscraper import MrScraperError
+from scrapingarena.mrscraper_cli import app as mrscraper_app
 from scrapingarena.reporting import write_report
 from scrapingarena.runner import BenchmarkRunner
 from scrapingarena.scrapers.registry import create_scraper, scraper_names
@@ -19,6 +21,7 @@ app = typer.Typer(
     help="Run and validate reproducible scraper benchmarks.",
 )
 DEFAULT_TARGETS_PATH = default_targets_path()
+app.add_typer(mrscraper_app, name="mrscraper")
 
 
 @app.command("scrapers")
@@ -95,9 +98,14 @@ def benchmark(
     except ValueError as exc:
         raise typer.BadParameter(str(exc), param_hint="--proxy") from exc
 
+    try:
+        adapters = [create_scraper(name) for name in names]
+    except MrScraperError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--scraper") from None
+
     report = asyncio.run(
         runner.run(
-            [create_scraper(name) for name in names],
+            adapters,
             targets,
             targets_path=targets_path,
             proxy=proxy_settings,
